@@ -180,27 +180,27 @@ export default async function Home() {
   const fallbackCertifications = [
     {
       title: 'WHO GMP',
-      image: 'https://vedicana.com/wp-content/uploads/2024/08/Add-a-subheading-6.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2912/2912795.png'
     },
     {
       title: 'Organic',
-      image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading/1378270865.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/892/892926.png'
     },
     {
       title: 'Cruelty Free',
-      image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-1-1/720556754.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/825/825590.png'
     },
     {
       title: 'Chemical Free',
-      image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-2/3896995376.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2913/2913520.png'
     },
     {
       title: 'Sustainable',
-      image: 'https://vedicana.com/wp-content/uploads/2024/08/Add-a-subheading-1-2.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2913/2913564.png'
     },
     {
       title: 'SSL Secure',
-      image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-4/86510149.png'
+      image: 'https://cdn-icons-png.flaticon.com/512/2504/2504932.png'
     }
   ];
 
@@ -511,7 +511,10 @@ export default async function Home() {
               </h3>
               <div className="grid grid-cols-3 gap-6 items-center justify-items-center">
                 {certificationsToRender.map((cert, idx) => (
-                  <div key={cert.id || idx} className="flex flex-col items-center space-y-2 text-center group">
+                  <div 
+                    key={cert.id || idx} 
+                    className={`flex flex-col items-center space-y-2 text-center group animate-drop-in ${idx > 0 ? `delay-${idx * 100}` : ''}`}
+                  >
                     <div className="w-16 h-16 rounded-2xl bg-white border border-gray-150 shadow-sm flex items-center justify-center group-hover:border-vedicana-green group-hover:shadow-md transition-all duration-300 overflow-hidden p-2">
                       <img 
                         src={cert.image} 

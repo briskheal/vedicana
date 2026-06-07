@@ -6,32 +6,32 @@ const { Certification } = models;
 const defaultCertifications = [
   {
     title: 'WHO GMP',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/Add-a-subheading-6.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2912/2912795.png',
     order_index: 1
   },
   {
     title: 'Organic',
-    image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading/1378270865.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/892/892926.png',
     order_index: 2
   },
   {
     title: 'Cruelty Free',
-    image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-1-1/720556754.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/825/825590.png',
     order_index: 3
   },
   {
     title: 'Chemical Free',
-    image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-2/3896995376.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913520.png',
     order_index: 4
   },
   {
     title: 'Sustainable',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/Add-a-subheading-1-2.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913564.png',
     order_index: 5
   },
   {
     title: 'SSL Secure',
-    image: 'https://vedicana.com/wp-content/uploads/cache/2024/08/Add-a-subheading-4/86510149.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2504/2504932.png',
     order_index: 6
   },
   {

@@ -7,6 +7,7 @@ const dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhos
 
 const sequelizeOptions = {
   dialect: 'postgres',
+  dialectModule: pg,
   logging: false,
   dialectOptions: {
     ssl: {

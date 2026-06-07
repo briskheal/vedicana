@@ -6,6 +6,7 @@ import TestimonialsCarousel from '../components/TestimonialsCarousel';
 import PopularCategory from '../models/PopularCategory.js';
 import HeroSlide from '../models/HeroSlide.js';
 import Certification from '../models/Certification.js';
+import NewsletterForm from '../components/NewsletterForm';
 
 // Force dynamic rendering since we are fetching from DB
 export const dynamic = 'force-dynamic';
@@ -621,17 +622,7 @@ export default async function Home() {
           <p className="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">
             Subscribe to receive exclusive offers, early access to new products, and Ayurvedic wellness tips.
           </p>
-          <form className="flex flex-col sm:flex-row gap-4 justify-center max-w-lg mx-auto">
-            <input 
-              type="email" 
-              placeholder="Enter your email address" 
-              className="flex-grow px-6 py-4 rounded-md focus:outline-none focus:ring-2 focus:ring-vedicana-gold bg-white text-gray-900 placeholder-gray-500"
-              required
-            />
-            <button type="submit" className="bg-vedicana-gold hover:bg-[#e69d00] text-slate-950 px-8 py-4 rounded-md font-bold transition-colors shadow-lg">
-              Subscribe
-            </button>
-          </form>
+          <NewsletterForm />
         </div>
       </section>
     </div>

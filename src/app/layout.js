@@ -14,7 +14,7 @@ const Linkedin = ({ size = 20, className = "" }) => (
 );
 
 const Youtube = ({ size = 20, className = "" }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" /><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" /></svg>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M23.498 6.163c-.272-1.022-1.074-1.826-2.097-2.099C19.56 3.65 12 3.65 12 3.65s-7.56 0-9.4.414c-1.022.273-1.825 1.077-2.097 2.099C.1 8.002.1 12 .1 12s0 3.998.403 5.837c.272 1.022 1.075 1.826 2.097 2.1C4.44 20.35 12 20.35 12 20.35s7.56 0 9.4-.414c1.022-.274 1.825-1.078 2.097-2.1.402-1.839.402-5.837.402-5.837s0-3.998-.402-5.837zm-14.288 9.61V8.228L15.5 12l-6.29 3.773z" /></svg>
 );
 
 const Twitter = ({ size = 20, className = "" }) => (

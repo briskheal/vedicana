@@ -600,14 +600,12 @@ export default async function Home() {
             {/* Right Video Player */}
             <div className="lg:col-span-7">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-black aspect-video group">
-                <video 
-                  src="https://vedicana.com/wp-content/uploads/2024/08/VediCana_-The-Fusion-of-Tradition-and-Technology.-1-1.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  controls
-                  playsInline
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.01]"
+                <iframe 
+                  src="https://www.youtube.com/embed/45vWWqHxUhE?autoplay=1&mute=1&loop=1&playlist=45vWWqHxUhE"
+                  title="VediCana - The Fusion of Tradition and Technology"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full border-0 transition-transform duration-500 group-hover:scale-[1.01]"
                 />
               </div>
             </div>

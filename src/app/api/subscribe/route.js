@@ -5,13 +5,18 @@ import models from '../../../models/index.js';
 const { Subscriber } = models;
 
 // ── Zoho Mail SMTP transporter ──────────────────────────────────────────────
+// Zoho India: smtp.zoho.in | port 587 (STARTTLS)
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.in',
-  port: 465,
-  secure: true,           // SSL
+  port: 587,
+  secure: false,          // STARTTLS (more reliable than port 465 on Vercel)
+  requireTLS: true,
   auth: {
     user: process.env.ZOHO_SMTP_USER,
     pass: process.env.ZOHO_SMTP_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false, // allow self-signed certs if any
   },
 });
 
@@ -172,11 +177,22 @@ export async function POST(request) {
         existing.is_active = true;
         await existing.save();
 
-        // Send welcome-back email (fire & forget)
-        transporter.sendMail({
-          ...buildThankYouEmail(normalizedEmail),
-          subject: '🌿 Welcome Back to VediCana!',
-        }).catch(err => console.error('Welcome-back email error:', err));
+        // Send welcome-back email
+        try {
+          await transporter.sendMail({
+            ...buildThankYouEmail(normalizedEmail),
+            subject: '🌿 Welcome Back to VediCana!',
+          });
+          console.log(`✅ Welcome-back email sent to ${normalizedEmail}`);
+        } catch (mailErr) {
+          console.error('Welcome-back email error:', mailErr.message);
+          // Still return success but include mail error for debugging
+          return NextResponse.json({
+            success: true,
+            message: 'Welcome back! Your subscription has been reactivated.',
+            mailError: mailErr.message,
+          }, { status: 200 });
+        }
 
         return NextResponse.json({
           success: true,
@@ -188,10 +204,19 @@ export async function POST(request) {
     // 3. Create new subscriber
     await Subscriber.create({ email: normalizedEmail, is_active: true });
 
-    // 4. Send thank-you email (fire & forget — don't fail the API if mail errors)
-    transporter.sendMail(buildThankYouEmail(normalizedEmail))
-      .then(() => console.log(`✅ Thank-you email sent to ${normalizedEmail}`))
-      .catch(err => console.error('Thank-you email error:', err));
+    // 4. Send thank-you email — await to catch errors
+    try {
+      await transporter.sendMail(buildThankYouEmail(normalizedEmail));
+      console.log(`✅ Thank-you email sent to ${normalizedEmail}`);
+    } catch (mailErr) {
+      console.error('Thank-you email SMTP error:', mailErr.message);
+      // Subscription succeeded, but return mail error for debugging
+      return NextResponse.json({
+        success: true,
+        message: 'Thank you for subscribing to the VediCana newsletter!',
+        mailError: mailErr.message,
+      }, { status: 201 });
+    }
 
     return NextResponse.json({
       success: true,

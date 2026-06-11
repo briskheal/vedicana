@@ -74,33 +74,33 @@ function BlogCard({ blog }) {
 function FeaturedPost({ blog }) {
   const displayDate = blog.published_at || blog.createdAt;
   return (
-    <Link href={`/blog/${blog.slug}`} className="group relative rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row mb-14 min-h-[320px] hover:-translate-y-1 transition-transform duration-300">
-      <div className="md:w-1/2 h-56 md:h-auto relative overflow-hidden">
+    <Link href={`/blog/${blog.slug}`} className="group relative rounded-2xl overflow-hidden shadow-xl flex flex-col md:flex-row mb-6 min-h-[180px] hover:-translate-y-0.5 transition-transform duration-300">
+      <div className="md:w-2/5 h-36 md:h-auto relative overflow-hidden flex-shrink-0">
         {blog.cover_image ? (
           <img src={blog.cover_image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#006d39]/20 to-[#b8962e]/10">
-            <Leaf size={60} className="text-[#006d39]/30" />
+            <Leaf size={40} className="text-[#006d39]/30" />
           </div>
         )}
       </div>
-      <div className="md:w-1/2 bg-gradient-to-br from-[#0d1f13] to-[#132b1c] p-8 md:p-10 flex flex-col justify-center">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="bg-[#b8962e] text-white text-[11px] font-extrabold px-3 py-1 rounded-full">★ Featured</span>
+      <div className="md:w-3/5 bg-gradient-to-br from-[#0d1f13] to-[#132b1c] p-5 md:p-6 flex flex-col justify-center">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="bg-[#b8962e] text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full">★ Featured</span>
           <CategoryBadge category={blog.category} />
         </div>
-        <h2 className="text-white font-bold text-2xl md:text-3xl leading-tight mb-3 font-serif group-hover:text-[#d4af37] transition-colors">{blog.title}</h2>
-        {blog.excerpt && <p className="text-[#b0c4b8] text-sm leading-relaxed mb-6 line-clamp-3">{blog.excerpt}</p>}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="flex items-center gap-2">
+        <h2 className="text-white font-bold text-lg md:text-xl leading-snug mb-2 font-serif group-hover:text-[#d4af37] transition-colors line-clamp-2">{blog.title}</h2>
+        {blog.excerpt && <p className="text-[#b0c4b8] text-xs leading-relaxed mb-3 line-clamp-2">{blog.excerpt}</p>}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
             <AuthorAvatar name={blog.author} />
-            <span className="text-[#b0c4b8] text-sm">{blog.author}</span>
+            <span className="text-[#b0c4b8] text-xs">{blog.author}</span>
           </div>
-          <span className="text-[#b0c4b8]/70 text-xs flex items-center gap-1"><Clock size={11} /> {blog.read_time || 5} min</span>
-          <span className="text-[#b0c4b8]/70 text-xs flex items-center gap-1"><Calendar size={11} /> {formatDate(displayDate)}</span>
-        </div>
-        <div className="inline-flex items-center gap-2 text-[#d4af37] font-semibold text-sm group-hover:gap-3 transition-all">
-          Read Article <ArrowRight size={16} />
+          <span className="text-[#b0c4b8]/60 text-[11px] flex items-center gap-1"><Clock size={10} /> {blog.read_time || 5} min</span>
+          <span className="text-[#b0c4b8]/60 text-[11px] flex items-center gap-1"><Calendar size={10} /> {formatDate(displayDate)}</span>
+          <span className="ml-auto inline-flex items-center gap-1 text-[#d4af37] font-semibold text-xs group-hover:gap-2 transition-all">
+            Read <ArrowRight size={13} />
+          </span>
         </div>
       </div>
     </Link>
@@ -190,7 +190,7 @@ export default function BlogClient({ blogs }) {
       </section>
 
       {/* ── Content ──────────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* ── Page Banner Slot ──────────────────────────────────────────── */}
         <PageBanner

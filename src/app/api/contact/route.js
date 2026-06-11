@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import fs from 'fs/promises';
+import path from 'path';
 
 // ── Zoho SMTP — port 465 SSL (587 is blocked on Vercel) ─────────────────────
 const transporter = nodemailer.createTransport({
@@ -53,7 +55,7 @@ function buildAdminEmail({ name, email, subject, message }) {
 }
 
 // ── Auto-reply to visitor ─────────────────────────────────────────────────────
-function buildAutoReply({ name, email, subject }) {
+function buildAutoReply({ name, email, subject, companyEmail, companyAddress }) {
   return {
     from: `"VediCana Organics" <${process.env.ZOHO_SMTP_USER}>`,
     to: email,
@@ -76,8 +78,8 @@ function buildAutoReply({ name, email, subject }) {
           </p>
           <p style="margin:0 0 28px;color:#777;font-size:14px;line-height:1.7;">
             For urgent queries, you can reach us directly at:<br/>
-            📧 <a href="mailto:newsletter@vedicana.com" style="color:#006d39;">newsletter@vedicana.com</a><br/>
-            📍 Vraj Raj Complex, Ambamata-Temple Road, Karelibaug, Vadodara – 390018
+            📧 <a href="mailto:${companyEmail}" style="color:#006d39;">${companyEmail}</a><br/>
+            📍 ${companyAddress}
           </p>
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr><td align="center">
@@ -110,10 +112,23 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Invalid email address.' }, { status: 400 });
     }
 
+    // Load settings from config to get company email and address
+    let companyEmail = 'info@vedicana.com';
+    let companyAddress = 'Vadodara, India';
+    try {
+      const settingsPath = path.join(process.cwd(), 'public', 'settings_config.json');
+      const settingsData = await fs.readFile(settingsPath, 'utf8');
+      const settings = JSON.parse(settingsData);
+      companyEmail = settings.company_email || companyEmail;
+      companyAddress = settings.company_address || companyAddress;
+    } catch (err) {
+      console.error('Failed to load settings_config.json for contact form:', err);
+    }
+
     // Send both emails in parallel
     const [adminResult, autoReplyResult] = await Promise.allSettled([
       transporter.sendMail(buildAdminEmail({ name, email, subject, message })),
-      transporter.sendMail(buildAutoReply({ name, email, subject })),
+      transporter.sendMail(buildAutoReply({ name, email, subject, companyEmail, companyAddress })),
     ]);
 
     if (adminResult.status === 'rejected') {

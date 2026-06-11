@@ -66,17 +66,17 @@ export default function NewsletterForm() {
 
       {/* Success alert message */}
       {successMessage && (
-        <div className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 p-4 rounded-md text-sm flex items-center gap-2 animate-fadeIn">
-          <CheckCircle size={16} className="flex-shrink-0" />
-          <span>{successMessage}</span>
+        <div className="mt-4 bg-emerald-500/20 border border-emerald-400 text-emerald-300 p-4 rounded-md text-sm flex items-center gap-2 shadow-lg">
+          <CheckCircle size={18} className="flex-shrink-0" />
+          <span className="font-medium">{successMessage}</span>
         </div>
       )}
 
       {/* Error alert message */}
       {errorMessage && (
-        <div className="bg-red-500/10 border border-red-500/25 text-red-400 p-4 rounded-md text-sm flex items-center gap-2 animate-fadeIn">
-          <AlertCircle size={16} className="flex-shrink-0" />
-          <span>{errorMessage}</span>
+        <div className="mt-4 bg-red-500/20 border border-red-400 text-red-300 p-4 rounded-md text-sm flex items-center gap-2 shadow-lg">
+          <AlertCircle size={18} className="flex-shrink-0" />
+          <span className="font-medium">{errorMessage}</span>
         </div>
       )}
     </div>

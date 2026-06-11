@@ -26,6 +26,7 @@ import LanguageTranslator from '../components/LanguageTranslator';
 import AccessibilityAssistant from '../components/AccessibilityAssistant';
 import { CartProvider } from '../context/CartContext';
 import SpinWheelModal from '../components/SpinWheelModal';
+import MobileNav from '../components/MobileNav';
 import { headers } from 'next/headers';
 import DiscoverPage from '../models/DiscoverPage.js';
 import Category from '../models/Category.js';
@@ -229,6 +230,7 @@ export default async function RootLayout({ children }) {
                         <User size={20} />
                       </a>
                       <CartIcon />
+                      <MobileNav discoverPages={discoverPages} />
                     </div>
                   </div>
                 </div>

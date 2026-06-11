@@ -27,7 +27,7 @@ export default function AdminCareersPage() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(\`/api/admin/careers/\${id}\`, {
+      const res = await fetch(`/api/admin/careers/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -45,7 +45,7 @@ export default function AdminCareersPage() {
   const deleteApplication = async (id) => {
     if (!confirm('Are you sure you want to delete this application?')) return;
     try {
-      const res = await fetch(\`/api/admin/careers/\${id}\`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/careers/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setApplications(apps => apps.filter(app => app.id !== id));
         if (selectedApp?.id === id) setSelectedApp(null);
@@ -117,7 +117,7 @@ export default function AdminCareersPage() {
                     <select 
                       value={app.status}
                       onChange={(e) => updateStatus(app.id, e.target.value)}
-                      className={\`px-3 py-1 rounded-full text-xs font-bold border-none outline-none appearance-none cursor-pointer \${getStatusColor(app.status)}\`}
+                      className={`px-3 py-1 rounded-full text-xs font-bold border-none outline-none appearance-none cursor-pointer ${getStatusColor(app.status)}`}
                     >
                       <option className="bg-slate-800 text-white" value="Pending">Pending</option>
                       <option className="bg-slate-800 text-white" value="Reviewed">Reviewed</option>
@@ -139,7 +139,7 @@ export default function AdminCareersPage() {
                         <Eye size={16} />
                       </button>
                       <a 
-                        href={\`/api/admin/careers/\${app.id}/download\`}
+                        href={`/api/admin/careers/${app.id}/download`}
                         target="_blank"
                         className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-lg transition-colors inline-flex items-center"
                         title="Download CV"
@@ -176,8 +176,8 @@ export default function AdminCareersPage() {
                 <label className="text-xs text-slate-500 uppercase tracking-wider font-bold">Candidate</label>
                 <p className="text-lg text-white font-semibold">{selectedApp.full_name}</p>
                 <div className="flex flex-col gap-2 mt-2">
-                  <a href={\`mailto:\${selectedApp.email}\`} className="flex items-center gap-2 text-sm text-blue-400 hover:underline"><Mail size={14}/> {selectedApp.email}</a>
-                  <a href={\`tel:\${selectedApp.phone}\`} className="flex items-center gap-2 text-sm text-emerald-400 hover:underline"><Phone size={14}/> {selectedApp.phone}</a>
+                  <a href={`mailto:${selectedApp.email}`} className="flex items-center gap-2 text-sm text-blue-400 hover:underline"><Mail size={14}/> {selectedApp.email}</a>
+                  <a href={`tel:${selectedApp.phone}`} className="flex items-center gap-2 text-sm text-emerald-400 hover:underline"><Phone size={14}/> {selectedApp.phone}</a>
                 </div>
               </div>
 
@@ -205,7 +205,7 @@ export default function AdminCareersPage() {
 
               <div className="pt-4 border-t border-slate-800">
                 <a 
-                  href={\`/api/admin/careers/\${selectedApp.id}/download\`}
+                  href={`/api/admin/careers/${selectedApp.id}/download`}
                   target="_blank"
                   className="w-full flex items-center justify-center gap-2 bg-vedicana-green hover:bg-emerald-600 text-white py-3 rounded-xl font-bold transition-colors"
                 >

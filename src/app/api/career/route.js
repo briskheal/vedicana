@@ -105,17 +105,17 @@ export async function POST(request) {
     
     // 3. Send Auto-Reply to Candidate
     const candidateAutoReply = {
-      from: \`"VediCana HR" <\${process.env.ZOHO_SMTP_USER}>\`,
+      from: `"VediCana HR" <${process.env.ZOHO_SMTP_USER}>`,
       to: email,
-      subject: \`Application Received: \${position} at VediCana Organics\`,
-      html: \`
+      subject: `Application Received: ${position} at VediCana Organics`,
+      html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #006d39;">Thank you for applying, \${full_name}!</h2>
-          <p>We have successfully received your application and CV for the <strong>\${position}</strong> role.</p>
+          <h2 style="color: #006d39;">Thank you for applying, ${full_name}!</h2>
+          <p>We have successfully received your application and CV for the <strong>${position}</strong> role.</p>
           <p>Our HR team will review your qualifications and get back to you if your profile matches our requirements.</p>
           <p>Best regards,<br/><strong>VediCana Human Resources</strong></p>
         </div>
-      \`
+      `
     };
 
     // Fire emails

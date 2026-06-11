@@ -86,7 +86,7 @@ export default function MobileNav({ discoverPages = [] }) {
                       Ayurvedic Quiz (Prakriti)
                     </Link>
                     {discoverPages.map((page) => (
-                      <Link key={page.id} href={\`/\${page.slug}\`} className="py-2 text-sm font-medium text-gray-600 hover:text-vedicana-green">
+                      <Link key={page.id} href={`/${page.slug}`} className="py-2 text-sm font-medium text-gray-600 hover:text-vedicana-green">
                         {page.title}
                       </Link>
                     ))}

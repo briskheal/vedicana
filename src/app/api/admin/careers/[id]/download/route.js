@@ -22,7 +22,7 @@ export async function GET(request, { params }) {
       status: 200,
       headers: {
         'Content-Type': application.resume_file_type || 'application/pdf',
-        'Content-Disposition': \`attachment; filename="\${application.resume_file_name || 'Resume.pdf'}"\`,
+        'Content-Disposition': `attachment; filename="${application.resume_file_name || 'Resume.pdf'}"`,
       },
     });
   } catch (error) {

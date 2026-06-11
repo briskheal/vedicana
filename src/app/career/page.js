@@ -279,7 +279,7 @@ export default function CareerPage() {
                         {file ? file.name : "Click to upload or drag and drop"}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {file ? \`\${(file.size / 1024 / 1024).toFixed(2)} MB\` : "PDF, DOCX up to 3MB"}
+                        {file ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : "PDF, DOCX up to 3MB"}
                       </p>
                     </div>
                   </div>

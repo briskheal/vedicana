@@ -26,7 +26,7 @@ export default async function ContactPage() {
     <div className="bg-[#fbfcfa] min-h-screen pb-24 font-sans antialiased">
 
       {/* Page Header Banner */}
-      <div className="bg-vedicana-dark-green py-20 text-center relative overflow-hidden">
+      <div className="bg-vedicana-dark-green py-10 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png")' }}></div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 animate-fade-in">

@@ -8,15 +8,11 @@ const { Subscriber } = models;
 // Zoho India: smtp.zoho.in | port 587 (STARTTLS)
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.in',
-  port: 587,
-  secure: false,          // STARTTLS (more reliable than port 465 on Vercel)
-  requireTLS: true,
+  port: 465,
+  secure: true,   // SSL — port 587 is blocked on Vercel
   auth: {
     user: process.env.ZOHO_SMTP_USER,
     pass: process.env.ZOHO_SMTP_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false, // allow self-signed certs if any
   },
 });
 

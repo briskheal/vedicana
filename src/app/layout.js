@@ -201,7 +201,6 @@ export default async function RootLayout({ children }) {
 
                     </div>
 
-                    <a href="/offers" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Offers</a>
                     <a href="/contact" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Contact Us</a>
                   </div>
 

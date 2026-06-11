@@ -126,12 +126,12 @@ function PageBanner({ bannerImage, onClose, isVisible }) {
         className="w-full h-20 md:h-24 object-cover object-center"
       />
       {/* Slim gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0a1f0e]/75 via-[#0a1f0e]/30 to-transparent flex items-center px-6 md:px-10">
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a1f0e]/80 via-[#0a1f0e]/40 to-transparent flex items-center px-6 md:px-10">
         <div className="flex items-center gap-3">
-          <span className="text-[#b8962e] text-base">🌿</span>
+          <span className="text-white text-base">🌿</span>
           <div>
-            <p className="text-[#b8962e] text-[9px] font-bold uppercase tracking-widest leading-none mb-0.5">Wellness Journal</p>
-            <h2 className="text-white font-serif text-sm md:text-base font-bold leading-tight">
+            <span className="inline-block bg-[#d4af37] text-[#0a1f0e] text-[9px] font-extrabold uppercase tracking-widest px-2 py-0.5 rounded-full leading-none mb-1">Wellness Journal</span>
+            <h2 className="text-white font-serif text-sm md:text-base font-bold leading-tight drop-shadow">
               Natural Therapy &amp; Ayurvedic Wisdom
             </h2>
           </div>

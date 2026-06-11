@@ -16,7 +16,7 @@ import Appointment from './Appointment.js';
 import DamagedStock from './DamagedStock.js';
 import Subscriber from './Subscriber.js';
 import Blog from './Blog.js';
-
+import CareerApplication from './CareerApplication.js';
 // Relationships
 Product.hasMany(Review, { foreignKey: 'productId', onDelete: 'CASCADE' });
 Review.belongsTo(Product, { foreignKey: 'productId' });
@@ -43,6 +43,7 @@ const models = {
   DamagedStock,
   Subscriber,
   Blog,
+  CareerApplication,
 };
 
 export { sequelize };

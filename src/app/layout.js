@@ -202,6 +202,7 @@ export default async function RootLayout({ children }) {
                     </div>
 
                     <a href="/contact" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Contact Us</a>
+                    <a href="/career" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Careers</a>
                   </div>
 
                   {/* Right Side Icons & Socials */}

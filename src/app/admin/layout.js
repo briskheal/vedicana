@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, 
   Image as ImageIcon, Sparkles, MessageSquare, Layers, Navigation, 
-  Award, CalendarCheck, Menu, X, AlertTriangle, FileText
+  Award, CalendarCheck, Menu, X, AlertTriangle, FileText, Briefcase
 } from 'lucide-react';
 import "../globals.css";
 
@@ -28,6 +28,7 @@ export default function AdminLayout({ children }) {
     { href: '/admin/inventory', label: 'Expired / Damaged', icon: AlertTriangle },
     { href: '/admin/discover', label: 'Discover Pages', icon: Sparkles },
     { href: '/admin/blogs', label: 'Blog Posts', icon: FileText },
+    { href: '/admin/careers', label: 'Career CVs', icon: Briefcase },
     { href: '/admin/reviews', label: 'Product Reviews', icon: MessageSquare },
     { href: '/admin/appointments', label: 'Wellness Bookings', icon: CalendarCheck },
     { href: '/admin/footer', label: 'Footer Navigation', icon: Navigation },

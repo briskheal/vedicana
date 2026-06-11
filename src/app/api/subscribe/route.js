@@ -99,7 +99,7 @@ function buildThankYouEmail(email) {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
-                    <a href="https://www.vedicana.com/products"
+                    <a href="https://www.vedicana.com/shop"
                        style="display:inline-block;background:linear-gradient(135deg,#3d6b3b,#5a9e57);color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:16px 40px;border-radius:50px;letter-spacing:0.5px;">
                       🛍️ Shop Our Remedies
                     </a>

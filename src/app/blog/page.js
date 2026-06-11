@@ -6,11 +6,11 @@ import { Calendar, Clock, Eye, Leaf, ArrowRight, User, Image as ImageIcon, X } f
 const CATEGORIES = ['All', 'Wellness', 'Ayurveda', 'Recipes', 'Lifestyle', 'Product News'];
 
 const CATEGORY_STYLES = {
-  Wellness:       { bg: 'bg-emerald-100',  text: 'text-emerald-800',  border: 'border-emerald-200' },
-  Ayurveda:       { bg: 'bg-amber-100',    text: 'text-amber-800',    border: 'border-amber-200'   },
-  Recipes:        { bg: 'bg-orange-100',   text: 'text-orange-800',   border: 'border-orange-200'  },
-  Lifestyle:      { bg: 'bg-purple-100',   text: 'text-purple-800',   border: 'border-purple-200'  },
-  'Product News': { bg: 'bg-sky-100',      text: 'text-sky-800',      border: 'border-sky-200'     },
+  Wellness:       { bg: 'bg-green-50',   text: 'text-green-700',   border: 'border-green-300' },
+  Ayurveda:       { bg: 'bg-yellow-50',  text: 'text-yellow-700',  border: 'border-yellow-300' },
+  Recipes:        { bg: 'bg-orange-50',  text: 'text-orange-600',  border: 'border-orange-300' },
+  Lifestyle:      { bg: 'bg-violet-50',  text: 'text-violet-700',  border: 'border-violet-300' },
+  'Product News': { bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-300'   },
 };
 
 function formatDate(dateStr) {

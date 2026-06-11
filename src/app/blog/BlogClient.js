@@ -74,8 +74,8 @@ function BlogCard({ blog }) {
 function FeaturedPost({ blog }) {
   const displayDate = blog.published_at || blog.createdAt;
   return (
-    <Link href={`/blog/${blog.slug}`} className="group relative rounded-2xl overflow-hidden shadow-xl flex flex-col md:flex-row mb-6 min-h-[180px] hover:-translate-y-0.5 transition-transform duration-300">
-      <div className="md:w-2/5 h-36 md:h-auto relative overflow-hidden flex-shrink-0">
+    <Link href={`/blog/${blog.slug}`} className="group relative rounded-2xl overflow-hidden shadow-xl flex flex-col md:flex-row mb-6 min-h-[130px] hover:-translate-y-0.5 transition-transform duration-300">
+      <div className="md:w-2/5 h-28 md:h-auto relative overflow-hidden flex-shrink-0">
         {blog.cover_image ? (
           <img src={blog.cover_image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
         ) : (

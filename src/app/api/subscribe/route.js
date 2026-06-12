@@ -4,22 +4,22 @@ import models from '../../../models/index.js';
 
 const { Subscriber } = models;
 
-// ── Zoho Mail SMTP transporter ──────────────────────────────────────────────
-// Zoho India: smtp.zoho.in | port 587 (STARTTLS)
+// ── Zoho SMTP (Newsletter) ──────────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.in',
   port: 465,
   secure: true,   // SSL — port 587 is blocked on Vercel
   auth: {
-    user: process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_SMTP_PASS,
+    user: process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER,
+    pass: process.env.ZOHO_NEWSLETTER_PASS || process.env.ZOHO_SMTP_PASS,
   },
 });
 
 // ── Beautiful HTML thank-you email ──────────────────────────────────────────
-function buildThankYouEmail(email) {
+function buildAutoReplyEmail(email) {
+  const senderEmail = process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER;
   return {
-    from: `"VediCana Organics" <${process.env.ZOHO_SMTP_USER}>`,
+    from: `"VediCana Updates" <${senderEmail}>`,
     to: email,
     subject: '🌿 Welcome to the VediCana Family!',
     html: `

@@ -3,22 +3,27 @@ import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import path from 'path';
 
+import models from '../../../models/index.js';
+
+const { ContactMessage } = models;
+
 // ── Zoho SMTP — port 465 SSL (587 is blocked on Vercel) ─────────────────────
 const transporter = nodemailer.createTransport({
   host: 'smtp.zoho.in',
   port: 465,
   secure: true,   // SSL on 465
   auth: {
-    user: process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_SMTP_PASS,
+    user: process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER,
+    pass: process.env.ZOHO_INFO_PASS || process.env.ZOHO_SMTP_PASS,
   },
 });
 
 // ── Email to admin (notify of new contact message) ───────────────────────────
 function buildAdminEmail({ name, email, subject, message }) {
+  const senderEmail = process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER;
   return {
-    from: `"VediCana Website" <${process.env.ZOHO_SMTP_USER}>`,
-    to: process.env.ZOHO_SMTP_USER,   // send to same inbox
+    from: `"VediCana Website" <${senderEmail}>`,
+    to: senderEmail,   // send to info@
     replyTo: email,
     subject: `📬 New Contact: ${subject}`,
     html: `
@@ -56,8 +61,9 @@ function buildAdminEmail({ name, email, subject, message }) {
 
 // ── Auto-reply to visitor ─────────────────────────────────────────────────────
 function buildAutoReply({ name, email, subject, companyEmail, companyAddress }) {
+  const senderEmail = process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER;
   return {
-    from: `"VediCana Organics" <${process.env.ZOHO_SMTP_USER}>`,
+    from: `"VediCana Organics" <${senderEmail}>`,
     to: email,
     subject: '✅ We received your message — VediCana Organics',
     html: `
@@ -104,8 +110,17 @@ export async function POST(request) {
     const { name, email, subject, message } = await request.json();
 
     if (!name || !email || !subject || !message) {
-      return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
+      return NextResponse.json({ error: 'Please fill out all required fields.' }, { status: 400 });
     }
+
+    // Save to database
+    await ContactMessage.create({
+      name,
+      email,
+      subject,
+      message,
+      status: 'Unread'
+    });
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {

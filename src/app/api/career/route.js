@@ -10,16 +10,17 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_SMTP_PASS,
+    user: process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER,
+    pass: process.env.ZOHO_HR_PASS || process.env.ZOHO_SMTP_PASS,
   },
 });
 
 // ── HR Notification Email (with attachment) ─────────────────────────────────
 function buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, fileName, fileType) {
+  const senderEmail = process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER;
   return {
-    from: `"VediCana Careers" <${process.env.ZOHO_SMTP_USER}>`,
-    to: 'hrpartner@vedicana.com',
+    from: `"VediCana Careers" <${senderEmail}>`,
+    to: senderEmail,
     replyTo: email,
     subject: `📄 New Job Application: ${full_name} for ${position}`,
     html: `
@@ -50,13 +51,6 @@ function buildHREmail({ full_name, email, phone, position, experience_years, loc
   };
 }
 
-// ── Candidate Auto-Reply Email ─────────────────────────────────────────────
-function buildCandidateAutoReply({ full_name, position }) {
-  return {
-    from: `"VediCana HR" <${process.env.ZOHO_SMTP_USER}>`,
-    to: full_name.email, // wait, need to pass email correctly
-  };
-} // Actually, we'll inline it to pass email correctly.
 
 export async function POST(request) {
   try {
@@ -108,8 +102,9 @@ export async function POST(request) {
     const hrEmail = buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, randomFileName, resume.type);
     
     // 3. Send Auto-Reply to Candidate
+    const senderEmail = process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER;
     const candidateAutoReply = {
-      from: `"VediCana HR" <${process.env.ZOHO_SMTP_USER}>`,
+      from: `"VediCana HR" <${senderEmail}>`,
       to: email,
       subject: `Application Received: ${position} at VediCana Organics`,
       html: `

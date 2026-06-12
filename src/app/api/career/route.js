@@ -85,6 +85,10 @@ export async function POST(request) {
       return NextResponse.json({ error: 'CV file size must be less than 3MB.' }, { status: 400 });
     }
 
+    // Generate a safe randomized filename
+    const ext = resume.name.split('.').pop() || 'pdf';
+    const randomFileName = `CV_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
+
     // 1. Save to Database
     await CareerApplication.create({
       full_name,
@@ -94,14 +98,14 @@ export async function POST(request) {
       experience_years,
       location,
       cover_letter,
-      resume_file_name: resume.name,
+      resume_file_name: randomFileName,
       resume_file_type: resume.type,
       resume_base64: base64Data,
       status: 'Pending'
     });
 
     // 2. Send Email to HR with attachment
-    const hrEmail = buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, resume.name, resume.type);
+    const hrEmail = buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, randomFileName, resume.type);
     
     // 3. Send Auto-Reply to Candidate
     const candidateAutoReply = {

@@ -555,17 +555,17 @@ export default function CheckoutPage() {
 
               </div>
               
-              <p className="text-[9.5px] text-gray-400 mb-3.5 leading-relaxed">
-                Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.
-              </p>
-              
               <button 
                 type="submit" 
                 disabled={isProcessing}
-                className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-2.5 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-xs disabled:opacity-70 disabled:cursor-not-allowed shadow-sm active:translate-y-0.5 animate-pulse-slow"
+                className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-2.5 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-xs disabled:opacity-70 disabled:cursor-not-allowed shadow-sm active:translate-y-0.5 animate-pulse-slow mb-3"
               >
                 {isProcessing ? 'Processing...' : 'Place order'} 
               </button>
+              
+              <p className="text-[9.5px] text-gray-400 leading-relaxed text-center">
+                Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.
+              </p>
             </div>
           </div>
         </form>

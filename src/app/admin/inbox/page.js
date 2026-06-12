@@ -4,7 +4,7 @@ import {
   Mail, Briefcase, Users, Trash2, Reply, Download, Eye, 
   RefreshCw, CheckCircle2, Circle, Clock, MapPin, Phone,
   ChevronRight, Search, Filter, X, AlertTriangle, Maximize2, Minimize2,
-  MessageSquare, FileText, Inbox
+  MessageSquare, FileText, Inbox, Send, ChevronDown, ChevronUp
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -37,6 +37,10 @@ export default function InboxPage() {
   const [deleting, setDeleting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [expanded, setExpanded] = useState(false); // fullscreen reading mode
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [toast, setToast] = useState(null); // { type: 'success'|'error', msg }
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -84,6 +88,45 @@ export default function InboxPage() {
     finally { setDeleting(false); setDeleteConfirm(null); }
   };
 
+  const sendReply = async () => {
+    if (!replyText.trim() || !selected) return;
+    setSending(true);
+    try {
+      const subjectPrefix = selected._type === 'contact' ? `Re: ${selected.subject}` : `Re: Your Application for ${selected.position}`;
+      const res = await fetch('/api/admin/reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: selected.email,
+          subject: subjectPrefix,
+          message: replyText,
+          bucket: selected._type,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setToast({ type: 'success', msg: `Reply sent to ${selected.email}` });
+        setReplyText('');
+        setReplyOpen(false);
+        if (selected._type === 'contact') {
+          await fetch(`/api/admin/contact/${selected.id}`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Replied' }),
+          });
+          setContacts(prev => prev.map(c => c.id === selected.id ? { ...c, status: 'Replied' } : c));
+          setSelected(s => ({ ...s, status: 'Replied' }));
+        }
+      } else {
+        setToast({ type: 'error', msg: data.error || 'Failed to send reply' });
+      }
+    } catch (e) {
+      setToast({ type: 'error', msg: 'Network error. Please try again.' });
+    } finally {
+      setSending(false);
+      setTimeout(() => setToast(null), 4000);
+    }
+  };
+
   const currentList = () => {
     const term = search.toLowerCase();
     if (activeTab === 'contact') return contacts.filter(c => c.name?.toLowerCase().includes(term) || c.email?.toLowerCase().includes(term) || c.subject?.toLowerCase().includes(term));
@@ -121,7 +164,15 @@ export default function InboxPage() {
         </div>
       )}
 
-      {/* Header */}
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-8 right-8 z-[300] flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-semibold transition-all ${
+          toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'
+        }`}>
+          {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
+          {toast.msg}
+        </div>
+      )}
       <div className="bg-[#111827] border-b border-slate-800 px-8 py-5 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white tracking-tight">Unified Inbox</h1>
@@ -288,12 +339,16 @@ export default function InboxPage() {
                   </div>
                   {/* Action Bar */}
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <a
-                      href={`mailto:${selected.email}`}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-sm font-semibold transition-all"
+                    <button
+                      onClick={() => { setReplyOpen(r => !r); }}
+                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
+                        replyOpen
+                          ? 'bg-blue-500 text-white border-blue-500'
+                          : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/20'
+                      }`}
                     >
-                      <Reply size={15} /> Reply
-                    </a>
+                      <Reply size={15} /> {replyOpen ? 'Close Reply' : 'Reply'}
+                    </button>
                     {selected._type === 'career' && (
                       <a
                         href={`/api/admin/careers/${selected.id}/download`}
@@ -397,6 +452,37 @@ export default function InboxPage() {
                   </div>
                 )}
               </div>
+
+              {/* Reply Composer */}
+              {replyOpen && (
+                <div className="border-t border-slate-800 bg-[#111827] flex flex-col">
+                  <div className="px-6 pt-4 pb-2 flex items-center justify-between">
+                    <div className="text-xs text-slate-500 space-y-0.5">
+                      <div><span className="text-slate-600">To:</span> <span className="text-slate-300 font-medium">{selected.email}</span></div>
+                      <div><span className="text-slate-600">Subject:</span> <span className="text-slate-400">{selected._type === 'contact' ? `Re: ${selected.subject}` : `Re: Your Application for ${selected.position}`}</span></div>
+                    </div>
+                    <button onClick={() => setReplyOpen(false)} className="p-1 text-slate-600 hover:text-slate-400"><X size={14}/></button>
+                  </div>
+                  <textarea
+                    value={replyText}
+                    onChange={e => setReplyText(e.target.value)}
+                    placeholder="Type your reply here..."
+                    rows={5}
+                    className="mx-6 mb-3 bg-[#0a0f1e] border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:border-slate-500 resize-none leading-relaxed"
+                  />
+                  <div className="px-6 pb-4 flex items-center justify-between">
+                    <p className="text-xs text-slate-600">Sending via {selected._type === 'career' ? 'hrpartner@vedicana.com' : selected._type === 'subscribe' ? 'newsletter@vedicana.com' : 'info@vedicana.com'}</p>
+                    <button
+                      onClick={sendReply}
+                      disabled={!replyText.trim() || sending}
+                      className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold text-sm transition-colors"
+                    >
+                      {sending ? <RefreshCw size={15} className="animate-spin" /> : <Send size={15} />}
+                      {sending ? 'Sending...' : 'Send Reply'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">

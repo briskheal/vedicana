@@ -5,7 +5,9 @@ import { Briefcase, Download, Trash2, Eye, Mail, Phone, Calendar, Clock, Loader2
 export default function AdminCareersPage() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedApp, setSelectedApp] = useState(null); // For modal/drawer
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null); // id to confirm delete
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchApplications();
@@ -16,7 +18,8 @@ export default function AdminCareersPage() {
       const res = await fetch('/api/admin/careers');
       if (res.ok) {
         const data = await res.json();
-        setApplications(data);
+        // API returns { applications: [...], total: N }
+        setApplications(data.applications || data);
       }
     } catch (err) {
       console.error(err);
@@ -43,15 +46,22 @@ export default function AdminCareersPage() {
   };
 
   const deleteApplication = async (id) => {
-    if (!confirm('Are you sure you want to delete this application?')) return;
+    setDeleting(true);
     try {
       const res = await fetch(`/api/admin/careers/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setApplications(apps => apps.filter(app => app.id !== id));
         if (selectedApp?.id === id) setSelectedApp(null);
+        setConfirmDelete(null);
+      } else {
+        const err = await res.json();
+        alert('Delete failed: ' + (err.error || 'Unknown error'));
       }
     } catch (err) {
       console.error(err);
+      alert('Network error. Please try again.');
+    } finally {
+      setDeleting(false);
     }
   };
 

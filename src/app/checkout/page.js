@@ -250,8 +250,8 @@ export default function CheckoutPage() {
   if (cart.length === 0) return null; 
 
   return (
-    <div className="min-h-screen bg-[#f9f9fa] py-8 md:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#f9f9fa] py-4 md:py-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         
         {/* Breadcrumb matching WooCommerce */}
         <div className="text-xs text-gray-500 mb-6 border-b border-gray-200/60 pb-3 flex items-center gap-1.5 font-medium">
@@ -262,7 +262,7 @@ export default function CheckoutPage() {
 
         {/* Confetti celebration banner if FIRSTSPIN10 is applied */}
         {appliedCoupon && appliedCoupon.code === 'FIRSTSPIN10' && (
-          <div className="bg-emerald-50/80 border-l-4 border-emerald-500 p-4 mb-6 rounded-lg shadow-xs text-xs text-emerald-800 flex items-center gap-3 animate-fade-in-up">
+          <div className="bg-emerald-50/80 border-l-4 border-emerald-500 p-3 mb-4 rounded-lg shadow-xs text-xs text-emerald-800 flex items-center gap-3 animate-fade-in-up">
             <span className="text-xl animate-bounce">🎉</span>
             <div>
               <p className="font-bold text-emerald-950 uppercase tracking-wider text-[11px]">Lottery Prize Applied!</p>
@@ -273,7 +273,7 @@ export default function CheckoutPage() {
 
         {/* Coupon Header (WooCommerce Style) */}
         {!appliedCoupon && (
-          <div className="bg-white border border-gray-200 border-t-4 border-t-vedicana-green p-3 mb-6 rounded-lg text-xs text-gray-600 flex items-center gap-1.5 shadow-xs">
+          <div className="bg-white border border-gray-200 border-t-4 border-t-vedicana-green p-3 mb-4 rounded-lg text-xs text-gray-600 flex items-center gap-1.5 shadow-xs">
             <Tag size={14} className="text-vedicana-green" /> Have a coupon? 
             <button type="button" className="text-vedicana-green hover:underline font-semibold" onClick={() => document.getElementById('coupon-section').classList.toggle('hidden')}>
               Click here to enter your code
@@ -281,7 +281,7 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        <form id="coupon-section" onSubmit={handleApplyCoupon} className="hidden mb-6 max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow-xs animate-fade-in-up">
+        <form id="coupon-section" onSubmit={handleApplyCoupon} className="hidden mb-4 max-w-md p-3 bg-white border border-gray-200 rounded-lg shadow-xs animate-fade-in-up">
           <p className="text-gray-500 text-xs mb-3">If you have a coupon code, please apply it below.</p>
           <div className="flex gap-2">
             <input 
@@ -296,16 +296,16 @@ export default function CheckoutPage() {
           {couponError && <p className="text-red-500 text-xs mt-2 font-medium">{couponError}</p>}
         </form>
 
-        <form onSubmit={handleCheckout} className="flex flex-col lg:flex-row gap-8">
+        <form onSubmit={handleCheckout} className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           
           {/* Billing & Shipping Details (Left) */}
-          <div className="lg:w-[57%] space-y-6">
+          <div className="lg:w-[57%] space-y-4">
             
             {/* Billing details card */}
-            <div className="bg-white p-5 md:p-6 rounded-xl border border-gray-200/60 shadow-xs">
-              <h3 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-100 pb-2.5">Billing details</h3>
+            <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-200/60 shadow-xs">
+              <h3 className="text-[11px] font-bold text-gray-900 mb-3 uppercase tracking-wider border-b border-gray-100 pb-2">Billing details</h3>
               
-              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+              <div className="grid grid-cols-2 gap-x-2.5 gap-y-2.5">
                 <div className="col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
                   <input required type="text" name="billingFirstName" value={formData.billingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Shipping Details Toggle */}
-            <div className="bg-white p-5 md:p-6 rounded-xl border border-gray-200/60 shadow-xs">
+            <div className="bg-white p-4 md:p-6 rounded-xl border border-gray-200/60 shadow-xs">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input 
                   type="checkbox" 
@@ -375,7 +375,7 @@ export default function CheckoutPage() {
               </label>
 
               {formData.shipToDifferentAddress && (
-                <div className="grid grid-cols-2 gap-x-3 gap-y-3 mt-4 pt-4 border-t border-gray-100 animate-fade-in-up">
+                <div className="grid grid-cols-2 gap-x-2.5 gap-y-2.5 mt-3 pt-3 border-t border-gray-100 animate-fade-in-up">
                   <div className="col-span-1">
                     <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
                     <input required={formData.shipToDifferentAddress} type="text" name="shippingFirstName" value={formData.shippingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
@@ -441,8 +441,8 @@ export default function CheckoutPage() {
 
           {/* Your Order (Right) */}
           <div className="lg:w-[43%]">
-            <div className="border border-gray-200 shadow-xs p-4 md:p-5 rounded-lg bg-white sticky top-24 border-t-4 border-t-vedicana-green">
-              <h3 className="text-xs font-bold text-gray-900 mb-3 uppercase tracking-wider border-b border-gray-100 pb-1.5">Your order</h3>
+            <div className="border border-gray-200 shadow-xs p-3 md:p-5 rounded-lg bg-white sticky top-24 border-t-4 border-t-vedicana-green">
+              <h3 className="text-[11px] font-bold text-gray-900 mb-2 uppercase tracking-wider border-b border-gray-100 pb-1.5">Your order</h3>
               
               <table className="w-full mb-3 border-collapse">
                 <thead>

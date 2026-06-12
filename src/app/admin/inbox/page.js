@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   Mail, Briefcase, Users, Trash2, Reply, Download, Eye, 
   RefreshCw, CheckCircle2, Circle, Clock, MapPin, Phone,
-  ChevronRight, Search, Filter, X, AlertTriangle
+  ChevronRight, Search, Filter, X, AlertTriangle, Maximize2, Minimize2,
+  MessageSquare, FileText, Inbox
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -35,6 +36,7 @@ export default function InboxPage() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [expanded, setExpanded] = useState(false); // fullscreen reading mode
 
   useEffect(() => { fetchAll(); }, []);
 
@@ -262,8 +264,8 @@ export default function InboxPage() {
           </div>
         </div>
 
-        {/* Right Detail Panel */}
-        <div className="flex-1 flex flex-col bg-[#0a0f1e] overflow-hidden">
+        {/* Right Detail Panel — switches to fullscreen when expanded */}
+        <div className={expanded && selected ? 'fixed inset-0 z-[150] flex flex-col bg-[#0a0f1e]' : 'flex-1 flex flex-col bg-[#0a0f1e] overflow-hidden'}>
           {selected ? (
             <>
               {/* Detail Header */}
@@ -307,7 +309,15 @@ export default function InboxPage() {
                     >
                       <Trash2 size={15} /> Delete
                     </button>
-                    <button onClick={() => setSelected(null)} className="p-2.5 rounded-xl hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors">
+                    <div className="w-px h-6 bg-slate-700 mx-1"></div>
+                    <button
+                      onClick={() => setExpanded(e => !e)}
+                      title={expanded ? 'Collapse' : 'Expand to fullscreen'}
+                      className="p-2.5 rounded-xl hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-slate-700"
+                    >
+                      {expanded ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
+                    </button>
+                    <button onClick={() => { setSelected(null); setExpanded(false); }} className="p-2.5 rounded-xl hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors">
                       <X size={18} />
                     </button>
                   </div>
@@ -389,12 +399,29 @@ export default function InboxPage() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-700">
-              <div className="w-24 h-24 rounded-2xl bg-slate-800/50 flex items-center justify-center mb-6 border border-slate-800">
-                <Mail size={40} className="opacity-30" />
+            <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-700 flex items-center justify-center mb-6 border border-slate-700 shadow-xl">
+                <Inbox size={36} className="text-slate-500" />
               </div>
-              <p className="text-lg font-semibold text-slate-600">Select a message</p>
-              <p className="text-sm text-slate-700 mt-1">Click any item from the list to read it here</p>
+              <h3 className="text-lg font-bold text-slate-400 mb-2">Select a message to read</h3>
+              <p className="text-sm text-slate-600 mb-10 max-w-xs leading-relaxed">Click any message from the list on the left. Use the <strong className="text-slate-500">⤢ expand</strong> button to read in full-screen mode.</p>
+              <div className="grid grid-cols-3 gap-4 w-full max-w-lg">
+                <div className="bg-blue-500/5 border border-blue-500/10 rounded-2xl p-5 text-center">
+                  <MessageSquare size={22} className="text-blue-400 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-blue-400 mb-1">General</p>
+                  <p className="text-xs text-slate-600">Contact form messages from customers</p>
+                </div>
+                <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-2xl p-5 text-center">
+                  <FileText size={22} className="text-emerald-400 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-emerald-400 mb-1">Careers</p>
+                  <p className="text-xs text-slate-600">Job applications with CV attached</p>
+                </div>
+                <div className="bg-purple-500/5 border border-purple-500/10 rounded-2xl p-5 text-center">
+                  <Users size={22} className="text-purple-400 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-purple-400 mb-1">Newsletter</p>
+                  <p className="text-xs text-slate-600">All newsletter subscriber emails</p>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -218,8 +218,8 @@ export default function CheckoutPage() {
 
   const handleUPIVerify = async (e) => {
     e.preventDefault();
-    if (!utrNumber || utrNumber.length < 10) {
-      alert("Please enter a valid UTR / Transaction ID (usually 12 digits)");
+    if (!utrNumber || utrNumber.replace(/\D/g, '').length !== 12) {
+      alert("Please enter a valid 12-digit UTR / Transaction ID");
       return;
     }
     setIsProcessing(true);
@@ -601,10 +601,14 @@ export default function CheckoutPage() {
                 <input 
                   type="text" 
                   required
+                  minLength={12}
+                  maxLength={12}
+                  pattern="\d{12}"
+                  title="Please enter exactly 12 digits"
                   placeholder="e.g. 312345678901"
                   value={utrNumber}
-                  onChange={(e) => setUtrNumber(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-vedicana-green focus:border-transparent outline-none transition-all mb-3 text-sm font-mono uppercase"
+                  onChange={(e) => setUtrNumber(e.target.value.replace(/\D/g, ''))}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-vedicana-green focus:border-transparent outline-none transition-all mb-3 text-sm font-mono uppercase text-center tracking-widest"
                 />
                 <button 
                   type="submit"

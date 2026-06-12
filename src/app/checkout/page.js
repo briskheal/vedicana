@@ -18,6 +18,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   
   const [isProcessing, setIsProcessing] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
@@ -56,13 +57,19 @@ export default function CheckoutPage() {
 
   // Load Razorpay Script dynamically
   useEffect(() => {
+    if (document.querySelector('script[src*="razorpay"]')) {
+      setRazorpayLoaded(true);
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    script.onload = () => setRazorpayLoaded(true);
+    script.onerror = () => console.error('Razorpay script failed to load');
     document.body.appendChild(script);
     return () => {
-      document.body.removeChild(script);
-    }
+      // Don't remove — keep loaded for the session
+    };
   }, []);
 
   // Auto-apply won coupon from Spin Wheel on load
@@ -246,9 +253,14 @@ export default function CheckoutPage() {
 
         const rzp = new window.Razorpay(options);
         rzp.on('payment.failed', function (response){
-          alert("Payment Failed. Please try again.");
+          alert("Payment Failed: " + (response.error?.description || 'Please try again.'));
           setIsProcessing(false);
         });
+        if (!window.Razorpay) {
+          alert('Payment gateway is still loading. Please wait a moment and try again.');
+          setIsProcessing(false);
+          return;
+        }
         rzp.open();
         setIsProcessing(false); 
       }
@@ -573,10 +585,10 @@ export default function CheckoutPage() {
               
               <button 
                 type="submit" 
-                disabled={isProcessing}
+                disabled={isProcessing || (paymentMethod === 'razorpay' && !razorpayLoaded)}
                 className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-2.5 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-xs disabled:opacity-70 disabled:cursor-not-allowed shadow-sm active:translate-y-0.5 animate-pulse-slow"
               >
-                {isProcessing ? 'Processing...' : 'Place order'} 
+                {isProcessing ? 'Processing...' : (paymentMethod === 'razorpay' && !razorpayLoaded) ? 'Loading payment...' : 'Place order'} 
               </button>
             </div>
           </div>

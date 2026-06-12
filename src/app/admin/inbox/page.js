@@ -321,25 +321,18 @@ export default function InboxPage() {
             <>
               {/* Detail Header — compact horizontal */}
               <div className="bg-[#111827] border-b border-slate-800 px-6 py-3 flex items-center gap-4 flex-wrap">
-                {/* Left: avatar + meta */}
+                {/* Left: avatar + name only */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700 flex items-center justify-center flex-shrink-0">
                     <span className="text-sm font-bold text-white">
                       {(selected._type === 'contact' ? selected.name : selected.full_name)?.[0]?.toUpperCase()}
                     </span>
                   </div>
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-white text-sm">{selected._type === 'contact' ? selected.name : selected.full_name}</span>
-                      <span className="text-slate-600">•</span>
-                      <a href={`mailto:${selected.email}`} className="text-blue-400 hover:underline text-xs">{selected.email}</a>
-                      <span className="text-slate-600">•</span>
-                      <span className="text-xs text-slate-500 flex items-center gap-1">
-                        <Clock size={10} />
-                        {new Date(selected.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 font-semibold truncate mt-0.5">
+                    <p className="font-bold text-white text-sm truncate">
+                      {selected._type === 'contact' ? selected.name : selected.full_name}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate mt-0.5">
                       {selected._type === 'contact' ? selected.subject : `Application — ${selected.position}`}
                     </p>
                   </div>

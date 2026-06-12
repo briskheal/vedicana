@@ -202,7 +202,7 @@ export async function POST(request) {
 
     // 4. Send thank-you email — await to catch errors
     try {
-      await transporter.sendMail(buildThankYouEmail(normalizedEmail));
+      await transporter.sendMail(buildAutoReplyEmail(normalizedEmail));
       console.log(`✅ Thank-you email sent to ${normalizedEmail}`);
     } catch (mailErr) {
       console.error('Thank-you email SMTP error:', mailErr.message);

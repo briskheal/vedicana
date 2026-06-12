@@ -319,63 +319,68 @@ export default function InboxPage() {
         <div className={expanded && selected ? 'fixed inset-0 z-[150] flex flex-col bg-[#0a0f1e]' : 'flex-1 flex flex-col bg-[#0a0f1e] overflow-hidden'}>
           {selected ? (
             <>
-              {/* Detail Header */}
-              <div className="bg-[#111827] border-b border-slate-800 px-8 py-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-bold text-white mb-1 truncate">
-                      {selected._type === 'contact' ? selected.subject : `Application — ${selected.position}`}
-                    </h2>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="text-slate-400">
-                        From: <strong className="text-slate-200">{selected._type === 'contact' ? selected.name : selected.full_name}</strong>
-                      </span>
+              {/* Detail Header — compact horizontal */}
+              <div className="bg-[#111827] border-b border-slate-800 px-6 py-3 flex items-center gap-4 flex-wrap">
+                {/* Left: avatar + meta */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700 flex items-center justify-center flex-shrink-0">
+                    <span className="text-sm font-bold text-white">
+                      {(selected._type === 'contact' ? selected.name : selected.full_name)?.[0]?.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-white text-sm">{selected._type === 'contact' ? selected.name : selected.full_name}</span>
                       <span className="text-slate-600">•</span>
-                      <a href={`mailto:${selected.email}`} className="text-blue-400 hover:underline">{selected.email}</a>
+                      <a href={`mailto:${selected.email}`} className="text-blue-400 hover:underline text-xs">{selected.email}</a>
+                      <span className="text-slate-600">•</span>
+                      <span className="text-xs text-slate-500 flex items-center gap-1">
+                        <Clock size={10} />
+                        {new Date(selected.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
-                    <p className="text-xs text-slate-600 mt-1 flex items-center gap-1">
-                      <Clock size={11} /> {new Date(selected.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    <p className="text-xs text-slate-400 font-semibold truncate mt-0.5">
+                      {selected._type === 'contact' ? selected.subject : `Application — ${selected.position}`}
                     </p>
                   </div>
-                  {/* Action Bar */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button
-                      onClick={() => { setReplyOpen(r => !r); }}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
-                        replyOpen
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/20'
-                      }`}
+                </div>
+
+                {/* Right: action buttons (compact icon+label) */}
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => { setReplyOpen(r => !r); }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all ${
+                      replyOpen ? 'bg-blue-500 text-white border-blue-500' : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border-blue-500/20'
+                    }`}
+                  >
+                    <Reply size={13} /> {replyOpen ? 'Close' : 'Reply'}
+                  </button>
+                  {selected._type === 'career' && (
+                    <a
+                      href={`/api/admin/careers/${selected.id}/download`}
+                      target="_blank"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-xs font-semibold transition-all"
                     >
-                      <Reply size={15} /> {replyOpen ? 'Close Reply' : 'Reply'}
-                    </button>
-                    {selected._type === 'career' && (
-                      <a
-                        href={`/api/admin/careers/${selected.id}/download`}
-                        target="_blank"
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-sm font-semibold transition-all"
-                      >
-                        <Download size={15} /> Download CV
-                      </a>
-                    )}
-                    <button
-                      onClick={() => setDeleteConfirm({ type: selected._type, id: selected.id })}
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-sm font-semibold transition-all"
-                    >
-                      <Trash2 size={15} /> Delete
-                    </button>
-                    <div className="w-px h-6 bg-slate-700 mx-1"></div>
-                    <button
-                      onClick={() => setExpanded(e => !e)}
-                      title={expanded ? 'Collapse' : 'Expand to fullscreen'}
-                      className="p-2.5 rounded-xl hover:bg-slate-700 text-slate-400 hover:text-white transition-colors border border-slate-700"
-                    >
-                      {expanded ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
-                    </button>
-                    <button onClick={() => { setSelected(null); setExpanded(false); }} className="p-2.5 rounded-xl hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors">
-                      <X size={18} />
-                    </button>
-                  </div>
+                      <Download size={13} /> CV
+                    </a>
+                  )}
+                  <button
+                    onClick={() => setDeleteConfirm({ type: selected._type, id: selected.id })}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 text-xs font-semibold transition-all"
+                  >
+                    <Trash2 size={13} /> Delete
+                  </button>
+                  <div className="w-px h-5 bg-slate-700 mx-0.5"></div>
+                  <button
+                    onClick={() => setExpanded(e => !e)}
+                    title={expanded ? 'Collapse' : 'Expand to fullscreen'}
+                    className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-500 hover:text-white transition-colors border border-slate-700"
+                  >
+                    {expanded ? <Minimize2 size={15} /> : <Maximize2 size={15} />}
+                  </button>
+                  <button onClick={() => { setSelected(null); setExpanded(false); }} className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-slate-300 transition-colors">
+                    <X size={15} />
+                  </button>
                 </div>
               </div>
 

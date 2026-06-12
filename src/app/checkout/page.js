@@ -575,16 +575,16 @@ export default function CheckoutPage() {
       {/* UPI QR Modal */}
       {showQRModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative animate-scale-in">
-            <div className="p-6 text-center">
-              <h2 className="text-xl font-bold text-gray-900 mb-1">Scan & Pay</h2>
-              <p className="text-sm text-gray-500 mb-6">Open any UPI app to make the payment</p>
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative animate-scale-in">
+            <div className="p-5 text-center">
+              <h2 className="text-lg font-bold text-gray-900 mb-1">Scan & Pay</h2>
+              <p className="text-xs text-gray-500 mb-4">Open any UPI app to make the payment</p>
               
-              <div className="bg-emerald-50 rounded-xl p-6 flex flex-col items-center justify-center mb-6">
-                <div className="bg-white p-3 rounded-xl shadow-sm mb-4 inline-block">
+              <div className="bg-emerald-50 rounded-xl p-4 flex flex-col items-center justify-center mb-4">
+                <div className="bg-white p-2 rounded-xl shadow-sm mb-3 inline-block">
                   <QRCodeSVG 
                     value={`upi://pay?pa=8878923337@ybl&pn=JNANA RANJAN DASH&am=${finalTotal}&cu=INR&tn=Order_${qrOrderId}`}
-                    size={200}
+                    size={160}
                     level={"H"}
                     includeMargin={true}
                   />
@@ -593,12 +593,12 @@ export default function CheckoutPage() {
                 <div className="text-xs text-gray-500 font-mono bg-white px-3 py-1 rounded-full border border-gray-200">8878923337@ybl</div>
               </div>
 
-              <div className="text-center mb-6">
-                <span className="text-gray-500 text-sm">Amount to Pay</span>
-                <div className="text-3xl font-extrabold text-vedicana-green">₹{finalTotal}</div>
+              <div className="text-center mb-4">
+                <span className="text-gray-500 text-xs">Amount to Pay</span>
+                <div className="text-2xl font-extrabold text-vedicana-green">₹{finalTotal}</div>
               </div>
 
-              <form onSubmit={handleUPIVerify} className="text-left border-t border-gray-100 pt-6">
+              <form onSubmit={handleUPIVerify} className="text-left border-t border-gray-100 pt-4">
                 <label className="block text-sm font-bold text-gray-900 mb-1">Step 2: Enter UTR Number</label>
                 <p className="text-[10px] text-gray-500 mb-3">After paying, enter the 12-digit UTR/Transaction ID below to confirm your order.</p>
                 <input 
@@ -607,12 +607,12 @@ export default function CheckoutPage() {
                   placeholder="e.g. 312345678901"
                   value={utrNumber}
                   onChange={(e) => setUtrNumber(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-vedicana-green focus:border-transparent outline-none transition-all mb-4 text-sm font-mono uppercase"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-vedicana-green focus:border-transparent outline-none transition-all mb-3 text-sm font-mono uppercase"
                 />
                 <button 
                   type="submit"
                   disabled={isProcessing || !utrNumber}
-                  className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-3 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-sm disabled:opacity-70 shadow-md"
+                  className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-2.5 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-xs disabled:opacity-70 shadow-md"
                 >
                   {isProcessing ? 'Verifying...' : 'I Have Paid'}
                 </button>

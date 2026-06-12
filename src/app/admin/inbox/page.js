@@ -397,20 +397,18 @@ export default function InboxPage() {
 
                 {selected._type === 'career' && (
                   <div className="max-w-3xl space-y-6">
-                    {/* Info Cards */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {/* Info Row — horizontal pills */}
+                    <div className="flex flex-wrap gap-3">
                       {[
-                        { label: 'Position', value: selected.position, icon: Briefcase, color: 'emerald' },
-                        { label: 'Experience', value: `${selected.experience_years} Years`, icon: Clock, color: 'blue' },
-                        { label: 'Phone', value: selected.phone, icon: Phone, color: 'purple' },
-                        { label: 'Location', value: selected.location, icon: MapPin, color: 'yellow' },
-                      ].map(({ label, value, icon: Icon, color }) => (
-                        <div key={label} className={`bg-${color}-500/5 border border-${color}-500/20 rounded-xl p-4`}>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Icon size={14} className={`text-${color}-400`} />
-                            <span className="text-xs text-slate-500 uppercase tracking-wider font-bold">{label}</span>
-                          </div>
-                          <p className="text-sm text-white font-semibold">{value}</p>
+                        { label: 'Position', value: selected.position, icon: Briefcase, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' },
+                        { label: 'Experience', value: `${selected.experience_years} Yrs`, icon: Clock, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+                        { label: 'Phone', value: selected.phone, icon: Phone, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20' },
+                        { label: 'Location', value: selected.location || 'Not provided', icon: MapPin, color: 'text-yellow-400', bg: 'bg-yellow-500/10 border-yellow-500/20' },
+                      ].map(({ label, value, icon: Icon, color, bg }) => (
+                        <div key={label} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${bg}`}>
+                          <Icon size={13} className={color} />
+                          <span className="text-xs text-slate-500 font-semibold uppercase tracking-wide">{label}:</span>
+                          <span className={`text-sm font-bold ${color}`}>{value}</span>
                         </div>
                       ))}
                     </div>
@@ -432,20 +430,20 @@ export default function InboxPage() {
 
                     {/* CV File */}
                     {selected.resume_file_name && (
-                      <div className="bg-[#111827] border border-slate-800 rounded-2xl p-5 flex items-center gap-4">
-                        <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/20">
+                      <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 flex items-center gap-3 flex-wrap">
+                        <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/20 flex-shrink-0">
                           <span className="text-red-400 text-xs font-bold uppercase">{selected.resume_file_name.split('.').pop()}</span>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-white">{selected.resume_file_name}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-white truncate">{selected.resume_file_name}</p>
                           <p className="text-xs text-slate-500 mt-0.5">Attached CV / Resume</p>
                         </div>
                         <a
                           href={`/api/admin/careers/${selected.id}/download`}
                           target="_blank"
-                          className="flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-colors"
+                          className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-sm transition-colors"
                         >
-                          <Download size={15} /> Download
+                          <Download size={14} /> Download CV
                         </a>
                       </div>
                     )}

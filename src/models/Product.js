@@ -54,6 +54,11 @@ const Product = sequelize.define('Product', {
     type: DataTypes.INTEGER,
     defaultValue: 5,
   },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+    allowNull: false,
+  },
 }, {
   timestamps: true,
 });

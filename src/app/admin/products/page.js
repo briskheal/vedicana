@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Search, Filter, RefreshCw, Upload, Loader } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Filter, RefreshCw, Upload, Loader, Eye, EyeOff } from 'lucide-react';
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -50,6 +50,22 @@ export default function AdminProducts() {
     } catch (err) {
       console.error(err);
       alert('Error deleting product. Please try again.');
+    }
+  };
+
+  const handleToggleActive = async (id, currentState, title) => {
+    const newState = !currentState;
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: newState }),
+      });
+      if (!res.ok) throw new Error('Failed to update product visibility');
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, is_active: newState } : p));
+    } catch (err) {
+      console.error(err);
+      alert('Error updating product visibility. Please try again.');
     }
   };
 
@@ -203,21 +219,36 @@ export default function AdminProducts() {
                         <span className="bg-slate-800 text-slate-400 px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wide">Standard</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-right flex justify-end gap-2 text-slate-400">
-                      <a 
-                        href={`/admin/products/edit/${product.id}`}
-                        className="p-2 hover:text-vedicana-gold hover:bg-slate-800 rounded transition-colors"
-                        title="Edit dynamic parameters"
-                      >
-                        <Edit2 size={16} />
-                      </a>
-                      <button 
-                        onClick={() => handleDelete(product.id, product.title)}
-                        className="p-2 hover:text-red-400 hover:bg-slate-800 rounded transition-colors cursor-pointer"
-                        title="Delete product permanent"
-                      >
-                        <Trash2 size={16} />
-                      </button>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end items-center gap-2 text-slate-400">
+                        {/* Visibility Toggle */}
+                        <button
+                          onClick={() => handleToggleActive(product.id, product.is_active, product.title)}
+                          title={product.is_active !== false ? 'Visible on website — click to hide' : 'Hidden from website — click to show'}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                            product.is_active !== false
+                              ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20'
+                              : 'bg-slate-700/60 text-slate-500 hover:bg-slate-700 border border-slate-600'
+                          }`}
+                        >
+                          {product.is_active !== false ? <Eye size={13} /> : <EyeOff size={13} />}
+                          {product.is_active !== false ? 'Live' : 'Hidden'}
+                        </button>
+                        <a 
+                          href={`/admin/products/edit/${product.id}`}
+                          className="p-2 hover:text-vedicana-gold hover:bg-slate-800 rounded transition-colors"
+                          title="Edit dynamic parameters"
+                        >
+                          <Edit2 size={16} />
+                        </a>
+                        <button 
+                          onClick={() => handleDelete(product.id, product.title)}
+                          className="p-2 hover:text-red-400 hover:bg-slate-800 rounded transition-colors cursor-pointer"
+                          title="Delete product permanently"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

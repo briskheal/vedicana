@@ -23,7 +23,7 @@ export default async function Shop({ searchParams }) {
     includeCategory.where = { slug: categorySlug };
   }
 
-  const whereClause = {};
+  const whereClause = { is_active: true }; // Only show active/visible products
   if (searchQuery) {
     whereClause[Op.or] = [
       { title: { [Op.iLike]: `%${searchQuery}%` } },

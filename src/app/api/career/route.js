@@ -65,8 +65,8 @@ export async function POST(request) {
     const cover_letter = formData.get('cover_letter');
     const resume = formData.get('resume'); // File object
 
-    if (!full_name || !email || !phone || !position || !resume) {
-      return NextResponse.json({ error: 'Please fill all required fields and upload your CV.' }, { status: 400 });
+    if (!full_name || !email || !phone || !position || !location || !resume) {
+      return NextResponse.json({ error: 'Please fill all required fields including your current location, and upload your CV.' }, { status: 400 });
     }
 
     // Process file

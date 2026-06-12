@@ -5,7 +5,7 @@ const { CareerApplication } = models;
 
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     // We only fetch the base64 and filename here to keep it lightweight
     const application = await CareerApplication.findByPk(id, {

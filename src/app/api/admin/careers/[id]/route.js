@@ -5,7 +5,7 @@ const { CareerApplication } = models;
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     
     const application = await CareerApplication.findByPk(id);
@@ -24,7 +24,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     
     const application = await CareerApplication.findByPk(id);
     if (!application) {

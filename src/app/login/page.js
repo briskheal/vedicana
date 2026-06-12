@@ -100,13 +100,41 @@ function LoginForm({ onToggleForgot }) {
 }
 
 function ForgotForm({ onToggleLogin, onSuccess }) {
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
+  const [pin, setPin] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleReset = async (e) => {
+  const handleRequestPin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Failed to request PIN');
+
+      setMessage(json.message || 'A verification PIN has been sent to your email.');
+      setStep(2);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
@@ -123,11 +151,17 @@ function ForgotForm({ onToggleLogin, onSuccess }) {
       return;
     }
 
+    if (pin.length !== 6) {
+      setError('Please enter the 6-digit PIN sent to your email.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await fetch('/api/auth/forgot-password', {
+      const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, newPassword }),
+        body: JSON.stringify({ email, pin, newPassword }),
       });
 
       const json = await res.json();
@@ -145,63 +179,99 @@ function ForgotForm({ onToggleLogin, onSuccess }) {
   return (
     <>
       {error && (
-        <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm mb-6 text-center border border-red-100 font-medium">
+        <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm mb-6 text-center border border-red-100 font-medium animate-fade-in">
           {error}
         </div>
       )}
-
-      <form onSubmit={handleReset} className="space-y-5">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-          <input 
-            required 
-            type="email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
-          />
+      {message && (
+        <div className="bg-emerald-50 text-emerald-700 p-3 rounded-md text-sm mb-6 text-center border border-emerald-100 font-medium animate-fade-in">
+          {message}
         </div>
+      )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-          <input 
-            required 
-            type="password" 
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
-          />
-        </div>
+      {step === 1 ? (
+        <form onSubmit={handleRequestPin} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Registered Email Address</label>
+            <input 
+              required 
+              type="email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-          <input 
-            required 
-            type="password" 
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
-          />
-        </div>
-
-        <button 
-          type="submit" 
-          disabled={loading}
-          className="w-full bg-vedicana-green hover:bg-emerald-700 text-white rounded-md py-3 font-medium transition-colors shadow-md mt-2 disabled:opacity-70 cursor-pointer"
-        >
-          {loading ? 'Resetting Password...' : 'Reset Password'}
-        </button>
-
-        <div className="text-center mt-4">
           <button 
-            type="button" 
-            onClick={onToggleLogin}
-            className="text-sm text-gray-500 hover:text-gray-700 font-medium hover:underline focus:outline-none"
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-vedicana-green hover:bg-emerald-700 text-white rounded-md py-3 font-medium transition-colors shadow-md mt-2 disabled:opacity-70 cursor-pointer flex items-center justify-center gap-2"
           >
-            Back to Sign In
+            {loading ? 'Sending PIN...' : 'Send Reset PIN'}
           </button>
-        </div>
-      </form>
+        </form>
+      ) : (
+        <form onSubmit={handleResetPassword} className="space-y-4 animate-fade-in-up">
+          <div className="bg-gray-50 px-3 py-2 rounded border border-gray-200 mb-2">
+            <span className="text-xs text-gray-500 block mb-0.5">Resetting password for:</span>
+            <span className="text-sm font-medium text-gray-900">{email}</span>
+            <button type="button" onClick={() => setStep(1)} className="text-xs text-vedicana-green ml-3 hover:underline">Change</button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">6-Digit Verification PIN <span className="text-red-500">*</span></label>
+            <input 
+              required 
+              type="text" 
+              maxLength={6}
+              placeholder="Enter PIN from email"
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+              className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none font-mono text-center tracking-widest text-lg" 
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">New Password <span className="text-red-500">*</span></label>
+            <input 
+              required 
+              type="password" 
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password <span className="text-red-500">*</span></label>
+            <input 
+              required 
+              type="password" 
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2.5 focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" 
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full bg-vedicana-green hover:bg-emerald-700 text-white rounded-md py-3 font-medium transition-colors shadow-md mt-4 disabled:opacity-70 cursor-pointer"
+          >
+            {loading ? 'Verifying & Resetting...' : 'Verify PIN & Reset Password'}
+          </button>
+        </form>
+      )}
+
+      <div className="text-center mt-5">
+        <button 
+          type="button" 
+          onClick={onToggleLogin}
+          className="text-sm text-gray-500 hover:text-gray-700 font-medium hover:underline focus:outline-none"
+        >
+          Back to Sign In
+        </button>
+      </div>
     </>
   );
 }

@@ -240,6 +240,26 @@ export default function AdminOrders() {
     }
   };
 
+  const handleUPIApprove = async (orderId) => {
+    if (!window.confirm(`Are you sure you want to approve the UPI payment for Order #${orderId}? This will mark it as paid and decrement stock.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/approve-upi`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to approve UPI payment');
+      
+      alert(`Order #${orderId} UPI payment approved successfully.`);
+      fetchOrders(); // Refresh to get updated status
+      setActiveInspectOrder(null);
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
+
   const getStatusStyle = (status) => {
     switch(status.toLowerCase()) {
       case 'delivered': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
@@ -344,7 +364,7 @@ export default function AdminOrders() {
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-slate-800/20 transition-colors group">
+                  <tr key={order.id} className={`hover:bg-slate-800/20 transition-colors group ${order.paymentStatus === 'verification_pending' ? 'bg-amber-900/10 border-l-4 border-amber-500' : ''}`}>
                     <td className="px-6 py-4 font-mono text-slate-300">
                       <div className="flex items-center gap-2">
                         <span className="text-vedicana-gold font-bold">#</span>
@@ -451,11 +471,23 @@ export default function AdminOrders() {
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Details</h4>
-                  <p className="text-xs text-slate-300">Method: <span className="font-semibold capitalize text-white">{activeInspectOrder.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Razorpay Secure'}</span></p>
+                  <p className="text-xs text-slate-300">Method: <span className="font-semibold capitalize text-white">{activeInspectOrder.paymentMethod === 'cod' ? 'Cash on Delivery' : activeInspectOrder.paymentMethod === 'upi_direct' ? 'UPI Direct QR' : 'Razorpay Secure'}</span></p>
                   {activeInspectOrder.paymentId && (
                     <p className="text-[10px] text-slate-400 mt-1 font-mono truncate">Razorpay ID: {activeInspectOrder.paymentId}</p>
                   )}
-                  <p className="text-xs text-slate-300 mt-1">Payment Status: <span className={`font-semibold capitalize ${activeInspectOrder.paymentStatus === 'paid' ? 'text-emerald-400' : 'text-amber-450'}`}>{activeInspectOrder.paymentStatus}</span></p>
+                  {activeInspectOrder.upi_utr && (
+                    <p className="text-[10px] text-amber-400 mt-1 font-mono break-all">UPI UTR: {activeInspectOrder.upi_utr}</p>
+                  )}
+                  <p className="text-xs text-slate-300 mt-1">Payment Status: <span className={`font-semibold capitalize ${activeInspectOrder.paymentStatus === 'paid' ? 'text-emerald-400' : activeInspectOrder.paymentStatus === 'verification_pending' ? 'text-amber-400 animate-pulse' : 'text-amber-450'}`}>{activeInspectOrder.paymentStatus.replace('_', ' ')}</span></p>
+                  
+                  {activeInspectOrder.paymentStatus === 'verification_pending' && (
+                    <button 
+                      onClick={() => handleUPIApprove(activeInspectOrder.id)}
+                      className="mt-3 w-full bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider py-2 rounded shadow-md transition-colors flex items-center justify-center gap-1"
+                    >
+                      <CheckCircle size={12} /> Approve Payment
+                    </button>
+                  )}
                 </div>
               </div>
 

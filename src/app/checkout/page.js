@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import { useRouter } from 'next/navigation';
-import { Truck, ArrowRight, Lock, CheckCircle, Tag, Wallet } from 'lucide-react';
+import { Truck, ArrowRight, Lock, CheckCircle, Tag, Wallet, QrCode, X } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", 
@@ -18,12 +19,16 @@ export default function CheckoutPage() {
   const router = useRouter();
   
   const [isProcessing, setIsProcessing] = useState(false);
-  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
+  const [paymentMethod, setPaymentMethod] = useState('upi_direct');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState('');
+  
+  // UPI QR Modal states
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrOrderId, setQrOrderId] = useState(null);
+  const [utrNumber, setUtrNumber] = useState('');
   
   const [formData, setFormData] = useState({
     billingFirstName: '',
@@ -55,22 +60,7 @@ export default function CheckoutPage() {
     }
   }, [cart, router, isProcessing]);
 
-  // Load Razorpay Script dynamically
-  useEffect(() => {
-    if (document.querySelector('script[src*="razorpay"]')) {
-      setRazorpayLoaded(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => setRazorpayLoaded(true);
-    script.onerror = () => console.error('Razorpay script failed to load');
-    document.body.appendChild(script);
-    return () => {
-      // Don't remove — keep loaded for the session
-    };
-  }, []);
+  // (Razorpay script loading removed)
 
   // Auto-apply won coupon from Spin Wheel on load
   useEffect(() => {
@@ -213,60 +203,46 @@ export default function CheckoutPage() {
         // COD Success
         clearCart();
         router.push(`/checkout/success?order_id=${orderData.orderId}`);
-      } else {
-        // 2. Open Razorpay Checkout Modal
-        const options = {
-          key: orderData.key_id,
-          amount: orderData.amount,
-          currency: orderData.currency,
-          name: 'VediCana',
-          description: 'Tradition Re-emerged',
-          image: 'https://vedicana.com/logo.png',
-          order_id: orderData.razorpayOrderId,
-          handler: async function (response) {
-            // 3. Verify Payment
-            const verifyRes = await fetch('/api/checkout/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-                internalOrderId: orderData.internalOrderId
-              })
-            });
-            const verifyData = await verifyRes.json();
-            if (verifyData.success) {
-              clearCart();
-              router.push(`/checkout/success?order_id=${orderData.internalOrderId}`);
-            } else {
-              alert("Payment verification failed.");
-            }
-          },
-          prefill: {
-            name: `${formData.billingFirstName} ${formData.billingLastName}`,
-            email: formData.billingEmail,
-            contact: formData.billingPhone
-          },
-          theme: { color: '#006d39' }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response){
-          alert("Payment Failed: " + (response.error?.description || 'Please try again.'));
-          setIsProcessing(false);
-        });
-        if (!window.Razorpay) {
-          alert('Payment gateway is still loading. Please wait a moment and try again.');
-          setIsProcessing(false);
-          return;
-        }
-        rzp.open();
-        setIsProcessing(false); 
+      } else if (orderData.method === 'upi_direct') {
+        // Show UPI QR Modal
+        setQrOrderId(orderData.internalOrderId);
+        setShowQRModal(true);
+        setIsProcessing(false);
       }
     } catch (error) {
       console.error("Checkout Error:", error);
       alert("Error initiating checkout. Please try again.");
+      setIsProcessing(false);
+    }
+  };
+
+  const handleUPIVerify = async (e) => {
+    e.preventDefault();
+    if (!utrNumber || utrNumber.length < 10) {
+      alert("Please enter a valid UTR / Transaction ID (usually 12 digits)");
+      return;
+    }
+    setIsProcessing(true);
+    try {
+      const res = await fetch('/api/checkout/verify-upi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: qrOrderId,
+          utr: utrNumber
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        clearCart();
+        router.push(`/checkout/success?order_id=${qrOrderId}`);
+      } else {
+        alert(data.error || "Verification submission failed.");
+        setIsProcessing(false);
+      }
+    } catch (err) {
+      console.error("UPI Verify Error:", err);
+      alert("Error submitting UTR. Please try again.");
       setIsProcessing(false);
     }
   };
@@ -521,28 +497,29 @@ export default function CheckoutPage() {
               {/* Payment Methods */}
               <div className="space-y-1.5 mb-3.5">
                 
-                {/* Razorpay Option */}
+                {/* UPI Direct Option */}
                 <div 
-                  className={`p-2.5 rounded-md border transition-all cursor-pointer ${paymentMethod === 'razorpay' ? 'border-vedicana-green bg-emerald-50/5' : 'border-gray-200 bg-white hover:bg-gray-50/50'}`}
-                  onClick={() => setPaymentMethod('razorpay')}
+                  className={`p-2.5 rounded-md border transition-all cursor-pointer ${paymentMethod === 'upi_direct' ? 'border-vedicana-green bg-emerald-50/5' : 'border-gray-200 bg-white hover:bg-gray-50/50'}`}
+                  onClick={() => setPaymentMethod('upi_direct')}
                 >
                   <div className="flex items-start gap-2">
                     <input 
                       type="radio" 
                       name="payment_method" 
-                      value="razorpay"
-                      checked={paymentMethod === 'razorpay'}
-                      onChange={() => setPaymentMethod('razorpay')}
+                      value="upi_direct"
+                      checked={paymentMethod === 'upi_direct'}
+                      onChange={() => setPaymentMethod('upi_direct')}
                       className="mt-0.5 text-vedicana-green focus:ring-vedicana-green"
                     />
                     <div className="flex-1">
                       <span className="text-xs font-bold text-gray-900 flex items-center gap-1.5 leading-none">
-                        Razorpay Secure <Lock size={12} className="text-gray-400" />
+                        Pay via UPI App <QrCode size={12} className="text-gray-400" />
                       </span>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Pay via Card, UPI, NetBanking</p>
-                      {paymentMethod === 'razorpay' && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">0% Processing Fee — GPay, PhonePe, Paytm</p>
+                      {paymentMethod === 'upi_direct' && (
                         <div className="text-[10px] text-gray-500 mt-1.5 pt-1.5 border-t border-gray-100/60 leading-relaxed animate-fade-in-up">
-                          Pay securely by Credit or Debit card or Internet Banking through Razorpay.
+                          Pay directly to our bank account by scanning a secure QR code. 
+                          Your order will be verified manually.
                         </div>
                       )}
                     </div>
@@ -585,15 +562,72 @@ export default function CheckoutPage() {
               
               <button 
                 type="submit" 
-                disabled={isProcessing || (paymentMethod === 'razorpay' && !razorpayLoaded)}
+                disabled={isProcessing}
                 className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-2.5 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-xs disabled:opacity-70 disabled:cursor-not-allowed shadow-sm active:translate-y-0.5 animate-pulse-slow"
               >
-                {isProcessing ? 'Processing...' : (paymentMethod === 'razorpay' && !razorpayLoaded) ? 'Loading payment...' : 'Place order'} 
+                {isProcessing ? 'Processing...' : 'Place order'} 
               </button>
             </div>
           </div>
         </form>
       </div>
+
+      {/* UPI QR Modal */}
+      {showQRModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative animate-scale-in">
+            <div className="p-6 text-center">
+              <h2 className="text-xl font-bold text-gray-900 mb-1">Scan & Pay</h2>
+              <p className="text-sm text-gray-500 mb-6">Open any UPI app to make the payment</p>
+              
+              <div className="bg-emerald-50 rounded-xl p-6 flex flex-col items-center justify-center mb-6">
+                <div className="bg-white p-3 rounded-xl shadow-sm mb-4 inline-block">
+                  <QRCodeSVG 
+                    value={`upi://pay?pa=8878923337@ybl&pn=JNANA RANJAN DASH&am=${finalTotal}&cu=INR&tn=Order_${qrOrderId}`}
+                    size={200}
+                    level={"H"}
+                    includeMargin={true}
+                  />
+                </div>
+                <div className="text-sm text-gray-600 mb-1">Paying to <strong className="text-gray-900">JNANA RANJAN DASH</strong></div>
+                <div className="text-xs text-gray-500 font-mono bg-white px-3 py-1 rounded-full border border-gray-200">8878923337@ybl</div>
+              </div>
+
+              <div className="text-center mb-6">
+                <span className="text-gray-500 text-sm">Amount to Pay</span>
+                <div className="text-3xl font-extrabold text-vedicana-green">₹{finalTotal}</div>
+              </div>
+
+              <form onSubmit={handleUPIVerify} className="text-left border-t border-gray-100 pt-6">
+                <label className="block text-sm font-bold text-gray-900 mb-1">Step 2: Enter UTR Number</label>
+                <p className="text-[10px] text-gray-500 mb-3">After paying, enter the 12-digit UTR/Transaction ID below to confirm your order.</p>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. 312345678901"
+                  value={utrNumber}
+                  onChange={(e) => setUtrNumber(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-vedicana-green focus:border-transparent outline-none transition-all mb-4 text-sm font-mono uppercase"
+                />
+                <button 
+                  type="submit"
+                  disabled={isProcessing || !utrNumber}
+                  className="w-full bg-vedicana-dark-green hover:bg-vedicana-green text-white rounded-lg py-3 flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-200 text-sm disabled:opacity-70 shadow-md"
+                >
+                  {isProcessing ? 'Verifying...' : 'I Have Paid'}
+                </button>
+              </form>
+            </div>
+            {/* Close Button if they want to cancel */}
+            <button 
+              onClick={() => { setShowQRModal(false); setIsProcessing(false); }}
+              className="absolute top-4 right-4 p-2 bg-gray-100 hover:bg-gray-200 text-gray-500 rounded-full transition-colors"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

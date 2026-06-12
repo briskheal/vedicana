@@ -17,15 +17,19 @@ const Order = sequelize.define('Order', {
     defaultValue: 'pending',
   },
   paymentStatus: {
-    type: DataTypes.ENUM('pending', 'paid', 'failed'),
+    type: DataTypes.ENUM('pending', 'paid', 'failed', 'verification_pending'),
     defaultValue: 'pending',
   },
   paymentId: {
     type: DataTypes.STRING, // Razorpay Payment ID
   },
   paymentMethod: {
-    type: DataTypes.ENUM('razorpay', 'cod'),
-    defaultValue: 'razorpay',
+    type: DataTypes.ENUM('razorpay', 'cod', 'upi_direct'),
+    defaultValue: 'upi_direct',
+  },
+  upi_utr: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   couponCode: {
     type: DataTypes.STRING,

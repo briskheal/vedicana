@@ -257,34 +257,15 @@ export async function POST(request) {
     // 5. Handle Payment Method
     if (paymentMethod === 'cod') {
       return NextResponse.json({ success: true, orderId: newOrder.id, method: 'cod' });
-    } else {
-      // Razorpay Flow
-      const razorpay = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID,
-        key_secret: process.env.RAZORPAY_KEY_SECRET,
-      });
-
-      const options = {
-        amount: Math.round(totalAmount * 100), // paise
-        currency: "INR",
-        receipt: `rcpt_${newOrder.id}_${Date.now()}`,
-        payment_capture: 1 
-      };
-
-      const razorpayOrder = await razorpay.orders.create(options);
-      
-      // Save Razorpay order ID to our DB order
-      await newOrder.update({ paymentId: razorpayOrder.id });
-
+    } else if (paymentMethod === 'upi_direct') {
       return NextResponse.json({
         success: true,
-        method: 'razorpay',
+        method: 'upi_direct',
         internalOrderId: newOrder.id,
-        razorpayOrderId: razorpayOrder.id,
-        currency: razorpayOrder.currency,
-        amount: razorpayOrder.amount,
-        key_id: process.env.RAZORPAY_KEY_ID
+        amount: totalAmount
       });
+    } else {
+      return NextResponse.json({ error: 'Invalid payment method' }, { status: 400 });
     }
 
   } catch (error) {

@@ -305,58 +305,58 @@ export default function CheckoutPage() {
             <div className="bg-white p-5 md:p-6 rounded-xl border border-gray-200/60 shadow-xs">
               <h3 className="text-xs font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-100 pb-2.5">Billing details</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
-                  <input required type="text" name="billingFirstName" value={formData.billingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+                <div className="col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
+                  <input required type="text" name="billingFirstName" value={formData.billingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Last name <span className="text-red-500">*</span></label>
-                  <input required type="text" name="billingLastName" value={formData.billingLastName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Last name <span className="text-red-500">*</span></label>
+                  <input required type="text" name="billingLastName" value={formData.billingLastName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Company name (optional)</label>
-                  <input type="text" name="billingCompanyName" value={formData.billingCompanyName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Company name (optional)</label>
+                  <input type="text" name="billingCompanyName" value={formData.billingCompanyName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Country / Region <span className="text-red-500">*</span></label>
-                  <select name="billingCountry" value={formData.billingCountry} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green bg-gray-50/40 pointer-events-none text-gray-500">
+                <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Country / Region <span className="text-red-500">*</span></label>
+                  <select name="billingCountry" value={formData.billingCountry} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green bg-gray-50/40 pointer-events-none text-gray-500">
                     <option value="India">India</option>
                   </select>
                 </div>
-                <div className="md:col-span-2">
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Street address <span className="text-red-500">*</span></label>
-                  <input required type="text" name="billingAddress" placeholder="House number and street name" value={formData.billingAddress} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Street address <span className="text-red-500">*</span></label>
+                  <input required type="text" name="billingAddress" placeholder="House number and street name" value={formData.billingAddress} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
                 
                 {/* Town, State, Pincode in a single grid row */}
-                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-3">
-                  <div className="md:col-span-2">
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Town / City <span className="text-red-500">*</span></label>
-                    <input required type="text" name="billingCity" value={formData.billingCity} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="col-span-2">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Town / City <span className="text-red-500">*</span></label>
+                    <input required type="text" name="billingCity" value={formData.billingCity} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">State <span className="text-red-500">*</span></label>
-                    <select required name="billingState" value={formData.billingState} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green bg-white text-gray-700">
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">State <span className="text-red-500">*</span></label>
+                    <select required name="billingState" value={formData.billingState} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green bg-white text-gray-700">
                       <option value="">State</option>
                       {INDIAN_STATES.map(state => (
                         <option key={state} value={state}>{state}</option>
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">PIN Code <span className="text-red-500">*</span></label>
-                    <input required type="text" name="billingPincode" value={formData.billingPincode} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">PIN Code <span className="text-red-500">*</span></label>
+                    <input required type="text" name="billingPincode" value={formData.billingPincode} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Phone <span className="text-red-500">*</span></label>
-                  <input required type="tel" name="billingPhone" value={formData.billingPhone} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Phone <span className="text-red-500">*</span></label>
+                  <input required type="tel" name="billingPhone" value={formData.billingPhone} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Email address <span className="text-red-500">*</span></label>
-                  <input required type="email" name="billingEmail" value={formData.billingEmail} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="col-span-2 md:col-span-1">
+                  <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Email address <span className="text-red-500">*</span></label>
+                  <input required type="email" name="billingEmail" value={formData.billingEmail} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
               </div>
             </div>
@@ -375,48 +375,47 @@ export default function CheckoutPage() {
               </label>
 
               {formData.shipToDifferentAddress && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3 mt-4 pt-4 border-t border-gray-100 animate-fade-in-up">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
-                    <input required={formData.shipToDifferentAddress} type="text" name="shippingFirstName" value={formData.shippingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                <div className="grid grid-cols-2 gap-x-3 gap-y-3 mt-4 pt-4 border-t border-gray-100 animate-fade-in-up">
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">First name <span className="text-red-500">*</span></label>
+                    <input required={formData.shipToDifferentAddress} type="text" name="shippingFirstName" value={formData.shippingFirstName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Last name <span className="text-red-500">*</span></label>
-                    <input required={formData.shipToDifferentAddress} type="text" name="shippingLastName" value={formData.shippingLastName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                  <div className="col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Last name <span className="text-red-500">*</span></label>
+                    <input required={formData.shipToDifferentAddress} type="text" name="shippingLastName" value={formData.shippingLastName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Company name (optional)</label>
-                    <input type="text" name="shippingCompanyName" value={formData.shippingCompanyName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                  <div className="col-span-2 md:col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Company name (optional)</label>
+                    <input type="text" name="shippingCompanyName" value={formData.shippingCompanyName} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Country / Region <span className="text-red-500">*</span></label>
-                    <select name="shippingCountry" value={formData.shippingCountry} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green bg-gray-50/40 pointer-events-none text-gray-500">
+                  <div className="col-span-2 md:col-span-1">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Country / Region <span className="text-red-500">*</span></label>
+                    <select name="shippingCountry" value={formData.shippingCountry} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green bg-gray-50/40 pointer-events-none text-gray-500">
                       <option value="India">India</option>
                     </select>
                   </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Street address <span className="text-red-500">*</span></label>
-                    <input required={formData.shipToDifferentAddress} type="text" name="shippingAddress" placeholder="House number and street name" value={formData.shippingAddress} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                  <div className="col-span-2">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Street address <span className="text-red-500">*</span></label>
+                    <input required={formData.shipToDifferentAddress} type="text" name="shippingAddress" placeholder="House number and street name" value={formData.shippingAddress} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                   </div>
-                  
                   {/* Town, State, Pincode in a single grid row */}
-                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">Town / City <span className="text-red-500">*</span></label>
-                      <input required={formData.shipToDifferentAddress} type="text" name="shippingCity" value={formData.shippingCity} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                  <div className="col-span-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Town / City <span className="text-red-500">*</span></label>
+                      <input required={formData.shipToDifferentAddress} type="text" name="shippingCity" value={formData.shippingCity} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">State <span className="text-red-500">*</span></label>
-                      <select required={formData.shipToDifferentAddress} name="shippingState" value={formData.shippingState} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green bg-white text-gray-700">
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">State <span className="text-red-500">*</span></label>
+                      <select required={formData.shipToDifferentAddress} name="shippingState" value={formData.shippingState} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm focus:ring-1 focus:ring-vedicana-green bg-white text-gray-700">
                         <option value="">State</option>
                         {INDIAN_STATES.map(state => (
                           <option key={state} value={state}>{state}</option>
                         ))}
                       </select>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1">PIN Code <span className="text-red-500">*</span></label>
-                      <input required={formData.shipToDifferentAddress} type="text" name="shippingPincode" value={formData.shippingPincode} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-3 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green focus:border-vedicana-green transition-colors" />
+                    <div className="col-span-1">
+                      <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">PIN Code <span className="text-red-500">*</span></label>
+                      <input required={formData.shipToDifferentAddress} type="text" name="shippingPincode" value={formData.shippingPincode} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                     </div>
                   </div>
                 </div>

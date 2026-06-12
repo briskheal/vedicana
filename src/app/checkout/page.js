@@ -580,7 +580,7 @@ export default function CheckoutPage() {
               <p className="text-xs text-gray-500 mb-4">Open any UPI app to make the payment</p>
               
               <div className="bg-emerald-50 rounded-xl p-4 flex flex-col items-center justify-center mb-4">
-                <div className="bg-white p-2 rounded-xl shadow-sm mb-3 inline-block">
+                <div className="bg-white p-2 rounded-xl shadow-sm inline-block">
                   <QRCodeSVG 
                     value={`upi://pay?pa=8878923337@ybl&pn=JNANA RANJAN DASH&am=${finalTotal}&cu=INR&tn=Order_${qrOrderId}`}
                     size={160}
@@ -588,8 +588,6 @@ export default function CheckoutPage() {
                     includeMargin={true}
                   />
                 </div>
-                <div className="text-sm text-gray-600 mb-1">Paying to <strong className="text-gray-900">JNANA RANJAN DASH</strong></div>
-                <div className="text-xs text-gray-500 font-mono bg-white px-3 py-1 rounded-full border border-gray-200">8878923337@ybl</div>
               </div>
 
               <div className="text-center mb-4">

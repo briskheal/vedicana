@@ -512,39 +512,24 @@ export default function DiscoverEditor() {
                 ) : (
                   galleryImages.map((img) => (
                     <div key={img.id} className="relative group rounded-md overflow-hidden border border-slate-700 bg-slate-800 aspect-square">
-                      <img src={`/api/images/${img.id}`} alt={img.filename} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                      <img src={`/api/images/${img.id}`} alt={img.filename} className="w-full h-full object-cover opacity-70 group-hover:opacity-40 transition-opacity" />
                       
-                      {/* Delete Button (Top Right) */}
-                      <button
-                        type="button"
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          if (window.confirm('Are you sure you want to permanently delete this photo? If it is currently used on a page, it will become broken.')) {
-                            try {
-                              const res = await fetch(`/api/admin/discover/images/${img.id}`, { method: 'DELETE' });
-                              if (!res.ok) throw new Error('Failed to delete');
-                              setGalleryImages(prev => prev.filter(i => i.id !== img.id));
-                            } catch (err) {
-                              alert(err.message);
-                            }
-                          }
-                        }}
-                        className="absolute top-1 right-1 bg-red-500/90 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                        title="Delete permanently"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                      {/* Name Label */}
+                      <div className="absolute top-0 inset-x-0 bg-gradient-to-b from-black/80 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-[10px] text-slate-200 truncate w-full block text-center font-mono">{img.filename}</span>
+                      </div>
 
-                      <div className="absolute inset-x-0 bottom-0 top-auto h-auto bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2 text-center gap-2">
-                        <span className="text-[10px] text-slate-300 truncate w-full">{img.filename}</span>
+                      {/* Action Buttons Container */}
+                      <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        {/* Insert Button (Square) */}
                         <button
                           type="button"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             let alignmentClass = 'img-center';
                             if (alignment === 'left') alignmentClass = 'img-left';
                             else if (alignment === 'right') alignmentClass = 'img-right';
                             
-                            // Pure float insertion for wrapping text
                             let imgHtml = '';
                             if (alignment === 'left') {
                               imgHtml = `<img src="/api/images/${img.id}" alt="${img.filename}" style="float: left; width: 45%; max-width: 450px; border-radius: 12px; margin: 5px 25px 15px 0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);" />`;
@@ -555,13 +540,36 @@ export default function DiscoverEditor() {
                             }
                             
                             insertContentAtCursor('\\n' + imgHtml + '\\n');
-                            alert('Image inserted into editor!');
+                            alert('Image inserted!');
                           }}
-                          className="bg-vedicana-green text-white text-[10px] px-3 py-1.5 rounded hover:bg-emerald-600 font-bold uppercase tracking-wider w-full"
+                          className="bg-vedicana-green hover:bg-emerald-500 text-white w-10 h-10 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
+                          title="Insert Image"
                         >
-                          Insert
+                          <Plus size={18} />
+                        </button>
+
+                        {/* Delete Button (Square) */}
+                        <button
+                          type="button"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (window.confirm('Are you sure you want to permanently delete this photo?')) {
+                              try {
+                                const res = await fetch(`/api/admin/discover/images/${img.id}`, { method: 'DELETE' });
+                                if (!res.ok) throw new Error('Failed to delete');
+                                setGalleryImages(prev => prev.filter(i => i.id !== img.id));
+                              } catch (err) {
+                                alert(err.message);
+                              }
+                            }
+                          }}
+                          className="bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
+                          title="Delete Image"
+                        >
+                          <Trash2 size={16} />
                         </button>
                       </div>
+
                     </div>
                   ))
                 )}

@@ -113,22 +113,30 @@ export default function ChakraWheel() {
             return (
               <div
                 key={chakra.name}
-                className="absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-700"
+                className="absolute transition-all duration-700"
                 style={{ 
                   left: `${x}%`, 
                   top: `${y}%`,
-                  transform: `translate(-50%, -50%) rotate(${-rotation}deg)`
+                  transform: `translate(-50%, -50%)`,
+                  zIndex: isActive ? 50 : 10
                 }}
               >
+                {/* Counter-rotate wrapper to keep the text upright without breaking the translation anchor */}
                 <div 
-                  className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center transition-all duration-500 ${chakra.color} ${isActive ? `scale-125 shadow-[0_0_30px_10px_rgba(0,0,0,0.5)] ${chakra.glow}` : 'opacity-70 scale-90 hover:opacity-100'}`}
+                  style={{ transform: `rotate(${-rotation}deg)` }}
+                  className="transition-transform duration-1000 ease-in-out relative flex flex-col items-center justify-center"
                 >
-                  <span className="text-white font-bold text-lg drop-shadow-md">{chakra.mantra}</span>
-                  {isActive && <Volume2 size={12} className="text-white mt-1 animate-pulse" />}
-                </div>
-                
-                <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 text-center transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
-                  <span className="text-xs font-bold text-white whitespace-nowrap bg-black/50 px-2 py-1 rounded-full">{chakra.name} Chakra</span>
+                  <div 
+                    className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center transition-all duration-500 ${chakra.color} ${isActive ? `scale-125 shadow-[0_0_30px_10px_rgba(0,0,0,0.5)] ${chakra.glow}` : 'opacity-70 scale-90 hover:opacity-100'}`}
+                  >
+                    <span className="text-white font-bold text-lg drop-shadow-md">{chakra.mantra}</span>
+                    {isActive && <Volume2 size={12} className="text-white mt-1 animate-pulse" />}
+                  </div>
+                  
+                  {/* Tooltip-like label */}
+                  <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 text-center transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+                    <span className="text-xs font-bold text-white whitespace-nowrap bg-black/50 px-2 py-1 rounded-full">{chakra.name} Chakra</span>
+                  </div>
                 </div>
               </div>
             );

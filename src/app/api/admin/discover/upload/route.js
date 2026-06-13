@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
+import models from '../../../../../models/index.js';
+
+const { StoredImage } = models;
 
 export async function POST(req) {
   try {
@@ -13,7 +16,7 @@ export async function POST(req) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    console.log(`[Upload API] Compressing image and converting to Base64...`);
+    console.log(`[Upload API] Compressing image and saving to database...`);
 
     // Compress using sharp (resize to max 1000px keeping aspect, encode in WebP)
     const compressedBuffer = await sharp(buffer)
@@ -21,14 +24,19 @@ export async function POST(req) {
       .webp({ quality: 80 })
       .toBuffer();
 
-    // Convert to Base64 Data URI
-    const base64String = compressedBuffer.toString('base64');
-    const dataUri = `data:image/webp;base64,${base64String}`;
+    // Save binary data to PostgreSQL
+    const storedImage = await StoredImage.create({
+      filename: `discover-upload-${Date.now()}.webp`,
+      mimeType: 'image/webp',
+      data: compressedBuffer
+    });
 
-    return NextResponse.json({ url: dataUri });
+    // Return the clean public URL
+    return NextResponse.json({ url: `/api/images/${storedImage.id}` });
   } catch (error) {
     console.error('[Upload API] Error processing image upload:', error);
     return NextResponse.json({ error: error.message || 'Image processing failed' }, { status: 500 });
   }
 }
+
 

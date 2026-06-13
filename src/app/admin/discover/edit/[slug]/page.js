@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Image as ImageIcon, Sparkles, Layout, AlignLeft, AlignCenter, AlignRight, FileText, Loader, Plus } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Sparkles, Layout, AlignLeft, AlignCenter, AlignRight, FileText, Loader, Plus, RefreshCw } from 'lucide-react';
 
 export default function DiscoverEditor() {
   const params = useParams();
@@ -23,6 +23,7 @@ export default function DiscoverEditor() {
   const [alignment, setAlignment] = useState('center'); // left, center, right
   const [imageFile, setImageFile] = useState(null);
   const [processingImage, setProcessingImage] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
   
   const fileInputRef = useRef(null);
   const textareaRef = useRef(null);
@@ -66,6 +67,14 @@ export default function DiscoverEditor() {
 
     loadPage();
   }, [rawSlug, isCreateMode]);
+
+  // Load Media Gallery on mount
+  useEffect(() => {
+    fetch('/api/admin/discover/images')
+      .then(r => r.json())
+      .then(data => setGalleryImages(data.images || []))
+      .catch(e => console.error(e));
+  }, []);
 
   // Handle WebP Conversion via HTML5 Canvas
   const processImageToWebpBase64 = (file) => {
@@ -481,6 +490,60 @@ export default function DiscoverEditor() {
                 <p><strong>Background Uploads</strong>: Your photos are uploaded, compressed, and resized in the background on the server. The text editor remains 100% clean and free of huge Base64 strings.</p>
               </div>
 
+            </div>
+
+            {/* Media Gallery / Photo Holder */}
+            <div className="bg-[#1e293b] p-6 rounded-xl border border-slate-800 shadow-sm space-y-4">
+              <h3 className="text-lg font-serif text-white font-bold pb-4 border-b border-slate-800 flex items-center justify-between">
+                <span><ImageIcon className="inline mr-2 text-vedicana-green" size={20} /> Media Library</span>
+                <button onClick={() => {
+                  fetch('/api/admin/discover/images')
+                    .then(r => r.json())
+                    .then(data => setGalleryImages(data.images || []))
+                    .catch(e => console.error(e));
+                }} className="text-slate-400 hover:text-white" title="Refresh Gallery">
+                  <RefreshCw size={16} />
+                </button>
+              </h3>
+              
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+                {galleryImages.length === 0 ? (
+                  <p className="col-span-3 text-center text-xs text-slate-500 py-4">No images found in database.</p>
+                ) : (
+                  galleryImages.map((img) => (
+                    <div key={img.id} className="relative group rounded-md overflow-hidden border border-slate-700 bg-slate-800 aspect-square">
+                      <img src={`/api/images/${img.id}`} alt={img.filename} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2 text-center gap-2">
+                        <span className="text-[10px] text-slate-300 truncate w-full">{img.filename}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            let alignmentClass = 'img-center';
+                            if (alignment === 'left') alignmentClass = 'img-left';
+                            else if (alignment === 'right') alignmentClass = 'img-right';
+                            
+                            // Pure float insertion for wrapping text
+                            let imgHtml = '';
+                            if (alignment === 'left') {
+                              imgHtml = `<img src="/api/images/${img.id}" alt="${img.filename}" style="float: left; width: 45%; max-width: 450px; border-radius: 12px; margin: 5px 25px 15px 0; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);" />`;
+                            } else if (alignment === 'right') {
+                              imgHtml = `<img src="/api/images/${img.id}" alt="${img.filename}" style="float: right; width: 45%; max-width: 450px; border-radius: 12px; margin: 5px 0 15px 25px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);" />`;
+                            } else {
+                              imgHtml = `<div style="text-align: center; margin: 30px 0;"><img src="/api/images/${img.id}" alt="${img.filename}" style="width: 80%; max-width: 600px; border-radius: 12px; margin: 0 auto; display: inline-block; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);" /></div>`;
+                            }
+                            
+                            insertContentAtCursor('\\n' + imgHtml + '\\n');
+                            alert('Image inserted into editor!');
+                          }}
+                          className="bg-vedicana-green text-white text-[10px] px-2 py-1 rounded hover:bg-emerald-600 font-bold uppercase tracking-wider"
+                        >
+                          Insert
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
           </div>

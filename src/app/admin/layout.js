@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, 
   Image as ImageIcon, Sparkles, MessageSquare, Layers, Navigation, 
-  Award, CalendarCheck, Menu, X, AlertTriangle, FileText, Briefcase, Inbox
+  Award, CalendarCheck, Menu, X, AlertTriangle, FileText, Briefcase, Inbox, Music
 } from 'lucide-react';
 import "../globals.css";
 
@@ -29,6 +29,7 @@ export default function AdminLayout({ children }) {
     { href: '/admin/discover', label: 'Discover Pages', icon: Sparkles },
     { href: '/admin/blogs', label: 'Blog Posts', icon: FileText },
     { href: '/admin/inbox', label: 'Unified Inbox', icon: Inbox },
+    { href: '/admin/mantras', label: 'Mantras Library', icon: Music },
     { href: '/admin/careers', label: 'Career CVs', icon: Briefcase },
     { href: '/admin/reviews', label: 'Product Reviews', icon: MessageSquare },
     { href: '/admin/appointments', label: 'Wellness Bookings', icon: CalendarCheck },

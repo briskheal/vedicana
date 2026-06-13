@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, User, Mail, Phone, FileText, Sparkles, ShieldCheck, Flame, Heart, ArrowRight, ArrowLeft, CheckCircle, RefreshCcw } from 'lucide-react';
+import { getISTTime, consultationTimeSlots, isSlotPassedIST } from '../../lib/timeUtils.js';
 
 const topics = [
   {
@@ -29,13 +30,7 @@ const topics = [
   }
 ];
 
-const timeSlots = [
-  "10:00 AM",
-  "11:30 AM",
-  "02:00 PM",
-  "03:30 PM",
-  "05:00 PM"
-];
+const timeSlots = consultationTimeSlots;
 
 const getGoogleCalendarDates = (dateStr, timeSlotStr) => {
   if (!dateStr || !timeSlotStr) return '';
@@ -80,13 +75,13 @@ export default function WellnessConsultation() {
   });
   
   // Custom Calendar state
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date()); // Used for calendar navigation (not exact time)
   const [selectedDateStr, setSelectedDateStr] = useState(''); // YYYY-MM-DD
   const [selectedSlot, setSelectedSlot] = useState('');
   
-  // Set today's date as default on client mount
+  // Set today's date (IST) as default on client mount
   useEffect(() => {
-    const today = new Date();
+    const today = getISTTime();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
@@ -110,36 +105,7 @@ export default function WellnessConsultation() {
 
   // Helper to determine if a time slot has already passed for the selected date
   const isSlotPassed = (slotStr, dateStr) => {
-    if (!dateStr) return false;
-    
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${yyyy}-${mm}-${dd}`;
-    
-    if (dateStr !== todayStr) return false;
-    
-    const currentHour = today.getHours();
-    const currentMinute = today.getMinutes();
-    
-    const match = slotStr.match(/^(\d+):(\d+)\s+(AM|PM)$/i);
-    if (!match) return false;
-    
-    let slotHour = parseInt(match[1], 10);
-    const slotMinute = parseInt(match[2], 10);
-    const ampm = match[3].toUpperCase();
-    
-    if (ampm === 'PM' && slotHour !== 12) {
-      slotHour += 12;
-    } else if (ampm === 'AM' && slotHour === 12) {
-      slotHour = 0;
-    }
-    
-    if (slotHour < currentHour) return true;
-    if (slotHour === currentHour && slotMinute <= currentMinute) return true;
-    
-    return false;
+    return isSlotPassedIST(slotStr, dateStr);
   };
 
   useEffect(() => {
@@ -192,7 +158,7 @@ export default function WellnessConsultation() {
 
   const handleDaySelect = (day) => {
     if (!day) return;
-    const today = new Date();
+    const today = getISTTime();
     today.setHours(0, 0, 0, 0);
     
     if (day < today) return;
@@ -213,7 +179,8 @@ export default function WellnessConsultation() {
 
   const isDayDisabled = (day) => {
     if (!day) return true;
-    const today = new Date();
+    if (day.getDay() === 0) return true; // Block Sundays
+    const today = getISTTime();
     today.setHours(0, 0, 0, 0);
     return day < today;
   };

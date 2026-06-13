@@ -69,6 +69,22 @@ export default function AdminProducts() {
     }
   };
 
+  const handleToggleFeatured = async (id, currentState) => {
+    const newState = !currentState;
+    try {
+      const res = await fetch(`/api/admin/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_featured: newState }),
+      });
+      if (!res.ok) throw new Error('Failed to update product featured status');
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, is_featured: newState } : p));
+    } catch (err) {
+      console.error(err);
+      alert('Error updating featured status. Please try again.');
+    }
+  };
+
   // Filter & Search Logic
   const filteredProducts = products.filter(product => {
     const matchesSearch = 
@@ -213,11 +229,17 @@ export default function AdminProducts() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      {product.is_featured ? (
-                        <span className="bg-vedicana-gold/10 text-vedicana-gold border border-vedicana-gold/20 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wide">Featured</span>
-                      ) : (
-                        <span className="bg-slate-800 text-slate-400 px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wide">Standard</span>
-                      )}
+                      <button 
+                        onClick={() => handleToggleFeatured(product.id, product.is_featured)}
+                        className="transition-all hover:scale-105"
+                        title={product.is_featured ? "Click to remove from Featured" : "Click to set as Featured"}
+                      >
+                        {product.is_featured ? (
+                          <span className="bg-vedicana-gold/20 text-vedicana-gold border border-vedicana-gold/40 px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wide cursor-pointer shadow-[0_0_10px_rgba(212,175,55,0.2)] hover:bg-vedicana-gold/30">Featured</span>
+                        ) : (
+                          <span className="bg-slate-800 hover:bg-slate-700 text-slate-400 px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wide cursor-pointer">Standard</span>
+                        )}
+                      </button>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end items-center gap-2 text-slate-400">

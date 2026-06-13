@@ -109,18 +109,22 @@ export default async function RootLayout({ children }) {
   try {
     discoverPages = await DiscoverPage.findAll({
       where: { is_active: true },
-      order: [['createdAt', 'ASC']]
+      order: [['createdAt', 'ASC']],
+      raw: true
     });
     categories = await Category.findAll({
-      order: [['name', 'ASC']]
+      order: [['name', 'ASC']],
+      raw: true
     });
     footerQuickLinks = await FooterLink.findAll({
       where: { section: 'quick_links' },
-      order: [['order_index', 'ASC'], ['title', 'ASC']]
+      order: [['order_index', 'ASC'], ['title', 'ASC']],
+      raw: true
     });
     footerPolicies = await FooterLink.findAll({
       where: { section: 'policies' },
-      order: [['order_index', 'ASC'], ['title', 'ASC']]
+      order: [['order_index', 'ASC'], ['title', 'ASC']],
+      raw: true
     });
   } catch (err) {
     console.error('Failed to load dynamic navigation menus:', err);

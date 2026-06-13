@@ -19,6 +19,7 @@ import Blog from './Blog.js';
 import CareerApplication from './CareerApplication.js';
 import ContactMessage from './ContactMessage.js';
 import StoredImage from './StoredImage.js';
+import Mantra from './Mantra.js';
 
 // Relationships
 Product.hasMany(Review, { foreignKey: 'productId', onDelete: 'CASCADE' });
@@ -48,7 +49,8 @@ const models = {
   Blog,
   CareerApplication,
   ContactMessage,
-  StoredImage
+  StoredImage,
+  Mantra
 };
 
 export { sequelize };

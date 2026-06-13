@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import DiscoverPage from '../../models/DiscoverPage.js';
 import SafeHtmlRenderer from '../../components/SafeHtmlRenderer.js';
 import ChakraWheel from '../../components/ChakraWheel.js';
+import ChakraReadingWheel from '../../components/ChakraReadingWheel.js';
+import MantraPlayer from '../../components/MantraPlayer.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -52,6 +54,10 @@ export default async function DynamicDiscoverPage({ params }) {
 
   return (
     <div className="bg-[#fbfcfa] min-h-screen pb-24" suppressHydrationWarning={true}>
+      {slug === 'discover-vedic-culture' && (
+        <MantraPlayer />
+      )}
+      
       {/* Page Header Banner */}
       <div className="bg-vedicana-dark-green py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#d4af37_1px,transparent_1px)] [background-size:16px_16px]"></div>
@@ -68,8 +74,13 @@ export default async function DynamicDiscoverPage({ params }) {
           <SafeHtmlRenderer html={parts[0]} />
           
           {parts.length > 1 && (
-            <div className="my-12">
-              <ChakraWheel />
+            <div className="flex flex-col gap-12 my-12">
+              <div>
+                <ChakraReadingWheel />
+              </div>
+              <div>
+                <ChakraWheel />
+              </div>
             </div>
           )}
           

@@ -3,6 +3,7 @@ import Product from '../models/Product.js';
 import AddToCartButton from '../components/AddToCartButton';
 import HeroSlider from '../components/HeroSlider';
 import TestimonialsCarousel from '../components/TestimonialsCarousel';
+import DynamicCalendarGraphic from '../components/DynamicCalendarGraphic';
 import PopularCategory from '../models/PopularCategory.js';
 import HeroSlide from '../models/HeroSlide.js';
 import Certification from '../models/Certification.js';
@@ -208,39 +209,7 @@ export default async function Home() {
   const categoriesToRender = popularCategories.length > 0 ? popularCategories : homeCategories;
   const certificationsToRender = certifications.length > 0 ? certifications : fallbackCertifications;
 
-  // Dynamic calendar calculations for the Landing Page Consultation Block
-  const today = new Date();
-  const currentMonthName = today.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-  const currentDayOfWeek = today.getDay(); // 0 is Sunday, 1 is Monday...
-  const diffToMonday = today.getDate() - currentDayOfWeek + (currentDayOfWeek === 0 ? -6 : 1);
-  const monday = new Date(today);
-  monday.setDate(diffToMonday);
-  
-  const weekDates = [];
-  for (let i = 0; i < 7; i++) {
-    const tempDate = new Date(monday);
-    tempDate.setDate(monday.getDate() + i);
-    weekDates.push(tempDate);
-  }
-
-  const currentHour = today.getHours();
-  const currentMinute = today.getMinutes();
-  const currentTimeVal = currentHour * 60 + currentMinute;
-  
-  const timeSlots = ["10:00 AM", "11:30 AM", "02:00 PM", "03:30 PM", "05:00 PM"];
-  let activeTimeSlotIndex = 0;
-  
-  if (currentTimeVal >= 10 * 60 && currentTimeVal < 11.5 * 60) {
-    activeTimeSlotIndex = 1;
-  } else if (currentTimeVal >= 11.5 * 60 && currentTimeVal < 14 * 60) {
-    activeTimeSlotIndex = 2;
-  } else if (currentTimeVal >= 14 * 60 && currentTimeVal < 15.5 * 60) {
-    activeTimeSlotIndex = 3;
-  } else if (currentTimeVal >= 15.5 * 60 && currentTimeVal < 17 * 60) {
-    activeTimeSlotIndex = 4;
-  } else {
-    activeTimeSlotIndex = 0;
-  }
+  // Dynamic calendar component is now imported directly in the JSX
 
   return (
     <div>
@@ -388,74 +357,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
             
-            {/* Left Column: Visual Mini-Calendar Graphic / Advisor Card */}
-            <div className="lg:col-span-6 order-2 lg:order-1">
-              <div className="bg-white border border-gray-100 rounded-3xl p-5 md:p-6 shadow-xl max-w-[340px] mx-auto space-y-4 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
-                <div className="absolute -top-12 -right-12 w-28 h-28 bg-vedicana-green/5 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
-                
-                {/* Advisor Status Card */}
-                <div className="flex items-center gap-3 bg-gray-55/60 p-3 rounded-2xl border border-gray-100">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-vedicana-gold to-vedicana-green flex items-center justify-center text-white text-xs font-bold shadow-md flex-shrink-0">
-                    ZV
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
-                      Expert Advisors Online <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                    </h4>
-                    <p className="text-[10px] text-emerald-700 font-medium">Available for booking today</p>
-                  </div>
-                </div>
-
-                {/* Micro Calendar Grid */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex justify-between items-center pb-1 border-b border-gray-50">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 font-mono">Dynamic Slots</span>
-                    <span className="text-[9px] font-bold text-vedicana-green uppercase font-sans tracking-wide">{currentMonthName}</span>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-center text-[9px] font-bold text-gray-400 font-mono pb-1">
-                    <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1.5">
-                    {weekDates.map((d, idx) => {
-                      // Compare dates ignoring times
-                      const isToday = d.toDateString() === today.toDateString();
-                      const isPast = d < today && d.toDateString() !== today.toDateString();
-                      return (
-                        <div 
-                          key={idx} 
-                          className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-mono font-medium ${
-                            isToday 
-                              ? 'bg-vedicana-gold text-white font-bold shadow-sm' 
-                              : isPast 
-                                ? 'text-gray-300 bg-gray-50/20' 
-                                : 'text-gray-650 bg-gray-50/60'
-                          }`}
-                        >
-                          {d.getDate()}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Available Hours */}
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {timeSlots.map((hour, idx) => {
-                    const isActive = idx === activeTimeSlotIndex;
-                    return (
-                      <span 
-                        key={idx} 
-                        className={`text-[9px] font-bold uppercase tracking-wide px-2 py-0.5 rounded border font-mono ${
-                          isActive 
-                            ? 'bg-[#fffbeb] border-[#fef3c7] text-[#b45309] font-bold shadow-xs' 
-                            : 'bg-gray-50 border-gray-150 text-gray-400'
-                        }`}
-                      >
-                        {hour}
-                      </span>
-                    );
-                  })}
-                </div>
+            {/* Left Column: Live IST Consultation Slots */}
+            <div className="lg:col-span-6 order-2 lg:order-1 flex items-center justify-center">
+              <div className="w-full max-w-md">
+                <DynamicCalendarGraphic />
               </div>
             </div>
 

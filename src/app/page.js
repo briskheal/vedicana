@@ -329,7 +329,10 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
-                  <p className="text-sm text-gray-500 mb-2 line-clamp-2">{product.description}</p>
+                  <div 
+                    className="text-sm text-gray-500 mb-2 line-clamp-2 prose prose-sm prose-p:my-0" 
+                    dangerouslySetInnerHTML={{ __html: product.description }} 
+                  />
                   <h3 className="text-2xl font-serif mb-4 text-gray-900 group-hover:text-vedicana-green transition-colors">{product.title}</h3>
                   <div className="flex justify-between items-center mt-auto pt-6 border-t border-gray-100">
                     <div className="flex items-center gap-3">

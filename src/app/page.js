@@ -308,11 +308,11 @@ export default async function Home() {
                 <div className="relative h-72 overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 group-hover:opacity-0 transition-opacity pointer-events-none"></div>
                   {/* Pulling the Base64 WebP image directly from the Database! */}
-                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-vedicana-bg flex items-center justify-center">
+                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-white flex items-center justify-center">
                     <img 
                       src={product.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={product.title}
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </a>
                   {product.sale_price && (

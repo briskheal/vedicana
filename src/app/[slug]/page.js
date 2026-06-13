@@ -2,6 +2,7 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import DiscoverPage from '../../models/DiscoverPage.js';
 import SafeHtmlRenderer from '../../components/SafeHtmlRenderer.js';
+import ChakraWheel from '../../components/ChakraWheel.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -46,6 +47,9 @@ export default async function DynamicDiscoverPage({ params }) {
     content = page.content ? page.content.replace(/\r\n/g, '\n').trim() : '';
   }
 
+  // Check if there is a CHAKRA_WHEEL placeholder
+  const parts = content.split('<!-- CHAKRA_WHEEL -->');
+
   return (
     <div className="bg-[#fbfcfa] min-h-screen pb-24" suppressHydrationWarning={true}>
       {/* Page Header Banner */}
@@ -61,7 +65,17 @@ export default async function DynamicDiscoverPage({ params }) {
       {/* Page Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 animate-fade-in-up" suppressHydrationWarning={true}>
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100/60 hover:shadow-md transition-all duration-300" suppressHydrationWarning={true}>
-          <SafeHtmlRenderer html={content} />
+          <SafeHtmlRenderer html={parts[0]} />
+          
+          {parts.length > 1 && (
+            <div className="my-12">
+              <ChakraWheel />
+            </div>
+          )}
+          
+          {parts.length > 1 && (
+            <SafeHtmlRenderer html={parts.slice(1).join('<!-- CHAKRA_WHEEL -->')} />
+          )}
         </div>
       </div>
     </div>

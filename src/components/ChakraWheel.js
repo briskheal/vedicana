@@ -104,7 +104,7 @@ export default function ChakraWheel() {
         >
           {CHAKRAS.map((chakra, i) => {
             const angle = (i * (360 / 7)) - 90;
-            const radius = 50; 
+            const radius = 48; 
             const x = 50 + radius * Math.cos(angle * (Math.PI / 180));
             const y = 50 + radius * Math.sin(angle * (Math.PI / 180));
             
@@ -130,7 +130,7 @@ export default function ChakraWheel() {
                     className={`w-16 h-16 md:w-20 md:h-20 rounded-full flex flex-col items-center justify-center transition-all duration-500 ${chakra.color} ${isActive ? `scale-125 shadow-[0_0_30px_10px_rgba(0,0,0,0.5)] ${chakra.glow}` : 'opacity-70 scale-90 hover:opacity-100'}`}
                   >
                     <span className="text-white font-bold text-lg drop-shadow-md">{chakra.mantra}</span>
-                    {isActive && <Volume2 size={12} className="text-white mt-1 animate-pulse" />}
+                    {isActive && <Volume2 size={12} className="text-white absolute bottom-3 animate-pulse" />}
                   </div>
                   
                   {/* Tooltip-like label */}

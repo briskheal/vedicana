@@ -95,34 +95,14 @@ export default function HeroSlider({ slides = [] }) {
               </Link>
 
               {/* Text overlays with soft gradient behind (only if title/subtitle/badge exists) */}
-              {isActive && hasOverlayText && (
+              {isActive && (
                 <>
-                  {/* Subtle left-side dark gradient to ensure text readability (only if overlay text is configured) */}
-                  {Boolean(slide.badge || slide.title || slide.subtitle) && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent z-10 pointer-events-none" />
-                  )}
-                  
-                  {/* Content Panel */}
-                  <div className="absolute inset-y-0 left-0 flex items-center z-20 px-8 md:px-16 lg:px-24 max-w-xl pointer-events-none">
-                    <div className="space-y-2 md:space-y-4 text-left pointer-events-auto">
-                      {slide.badge && (
-                        <span className="inline-block bg-vedicana-gold text-slate-900 text-[9px] md:text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-md border border-vedicana-gold/30">
-                          {slide.badge}
-                        </span>
-                      )}
-                      {slide.title && (
-                        <h2 className="text-xl md:text-3xl lg:text-4xl font-serif font-bold text-white tracking-wide leading-tight drop-shadow">
-                          {slide.title}
-                        </h2>
-                      )}
-                      {slide.subtitle && (
-                        <p className="text-xs md:text-sm lg:text-base text-slate-350 font-medium leading-relaxed drop-shadow">
-                          {slide.subtitle}
-                        </p>
-                      )}
+                  {/* Button at the bottom center */}
+                  <div className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+                    <div className="pointer-events-auto">
                       <Link 
                         href={slide.link || '/shop'}
-                        className="inline-flex items-center justify-center bg-vedicana-green hover:bg-emerald-700 text-white font-bold text-[10px] md:text-xs uppercase tracking-wider px-4 py-2 rounded-lg shadow-lg transition-transform hover:-translate-y-0.5 mt-1"
+                        className="inline-flex items-center justify-center bg-vedicana-green/90 hover:bg-emerald-700 backdrop-blur-sm text-white font-bold text-[10px] md:text-xs uppercase tracking-wider px-6 py-3 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 hover:shadow-xl"
                       >
                         Explore Now
                       </Link>

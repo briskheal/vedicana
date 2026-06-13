@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Image as ImageIcon, Sparkles, Layout, AlignLeft, AlignCenter, AlignRight, FileText, Loader, Plus, RefreshCw } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Sparkles, Layout, AlignLeft, AlignCenter, AlignRight, FileText, Loader, Plus, RefreshCw, Trash2 } from 'lucide-react';
 
 export default function DiscoverEditor() {
   const params = useParams();
@@ -513,7 +513,29 @@ export default function DiscoverEditor() {
                   galleryImages.map((img) => (
                     <div key={img.id} className="relative group rounded-md overflow-hidden border border-slate-700 bg-slate-800 aspect-square">
                       <img src={`/api/images/${img.id}`} alt={img.filename} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
-                      <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2 text-center gap-2">
+                      
+                      {/* Delete Button (Top Right) */}
+                      <button
+                        type="button"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to permanently delete this photo? If it is currently used on a page, it will become broken.')) {
+                            try {
+                              const res = await fetch(`/api/admin/discover/images/${img.id}`, { method: 'DELETE' });
+                              if (!res.ok) throw new Error('Failed to delete');
+                              setGalleryImages(prev => prev.filter(i => i.id !== img.id));
+                            } catch (err) {
+                              alert(err.message);
+                            }
+                          }
+                        }}
+                        className="absolute top-1 right-1 bg-red-500/90 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Delete permanently"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+
+                      <div className="absolute inset-x-0 bottom-0 top-auto h-auto bg-black/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity p-2 text-center gap-2">
                         <span className="text-[10px] text-slate-300 truncate w-full">{img.filename}</span>
                         <button
                           type="button"
@@ -535,7 +557,7 @@ export default function DiscoverEditor() {
                             insertContentAtCursor('\\n' + imgHtml + '\\n');
                             alert('Image inserted into editor!');
                           }}
-                          className="bg-vedicana-green text-white text-[10px] px-2 py-1 rounded hover:bg-emerald-600 font-bold uppercase tracking-wider"
+                          className="bg-vedicana-green text-white text-[10px] px-3 py-1.5 rounded hover:bg-emerald-600 font-bold uppercase tracking-wider w-full"
                         >
                           Insert
                         </button>

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Leaf } from 'lucide-react';
+import { Leaf, Eye, EyeOff } from 'lucide-react';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", 
@@ -17,6 +17,8 @@ export default function Register() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -126,11 +128,29 @@ export default function Register() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Password <span className="text-red-500">*</span></label>
-              <input required name="password" type="password" minLength={6} className="w-full border border-gray-300 rounded-md px-3.5 py-2 text-sm focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" />
+              <div className="relative">
+                <input required name="password" type={showPassword ? "text" : "password"} minLength={6} className="w-full border border-gray-300 rounded-md px-3.5 py-2 pr-10 text-sm focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-1"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
             <div>
               <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Confirm Password <span className="text-red-500">*</span></label>
-              <input required name="confirmPassword" type="password" minLength={6} className="w-full border border-gray-300 rounded-md px-3.5 py-2 text-sm focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" />
+              <div className="relative">
+                <input required name="confirmPassword" type={showConfirmPassword ? "text" : "password"} minLength={6} className="w-full border border-gray-300 rounded-md px-3.5 py-2 pr-10 text-sm focus:ring-2 focus:ring-vedicana-green/20 focus:border-vedicana-green focus:outline-none" />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none p-1"
+                >
+                  {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
             </div>
           </div>
 

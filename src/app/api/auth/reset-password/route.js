@@ -47,7 +47,7 @@ export async function POST(request) {
     });
 
   } catch (error) {
-    console.error('Reset Password API Error:', error);
-    return NextResponse.json({ error: 'An error occurred while resetting the password.' }, { status: 500 });
+    console.error('Password Reset Error:', error);
+    return NextResponse.json({ error: 'Internal server error', message: error.message, stack: error.stack }, { status: 500 });
   }
 }

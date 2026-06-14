@@ -217,34 +217,48 @@ export default function ProfileDashboard({ initialUser }) {
             <h2 className="text-2xl font-serif text-gray-900 mb-6">Order History</h2>
             
             {user.Orders && user.Orders.length > 0 ? (
-              <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
-                <table className="w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase tracking-wider text-[11px] font-bold">
+              <div className="overflow-x-auto border border-gray-300 shadow-sm mt-4">
+                <table className="w-full text-left text-sm whitespace-nowrap border-collapse">
+                  <thead className="bg-gray-100 text-gray-700 uppercase tracking-wider text-[11px] font-bold">
                     <tr>
-                      <th className="px-6 py-4">Order ID</th>
-                      <th className="px-6 py-4">Date</th>
-                      <th className="px-6 py-4 text-right">Amount</th>
-                      <th className="px-6 py-4">Method</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4 text-right">Actions</th>
+                      <th className="px-3 py-2 border border-gray-300">Order ID</th>
+                      <th className="px-3 py-2 border border-gray-300">Date</th>
+                      <th className="px-3 py-2 border border-gray-300 w-1/3">Items</th>
+                      <th className="px-3 py-2 border border-gray-300 text-right">Amount</th>
+                      <th className="px-3 py-2 border border-gray-300">Method</th>
+                      <th className="px-3 py-2 border border-gray-300">Status</th>
+                      <th className="px-3 py-2 border border-gray-300 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100 bg-white">
-                    {user.Orders.map(order => (
-                      <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 font-mono font-medium text-gray-900">
+                  <tbody className="bg-white">
+                    {user.Orders.map((order, idx) => (
+                      <tr key={order.id} className={idx % 2 === 0 ? "bg-white hover:bg-emerald-50/30" : "bg-gray-50 hover:bg-emerald-50/30"}>
+                        <td className="px-3 py-2 border border-gray-300 font-mono font-medium text-gray-900">
                           #{order.id}
                         </td>
-                        <td className="px-6 py-4 text-gray-600">
-                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        <td className="px-3 py-2 border border-gray-300 text-gray-700">
+                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                         </td>
-                        <td className="px-6 py-4 text-right font-bold text-vedicana-green">
+                        <td className="px-3 py-2 border border-gray-300 text-gray-600 whitespace-normal text-xs">
+                          {order.OrderItems && order.OrderItems.length > 0 ? (
+                            <ul className="list-disc pl-4">
+                              {order.OrderItems.map(item => (
+                                <li key={item.id}>
+                                  {item.quantity}x {item.Product ? item.Product.name : 'Unknown Item'} {item.variant ? `(${item.variant})` : ''}
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <span className="text-gray-400 italic">No items recorded</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 border border-gray-300 text-right font-bold text-vedicana-green">
                           ₹{order.totalAmount}
                         </td>
-                        <td className="px-6 py-4 text-gray-600">
+                        <td className="px-3 py-2 border border-gray-300 text-gray-700">
                           {order.paymentMethod === 'cod' ? 'COD' : 'Razorpay'}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-3 py-2 border border-gray-300">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                             order.status === 'processing' || order.status === 'shipped' || order.status === 'completed'
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
@@ -255,18 +269,18 @@ export default function ProfileDashboard({ initialUser }) {
                             {order.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right space-x-4">
+                        <td className="px-3 py-2 border border-gray-300 text-right space-x-3">
                           <a 
                             href={`/orders/${order.id}/invoice`} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-vedicana-green font-medium hover:text-emerald-700 transition-colors"
+                            className="text-vedicana-green font-medium hover:text-emerald-700 transition-colors text-xs underline"
                           >
                             Invoice
                           </a>
                           <button
                             onClick={() => handleDeleteOrder(order.id)}
-                            className="text-red-500 hover:text-red-700 font-medium transition-colors cursor-pointer"
+                            className="text-red-500 hover:text-red-700 font-medium transition-colors cursor-pointer text-xs underline"
                           >
                             Delete
                           </button>

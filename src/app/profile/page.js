@@ -3,6 +3,8 @@ import { jwtVerify } from 'jose';
 import { redirect } from 'next/navigation';
 import User from '../../models/User.js';
 import Order from '../../models/Order.js';
+import OrderItem from '../../models/OrderItem.js';
+import Product from '../../models/Product.js';
 import ProfileDashboard from '../../components/ProfileDashboard';
 
 export const dynamic = 'force-dynamic';
@@ -27,7 +29,18 @@ export default async function ProfilePage() {
 
   // Fetch full user and order history from DB
   const user = await User.findByPk(decoded.id, {
-    include: [{ model: Order, as: 'Orders', separate: true, order: [['createdAt', 'DESC']] }]
+    include: [
+      { 
+        model: Order, 
+        as: 'Orders', 
+        separate: true, 
+        order: [['createdAt', 'DESC']],
+        include: [{
+          model: OrderItem,
+          include: [{ model: Product, attributes: ['name'] }]
+        }]
+      }
+    ]
   });
 
   if (!user) {

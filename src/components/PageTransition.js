@@ -12,9 +12,9 @@ export default function PageTransition({ children }) {
   return (
     <motion.div
       key={pathname}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
       className="flex-grow flex flex-col"
     >
       {children}

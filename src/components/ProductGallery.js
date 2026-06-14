@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { ImageIcon } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ProductGallery({ title, primaryImage, gallery = [] }) {
   // Combine primary image and gallery images, filtering out any empty strings
@@ -49,11 +50,13 @@ export default function ProductGallery({ title, primaryImage, gallery = [] }) {
         onMouseMove={handleMouseMove}
         className="bg-[#fcfcfa] rounded-2xl overflow-hidden border border-gray-100/90 aspect-square flex items-center justify-center relative shadow-sm group cursor-zoom-in"
       >
-        <img 
+        <Image 
           src={activeImage || 'https://via.placeholder.com/800x800?text=VediCana+Organics'} 
           alt={title}
-          style={isZoomed ? { transform: 'scale(1.8)', transition: 'transform 0.15s ease-out', ...zoomStyle } : { transform: 'scale(1)', transition: 'transform 0.15s ease-out' }}
-          className={`w-full h-full object-contain p-5 transition-opacity duration-200 ${
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          style={isZoomed ? { transform: 'scale(1.8)', transition: 'transform 0.15s ease-out', ...zoomStyle, objectFit: 'contain' } : { transform: 'scale(1)', transition: 'transform 0.15s ease-out', objectFit: 'contain' }}
+          className={`p-5 transition-opacity duration-200 ${
             isFading ? 'opacity-30' : 'opacity-100'
           }`}
         />
@@ -73,17 +76,19 @@ export default function ProductGallery({ title, primaryImage, gallery = [] }) {
                 key={idx}
                 type="button"
                 onClick={() => handleImageChange(img)}
-                className={`aspect-square rounded-xl overflow-hidden border-2 bg-gray-50 focus:outline-none transition-all duration-300 p-1 flex items-center justify-center hover:scale-105 shadow-sm cursor-pointer ${
+                className={`aspect-square rounded-xl overflow-hidden border-2 bg-gray-50 focus:outline-none transition-all duration-300 p-1 flex items-center justify-center hover:scale-105 shadow-sm cursor-pointer relative ${
                   isActive 
                     ? 'border-vedicana-gold shadow-md bg-white scale-102' 
                     : 'border-transparent hover:border-vedicana-green/40 hover:bg-white'
                 }`}
                 aria-label={`View product image ${idx + 1}`}
               >
-                <img 
+                <Image 
                   src={img} 
                   alt={`${title} Thumbnail ${idx + 1}`} 
-                  className="w-full h-full object-contain rounded-lg"
+                  fill
+                  sizes="100px"
+                  className="object-contain rounded-lg p-1"
                 />
               </button>
             );

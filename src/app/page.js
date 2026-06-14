@@ -1,4 +1,5 @@
 import { ArrowRight, Leaf, ShieldCheck, Heart, ShoppingCart, Star, Check } from 'lucide-react';
+import Image from 'next/image';
 import Product from '../models/Product.js';
 import AddToCartButton from '../components/AddToCartButton';
 import HeroSlider from '../components/HeroSlider';
@@ -9,8 +10,8 @@ import HeroSlide from '../models/HeroSlide.js';
 import Certification from '../models/Certification.js';
 import NewsletterForm from '../components/NewsletterForm';
 
-// Force dynamic rendering since we are fetching from DB
-export const dynamic = 'force-dynamic';
+// Cache page at Edge for 1 hour to reduce Fast Origin Transfer
+export const revalidate = 3600;
 
 const homeCategories = [
   {
@@ -270,7 +271,9 @@ export default async function Home() {
                   {/* Icon/Photo Container */}
                   <div className={`w-14 h-14 bg-white flex items-center justify-center mb-5 transform group-hover:scale-110 transition-transform duration-300 shadow-sm overflow-hidden ${shapeClass} ${isDynamic ? 'p-1 border border-gray-100' : cat.iconColor}`}>
                     {isDynamic ? (
-                      <img src={cat.image} alt={cat.name} className="w-full h-full object-contain" />
+                      <div className="relative w-full h-full">
+                        <Image src={cat.image} alt={cat.name} fill sizes="56px" className="object-contain" />
+                      </div>
                     ) : (
                       cat.svg
                     )}
@@ -308,11 +311,13 @@ export default async function Home() {
                 <div className="relative h-72 overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 group-hover:opacity-0 transition-opacity pointer-events-none"></div>
                   {/* Pulling the Base64 WebP image directly from the Database! */}
-                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-white flex items-center justify-center">
-                    <img 
+                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-white flex items-center justify-center relative">
+                    <Image 
                       src={product.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={product.title}
-                      className="w-full h-full object-contain p-6 transform group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-contain p-6 transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </a>
                   {product.sale_price && (

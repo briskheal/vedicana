@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import AddToCartButton from './AddToCartButton';
 
 export default function RelatedProductsCarousel({ products = [] }) {
@@ -102,12 +103,14 @@ export default function RelatedProductsCarousel({ products = [] }) {
                 key={relProduct.id} 
                 className="w-[280px] sm:w-[300px] md:w-[310px] flex-shrink-0 bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 border border-gray-150/60 group flex flex-col snap-start"
               >
-                <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
+                <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 relative">
                   <a href={`/shop/${relProduct.slug}`} className="w-full h-full">
-                    <img 
+                    <Image 
                       src={relProduct.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={relProduct.title}
-                      className="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 640px) 280px, 310px"
+                      className="object-cover transform group-hover:scale-103 transition-transform duration-500"
                     />
                   </a>
                   {relProduct.sale_price && (
@@ -141,12 +144,14 @@ export default function RelatedProductsCarousel({ products = [] }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((relProduct) => (
             <div key={relProduct.id} className="bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 border border-gray-150/60 group flex flex-col">
-              <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100">
+              <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 relative">
                 <a href={`/shop/${relProduct.slug}`} className="w-full h-full">
-                  <img 
+                  <Image 
                     src={relProduct.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                     alt={relProduct.title}
-                    className="w-full h-full object-cover transform group-hover:scale-103 transition-transform duration-500"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
+                    className="object-cover transform group-hover:scale-103 transition-transform duration-500"
                   />
                 </a>
                 {relProduct.sale_price && (

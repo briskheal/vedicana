@@ -139,7 +139,7 @@ export default function InboxPage() {
   const tabColors = { contact: 'blue', career: 'emerald', subscribe: 'purple' };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e] text-slate-300 flex flex-col">
+    <div className="h-[calc(100vh-10rem)] bg-[#0a0f1e] text-slate-300 flex flex-col rounded-2xl overflow-hidden border border-slate-800 shadow-2xl">
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-sm">

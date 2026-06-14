@@ -1,10 +1,11 @@
 import { ShoppingCart, Filter, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import Product from '../../models/Product.js';
 import Category from '../../models/Category.js';
 import AddToCartButton from '../../components/AddToCartButton';
 import { Op } from 'sequelize';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export default async function Shop({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -199,12 +200,14 @@ export default async function Shop({ searchParams }) {
               <div key={product.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col">
                 <div className="relative h-72 overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 group-hover:opacity-0 transition-opacity pointer-events-none"></div>
-                  {/* Pulling the Base64 WebP image directly from the Database! */}
-                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-vedicana-bg flex items-center justify-center">
-                    <img 
+                  {/* Now pulling standard image via URL */}
+                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-vedicana-bg flex items-center justify-center relative">
+                    <Image 
                       src={product.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={product.title}
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </a>
                   {product.sale_price && (

@@ -296,7 +296,7 @@ export default function CheckoutPage() {
           {couponError && <p className="text-red-500 text-xs mt-2 font-medium">{couponError}</p>}
         </form>
 
-        <form onSubmit={handleCheckout} className="flex flex-col lg:flex-row gap-4 lg:gap-8">
+        <form onSubmit={handleCheckout} className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8">
           
           {/* Billing & Shipping Details (Left) */}
           <div className="lg:w-[57%] space-y-4">

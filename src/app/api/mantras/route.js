@@ -3,6 +3,8 @@ import models from '../../../models/index.js';
 
 const { Mantra } = models;
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const mantras = await Mantra.findAll({

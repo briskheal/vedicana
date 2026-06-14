@@ -1,24 +1,23 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 export default function PageTransition({ children }) {
   const pathname = usePathname();
 
-  // On initial load, we don't want a massive delay, but on navigation we want a smooth fade-in
+  // Next.js App Router has issues with AnimatePresence mode="wait" holding up the React tree.
+  // Using just motion.div with a dynamic key ensures the entry animation plays smoothly
+  // on every route change without freezing the navigation links.
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={pathname}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="flex-grow flex flex-col"
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="flex-grow flex flex-col"
+    >
+      {children}
+    </motion.div>
   );
 }

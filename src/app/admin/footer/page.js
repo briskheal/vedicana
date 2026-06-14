@@ -146,7 +146,7 @@ export default function AdminFooterLinks() {
             <>
               {/* Quick Links Section */}
               <div className="bg-[#1e293b] border border-slate-800 rounded-xl shadow-xl overflow-hidden">
-                <div className="bg-slate-900/60 px-6 py-4 border-b border-slate-800/80">
+                <div className="bg-slate-900/60 px-4 py-2 border-b border-slate-800/80">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-white">Quick Links Section</h3>
                 </div>
                 {quickLinks.length === 0 ? (
@@ -156,23 +156,23 @@ export default function AdminFooterLinks() {
                     <table className="w-full text-left border-collapse text-sm">
                       <thead>
                         <tr className="text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80 bg-slate-900/20">
-                          <th className="px-6 py-3 font-medium">Link Title</th>
-                          <th className="px-6 py-3 font-medium">Destination URL</th>
-                          <th className="px-6 py-3 font-medium">Order Index</th>
-                          <th className="px-6 py-3 font-medium text-right">Actions</th>
+                          <th className="px-4 py-2 font-medium">Link Title</th>
+                          <th className="px-4 py-2 font-medium">Destination URL</th>
+                          <th className="px-4 py-2 font-medium">Order Index</th>
+                          <th className="px-4 py-2 font-medium text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800/60 text-sm">
                         {quickLinks.map((link) => (
                           <tr key={link.id} className="hover:bg-slate-800/20 transition-colors">
-                            <td className="px-6 py-4 font-semibold text-white">{link.title}</td>
-                            <td className="px-6 py-4 font-mono text-xs text-slate-400">
+                            <td className="px-4 py-2 font-semibold text-white">{link.title}</td>
+                            <td className="px-4 py-2 font-mono text-xs text-slate-400">
                               <a href={link.url} target="_blank" rel="noopener noreferrer" className="hover:text-vedicana-gold inline-flex items-center gap-1.5">
                                 {link.url} <ExternalLink size={11} />
                               </a>
                             </td>
-                            <td className="px-6 py-4 font-mono text-slate-400">{link.order_index}</td>
-                            <td className="px-6 py-4 text-right flex justify-end gap-2">
+                            <td className="px-4 py-2 font-mono text-slate-400">{link.order_index}</td>
+                            <td className="px-4 py-2 text-right flex justify-end gap-2">
                               <button 
                                 onClick={() => handleDelete(link.id, link.title)}
                                 className="p-2 hover:text-red-400 hover:bg-slate-800 rounded transition-colors cursor-pointer text-slate-400"
@@ -192,7 +192,7 @@ export default function AdminFooterLinks() {
 
               {/* Policies & Terms Section */}
               <div className="bg-[#1e293b] border border-slate-800 rounded-xl shadow-xl overflow-hidden">
-                <div className="bg-slate-900/60 px-6 py-4 border-b border-slate-800/80">
+                <div className="bg-slate-900/60 px-4 py-2 border-b border-slate-800/80">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-white">Policies & Conditions Section</h3>
                 </div>
                 {policiesLinks.length === 0 ? (
@@ -202,23 +202,23 @@ export default function AdminFooterLinks() {
                     <table className="w-full text-left border-collapse text-sm">
                       <thead>
                         <tr className="text-slate-400 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80 bg-slate-900/20">
-                          <th className="px-6 py-3 font-medium">Link Title</th>
-                          <th className="px-6 py-3 font-medium">Destination URL</th>
-                          <th className="px-6 py-3 font-medium">Order Index</th>
-                          <th className="px-6 py-3 font-medium text-right">Actions</th>
+                          <th className="px-4 py-2 font-medium">Link Title</th>
+                          <th className="px-4 py-2 font-medium">Destination URL</th>
+                          <th className="px-4 py-2 font-medium">Order Index</th>
+                          <th className="px-4 py-2 font-medium text-right">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-800/60 text-sm">
                         {policiesLinks.map((link) => (
                           <tr key={link.id} className="hover:bg-slate-800/20 transition-colors">
-                            <td className="px-6 py-4 font-semibold text-white">{link.title}</td>
-                            <td className="px-6 py-4 font-mono text-xs text-slate-400">
+                            <td className="px-4 py-2 font-semibold text-white">{link.title}</td>
+                            <td className="px-4 py-2 font-mono text-xs text-slate-400">
                               <a href={link.url} target="_blank" rel="noopener noreferrer" className="hover:text-vedicana-gold inline-flex items-center gap-1.5">
                                 {link.url} <ExternalLink size={11} />
                               </a>
                             </td>
-                            <td className="px-6 py-4 font-mono text-slate-400">{link.order_index}</td>
-                            <td className="px-6 py-4 text-right flex justify-end gap-2">
+                            <td className="px-4 py-2 font-mono text-slate-400">{link.order_index}</td>
+                            <td className="px-4 py-2 text-right flex justify-end gap-2">
                               <button 
                                 onClick={() => handleDelete(link.id, link.title)}
                                 className="p-2 hover:text-red-400 hover:bg-slate-800 rounded transition-colors cursor-pointer text-slate-400"

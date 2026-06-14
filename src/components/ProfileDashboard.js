@@ -216,57 +216,64 @@ export default function ProfileDashboard({ initialUser }) {
             <h2 className="text-2xl font-serif text-gray-900 mb-6">Order History</h2>
             
             {user.Orders && user.Orders.length > 0 ? (
-              <div className="space-y-4">
-                {user.Orders.map(order => (
-                  <div key={order.id} className="border border-gray-100 rounded-lg p-6 hover:shadow-md transition-shadow">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-4 border-b border-gray-50">
-                      <div>
-                        <p className="text-sm text-gray-500 mb-1">Order Placed</p>
-                        <p className="font-medium">
-                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 mb-1">Total Amount</p>
-                        <p className="font-medium text-vedicana-green">₹{order.totalAmount}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500 mb-1">Order ID</p>
-                        <p className="font-mono text-sm">#{order.id}</p>
-                      </div>
-                      <div>
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                          order.status === 'processing' || order.status === 'shipped' || order.status === 'completed'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : order.status === 'pending'
-                            ? 'bg-amber-50 text-amber-700'
-                            : 'bg-red-50 text-red-700'
-                        }`}>
-                          {order.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-gray-50/50">
-                      <p className="text-sm text-gray-600">Method: {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Razorpay Secure'}</p>
-                      <div className="flex items-center gap-4">
-                        <a 
-                          href={`/orders/${order.id}/invoice`} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-vedicana-green text-sm font-medium hover:underline"
-                        >
-                          View Invoice
-                        </a>
-                        <button
-                          onClick={() => handleDeleteOrder(order.id)}
-                          className="text-red-500 hover:text-red-700 text-sm font-medium transition-colors cursor-pointer"
-                        >
-                          Delete Order
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                  <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase tracking-wider text-[11px] font-bold">
+                    <tr>
+                      <th className="px-6 py-4">Order ID</th>
+                      <th className="px-6 py-4">Date</th>
+                      <th className="px-6 py-4 text-right">Amount</th>
+                      <th className="px-6 py-4">Method</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 bg-white">
+                    {user.Orders.map(order => (
+                      <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4 font-mono font-medium text-gray-900">
+                          #{order.id}
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </td>
+                        <td className="px-6 py-4 text-right font-bold text-vedicana-green">
+                          ₹{order.totalAmount}
+                        </td>
+                        <td className="px-6 py-4 text-gray-600">
+                          {order.paymentMethod === 'cod' ? 'COD' : 'Razorpay'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            order.status === 'processing' || order.status === 'shipped' || order.status === 'completed'
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                              : order.status === 'pending'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                              : 'bg-red-50 text-red-700 border border-red-100'
+                          }`}>
+                            {order.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right space-x-4">
+                          <a 
+                            href={`/orders/${order.id}/invoice`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-vedicana-green font-medium hover:text-emerald-700 transition-colors"
+                          >
+                            Invoice
+                          </a>
+                          <button
+                            onClick={() => handleDeleteOrder(order.id)}
+                            className="text-red-500 hover:text-red-700 font-medium transition-colors cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             ) : (
               <div className="text-center py-12 bg-gray-50 rounded-lg border border-gray-100 border-dashed">

@@ -196,18 +196,18 @@ export default function AdminAppointments() {
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-slate-900/60 text-slate-300 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80">
-                  <th className="px-6 py-4 font-medium">Appt ID</th>
-                  <th className="px-6 py-4 font-medium">Customer Identity</th>
-                  <th className="px-6 py-4 font-medium">Focus Discipline</th>
-                  <th className="px-6 py-4 font-medium">Date &amp; Slot</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium text-right">Actions</th>
+                  <th className="px-4 py-2 font-medium">Appt ID</th>
+                  <th className="px-4 py-2 font-medium">Customer Identity</th>
+                  <th className="px-4 py-2 font-medium">Focus Discipline</th>
+                  <th className="px-4 py-2 font-medium">Date &amp; Slot</th>
+                  <th className="px-4 py-2 font-medium">Status</th>
+                  <th className="px-4 py-2 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredAppointments.map((appt) => (
                   <tr key={appt.id} className="hover:bg-slate-800/20 transition-colors group">
-                    <td className="px-6 py-4 font-mono text-slate-300">
+                    <td className="px-4 py-2 font-mono text-slate-300">
                       <div className="flex items-center gap-2">
                         <span className="text-[#0ea5e9] font-bold">#</span>
                         {settings.consultation_prefix || 'CNS-2026-'}{(() => {
@@ -216,23 +216,23 @@ export default function AdminAppointments() {
                         })()}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <p className="font-semibold text-white">{appt.name}</p>
                       <p className="text-xs text-slate-500 mt-0.5 font-mono">{appt.email}</p>
                       <p className="text-xs text-slate-500 font-mono">{appt.phone}</p>
                     </td>
-                    <td className="px-6 py-4 text-slate-300">
+                    <td className="px-4 py-2 text-slate-300">
                       <span className="bg-slate-900 px-2.5 py-1 rounded text-xs border border-slate-800 font-medium">
                         {appt.topic}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-slate-300 font-mono text-xs">
+                    <td className="px-4 py-2 text-slate-300 font-mono text-xs">
                       {new Date(appt.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       <span className="text-vedicana-gold text-[10px] block mt-0.5 font-bold uppercase tracking-wider">
                         Slot: {appt.timeSlot}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <button
                         onClick={() => handleStatusUpdate(appt.id, appt.status)}
                         className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border cursor-pointer transition-all ${
@@ -245,7 +245,7 @@ export default function AdminAppointments() {
                         {appt.status}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-right flex items-center justify-end gap-3.5">
+                    <td className="px-4 py-2 text-right flex items-center justify-end gap-3.5">
                       <button 
                         onClick={() => alert(`Customer Consultation Notes:\n\nName: ${appt.name}\nEmail: ${appt.email}\nTopic: ${appt.topic}\nNotes: ${appt.notes || 'None provided.'}`)}
                         className="text-slate-400 hover:text-white hover:bg-slate-800 px-3 py-1.5 rounded transition-colors text-xs font-semibold inline-flex items-center gap-1 cursor-pointer border border-transparent hover:border-slate-700"

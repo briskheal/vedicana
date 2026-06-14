@@ -71,7 +71,7 @@ export default function AdminLayout({ children }) {
                 <a 
                   key={item.href}
                   href={item.href} 
-                  className={`flex items-center gap-3 pl-9 pr-4 py-2.5 rounded-lg transition-all relative group ${
+                  className={`flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-lg transition-all relative group ${
                     isActive 
                       ? 'text-white font-bold bg-slate-800/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] border border-slate-700/20' 
                       : 'text-slate-400 hover:text-white hover:bg-slate-800/20'
@@ -85,7 +85,7 @@ export default function AdminLayout({ children }) {
                   }`} />
                   
                   <Icon size={16} className={`transition-colors ${isActive ? 'text-vedicana-green' : 'text-slate-450 group-hover:text-slate-200'}`} />
-                  <span className="text-[11px] uppercase tracking-wider font-semibold">{item.label}</span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold">{item.label}</span>
                   {item.badge && (
                     <span className="ml-auto bg-vedicana-gold text-slate-900 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">New</span>
                   )}
@@ -141,7 +141,7 @@ export default function AdminLayout({ children }) {
                 <a 
                   key={item.href}
                   href={item.href} 
-                  className={`flex items-center gap-3 pl-9 pr-4 py-2.5 rounded-lg transition-all relative group ${
+                  className={`flex items-center gap-3 pl-8 pr-3 py-1.5 rounded-lg transition-all relative group ${
                     isActive 
                       ? 'text-white font-bold bg-slate-800/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] border border-slate-700/20' 
                       : 'text-slate-400 hover:text-white hover:bg-slate-800/20'
@@ -155,7 +155,7 @@ export default function AdminLayout({ children }) {
                   }`} />
                   
                   <Icon size={16} className={`transition-colors ${isActive ? 'text-vedicana-green' : 'text-slate-450 group-hover:text-slate-200'}`} />
-                  <span className="text-[11px] uppercase tracking-wider font-semibold">{item.label}</span>
+                  <span className="text-[10px] uppercase tracking-wider font-semibold">{item.label}</span>
                   {item.badge && (
                     <span className="ml-auto bg-vedicana-gold text-slate-900 text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">New</span>
                   )}
@@ -167,7 +167,7 @@ export default function AdminLayout({ children }) {
         <div className="p-4 border-t border-slate-850">
           <button 
             onClick={handleSignOut}
-            className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer text-[11px] uppercase font-semibold tracking-wider"
+            className="flex items-center gap-3 px-4 py-3 w-full text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors cursor-pointer text-[10px] uppercase font-semibold tracking-wider"
           >
             <LogOut size={16} />
             <span>Sign Out</span>
@@ -191,7 +191,7 @@ export default function AdminLayout({ children }) {
             <h2 className="text-base md:text-lg font-semibold text-white">Command Center</h2>
           </div>
           <div className="flex items-center gap-4 md:gap-6">
-            <div className="flex items-center gap-2 bg-slate-900/60 rounded-full py-1 px-3 border border-slate-800 text-[11px] md:text-xs">
+            <div className="flex items-center gap-2 bg-slate-900/60 rounded-full py-1 px-3 border border-slate-800 text-[10px] md:text-xs">
               <div className="w-1.5 h-1.5 rounded-full bg-vedicana-green animate-pulse"></div>
               <span className="font-medium text-slate-400">OS Online</span>
             </div>

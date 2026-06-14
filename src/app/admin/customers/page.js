@@ -63,12 +63,12 @@ export default async function AdminCustomersPage() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-800 text-slate-400 text-xs font-semibold uppercase tracking-wider bg-slate-900/40">
-                  <th className="px-6 py-4">User</th>
-                  <th className="px-6 py-4">Email</th>
-                  <th className="px-6 py-4">Phone</th>
-                  <th className="px-6 py-4">Address</th>
-                  <th className="px-6 py-4 text-center">Orders</th>
-                  <th className="px-6 py-4">Joined Date</th>
+                  <th className="px-4 py-2">User</th>
+                  <th className="px-4 py-2">Email</th>
+                  <th className="px-4 py-2">Phone</th>
+                  <th className="px-4 py-2">Address</th>
+                  <th className="px-4 py-2 text-center">Orders</th>
+                  <th className="px-4 py-2">Joined Date</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
@@ -80,9 +80,9 @@ export default async function AdminCustomersPage() {
                   return (
                     <tr key={user.id} className="hover:bg-slate-900/20 transition-colors">
                       {/* User Info & Avatar */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-vedicana-green/10 text-vedicana-green font-bold rounded-full flex items-center justify-center border border-vedicana-green/20">
+                          <div className="w-8 h-8 bg-vedicana-green/10 text-vedicana-green font-bold rounded-full flex items-center justify-center border border-vedicana-green/20">
                             {avatarInitials}
                           </div>
                           <div>
@@ -100,7 +100,7 @@ export default async function AdminCustomersPage() {
                       </td>
 
                       {/* Email */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-sm text-slate-300">
                           <Mail size={14} className="text-slate-500" />
                           <span className="truncate max-w-xs">{user.email}</span>
@@ -108,7 +108,7 @@ export default async function AdminCustomersPage() {
                       </td>
 
                       {/* Phone */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-sm">
                           <Phone size={14} className="text-slate-500" />
                           {user.phone ? (
@@ -120,7 +120,7 @@ export default async function AdminCustomersPage() {
                       </td>
 
                       {/* Address */}
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2">
                         <div className="flex items-start gap-1.5 text-sm max-w-xs">
                           <MapPin size={14} className="text-slate-500 mt-0.5 flex-shrink-0" />
                           {user.address ? (
@@ -132,7 +132,7 @@ export default async function AdminCustomersPage() {
                       </td>
 
                       {/* Orders Count */}
-                      <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <td className="px-4 py-2 whitespace-nowrap text-center">
                         <div className="inline-flex items-center gap-1 bg-slate-900/60 px-2.5 py-1 rounded-full border border-slate-800 text-xs text-slate-300 font-semibold">
                           <ShoppingBag size={12} className="text-vedicana-green" />
                           {user.Orders ? user.Orders.length : 0}
@@ -140,7 +140,7 @@ export default async function AdminCustomersPage() {
                       </td>
 
                       {/* Created At */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-sm text-slate-400">
                           <Calendar size={14} className="text-slate-600" />
                           <span>

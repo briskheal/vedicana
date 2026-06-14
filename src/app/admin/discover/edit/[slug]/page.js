@@ -279,7 +279,7 @@ export default function DiscoverEditor() {
         <div className="flex items-center gap-3">
           <a 
             href="/admin/discover" 
-            className="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700 transition-colors"
+            className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center border border-slate-700 transition-colors"
           >
             <ArrowLeft size={20} />
           </a>
@@ -293,7 +293,7 @@ export default function DiscoverEditor() {
         <button 
           onClick={handleSubmit}
           disabled={saving}
-          className="inline-flex items-center gap-2 bg-[#d4af37] hover:bg-[#c5a028] text-slate-950 font-bold text-sm uppercase tracking-wide px-6 py-3.5 rounded-lg transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50"
+          className="inline-flex items-center gap-2 bg-[#d4af37] hover:bg-[#c5a028] text-slate-950 font-bold text-sm uppercase tracking-wide px-4 py-2.5 rounded-lg transition-all shadow-md hover:-translate-y-0.5 disabled:opacity-50"
         >
           {saving ? <Loader className="animate-spin" size={18} /> : <Save size={18} />} 
           {isCreateMode ? 'Publish Page' : 'Save Changes'}
@@ -542,7 +542,7 @@ export default function DiscoverEditor() {
                             insertContentAtCursor('\\n' + imgHtml + '\\n');
                             alert('Image inserted!');
                           }}
-                          className="bg-vedicana-green hover:bg-emerald-500 text-white w-10 h-10 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
+                          className="bg-vedicana-green hover:bg-emerald-500 text-white w-8 h-8 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
                           title="Insert Image"
                         >
                           <Plus size={18} />
@@ -563,7 +563,7 @@ export default function DiscoverEditor() {
                               }
                             }
                           }}
-                          className="bg-red-500 hover:bg-red-600 text-white w-10 h-10 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
+                          className="bg-red-500 hover:bg-red-600 text-white w-8 h-8 flex flex-col items-center justify-center rounded shadow-lg transition-transform hover:scale-110"
                           title="Delete Image"
                         >
                           <Trash2 size={16} />

@@ -354,37 +354,37 @@ export default function AdminOrders() {
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-slate-900/60 text-slate-300 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80">
-                  <th className="px-6 py-4 font-medium">Order ID</th>
-                  <th className="px-6 py-4 font-medium">Customer Identity</th>
-                  <th className="px-6 py-4 font-medium">Timestamp</th>
-                  <th className="px-6 py-4 font-medium">Total Paid</th>
-                  <th className="px-6 py-4 font-medium">Status Selector</th>
-                  <th className="px-6 py-4 font-medium text-right">Actions</th>
+                  <th className="px-4 py-2 font-medium">Order ID</th>
+                  <th className="px-4 py-2 font-medium">Customer Identity</th>
+                  <th className="px-4 py-2 font-medium">Timestamp</th>
+                  <th className="px-4 py-2 font-medium">Total Paid</th>
+                  <th className="px-4 py-2 font-medium">Status Selector</th>
+                  <th className="px-4 py-2 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredOrders.map((order) => (
                   <tr key={order.id} className={`hover:bg-slate-800/20 transition-colors group ${order.paymentStatus === 'verification_pending' ? 'bg-amber-900/10 border-l-4 border-amber-500' : ''}`}>
-                    <td className="px-6 py-4 font-mono text-slate-300">
+                    <td className="px-4 py-2 font-mono text-slate-300">
                       <div className="flex items-center gap-2">
                         <span className="text-vedicana-gold font-bold">#</span>
                         {order.id}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <p className="font-semibold text-white">{order.User?.name || 'Customer / Guest'}</p>
                       <p className="text-xs text-slate-500 mt-0.5 font-mono">{order.User?.email || 'guest@anonymous.com'}</p>
                     </td>
-                    <td className="px-6 py-4 text-slate-400 font-mono text-xs">
+                    <td className="px-4 py-2 text-slate-400 font-mono text-xs">
                       {new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       <span className="text-slate-600 text-[10px] block mt-0.5">
                         {new Date(order.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-mono text-slate-300 font-bold">
+                    <td className="px-4 py-2 font-mono text-slate-300 font-bold">
                       ₹{parseFloat(order.totalAmount || order.total).toFixed(2)}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <select 
                         value={order.status}
                         onChange={(e) => handleStatusChange(order.id, e.target.value)}
@@ -398,7 +398,7 @@ export default function AdminOrders() {
                         <option value="returned" className="bg-slate-900 text-slate-300">Returned</option>
                       </select>
                     </td>
-                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2.5">
+                    <td className="px-4 py-2 text-right flex items-center justify-end gap-2.5">
                       <a
                         href={`/orders/${order.id}/invoice`}
                         target="_blank"

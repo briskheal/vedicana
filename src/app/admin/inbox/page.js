@@ -320,7 +320,7 @@ export default function InboxPage() {
           {selected ? (
             <>
               {/* Detail Header — compact horizontal */}
-              <div className="bg-[#111827] border-b border-slate-800 px-6 py-3 flex items-center gap-4 flex-wrap">
+              <div className="bg-[#111827] border-b border-slate-800 px-4 py-2 flex items-center gap-4 flex-wrap">
                 {/* Left: avatar + name only */}
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 border border-slate-700 flex items-center justify-center flex-shrink-0">
@@ -429,7 +429,7 @@ export default function InboxPage() {
                     {/* CV File */}
                     {selected.resume_file_name && (
                       <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 flex items-center gap-3 flex-wrap">
-                        <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/20 flex-shrink-0">
+                        <div className="w-8 h-8 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/20 flex-shrink-0">
                           <span className="text-red-400 text-xs font-bold uppercase">{selected.resume_file_name.split('.').pop()}</span>
                         </div>
                         <div className="flex-1 min-w-0">

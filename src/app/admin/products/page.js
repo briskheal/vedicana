@@ -175,21 +175,21 @@ export default function AdminProducts() {
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="bg-slate-900/60 text-slate-300 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80">
-                  <th className="px-6 py-4 font-medium">Product Details</th>
-                  <th className="px-6 py-4 font-medium">Category</th>
-                  <th className="px-6 py-4 font-medium">Pricing</th>
-                  <th className="px-6 py-4 font-medium">Tax Details</th>
-                  <th className="px-6 py-4 font-medium">Stock Level</th>
-                  <th className="px-6 py-4 font-medium">Type</th>
-                  <th className="px-6 py-4 font-medium text-right">Actions</th>
+                  <th className="px-4 py-2 font-medium">Product Details</th>
+                  <th className="px-4 py-2 font-medium">Category</th>
+                  <th className="px-4 py-2 font-medium">Pricing</th>
+                  <th className="px-4 py-2 font-medium">Tax Details</th>
+                  <th className="px-4 py-2 font-medium">Stock Level</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
+                  <th className="px-4 py-2 font-medium text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {filteredProducts.map((product) => (
                   <tr key={product.id} className="hover:bg-slate-800/20 transition-colors group">
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-slate-900 border border-slate-800 p-0.5 overflow-hidden flex-shrink-0 relative group-hover:border-vedicana-green transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 p-0.5 overflow-hidden flex-shrink-0 relative group-hover:border-vedicana-green transition-colors">
                           <img 
                             src={product.image || 'https://via.placeholder.com/100?text=No+Image'} 
                             alt={product.title} 
@@ -202,12 +202,12 @@ export default function AdminProducts() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <span className="bg-slate-900 text-slate-400 px-2.5 py-1.5 rounded-lg text-xs border border-slate-850 font-medium">
                         {product.Category ? product.Category.name : 'Uncategorized'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-mono text-slate-300">
+                    <td className="px-4 py-2 font-mono text-slate-300">
                       {product.sale_price ? (
                         <div className="flex flex-col">
                           <span className="font-bold text-white">₹{parseFloat(product.sale_price).toFixed(2)}</span>
@@ -217,18 +217,18 @@ export default function AdminProducts() {
                         <span className="font-bold text-white">₹{parseFloat(product.price).toFixed(2)}</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-900 border border-slate-850 text-xs font-semibold text-slate-400 font-mono">
                         GST: {product.tax_rate ?? 5}%
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${product.stock > 10 ? 'bg-emerald-400 animate-pulse' : 'bg-red-400 shadow-[0_0_5px_rgba(239,68,68,1)]'}`}></div>
                         <span className="text-slate-300 font-medium">{product.stock} Units</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <button 
                         onClick={() => handleToggleFeatured(product.id, product.is_featured)}
                         className="transition-all hover:scale-105"
@@ -241,7 +241,7 @@ export default function AdminProducts() {
                         )}
                       </button>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-2 text-right">
                       <div className="flex justify-end items-center gap-2 text-slate-400">
                         {/* Visibility Toggle */}
                         <button

@@ -412,7 +412,7 @@ export default function AdminPopularCategoriesManager() {
                       <tr key={cat.id} className="border-b border-slate-800/40 hover:bg-slate-900/10 transition-colors text-xs">
                         {/* Icon column */}
                         <td className="py-4 flex justify-center">
-                          <div className={`w-12 h-12 bg-white border border-slate-800 flex items-center justify-center p-1.5 shadow-sm overflow-hidden ${
+                          <div className={`w-8 h-8 bg-white border border-slate-800 flex items-center justify-center p-1.5 shadow-sm overflow-hidden ${
                             cat.shape === 'round' ? 'rounded-full' : 'rounded-lg'
                           }`}>
                             <img src={cat.image} alt={cat.name} className="w-full h-full object-contain" />

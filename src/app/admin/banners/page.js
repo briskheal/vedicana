@@ -251,20 +251,20 @@ export default function AdminBanners() {
                 <table className="w-full text-left border-collapse text-sm">
                   <thead>
                     <tr className="bg-slate-900/60 text-slate-300 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80">
-                      <th className="px-6 py-4 font-medium w-16">Sort</th>
-                      <th className="px-6 py-4 font-medium w-48">Image Preview</th>
-                      <th className="px-6 py-4 font-medium">Text Overlays</th>
-                      <th className="px-6 py-4 font-medium w-24">Status</th>
-                      <th className="px-6 py-4 font-medium text-right w-28">Actions</th>
+                      <th className="px-4 py-2 font-medium w-16">Sort</th>
+                      <th className="px-4 py-2 font-medium w-48">Image Preview</th>
+                      <th className="px-4 py-2 font-medium">Text Overlays</th>
+                      <th className="px-4 py-2 font-medium w-24">Status</th>
+                      <th className="px-4 py-2 font-medium text-right w-28">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/60 text-sm">
                     {slides.map((slide) => (
                       <tr key={slide.id} className="hover:bg-slate-800/20 transition-colors group">
-                        <td className="px-6 py-4 font-mono font-bold text-vedicana-gold text-base">
+                        <td className="px-4 py-2 font-mono font-bold text-vedicana-gold text-base">
                           {slide.order_index}
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-2">
                           <div className="relative w-40 h-16 rounded overflow-hidden border border-slate-700 bg-slate-900 shadow">
                             <img 
                               src={slide.image} 
@@ -277,7 +277,7 @@ export default function AdminBanners() {
                             />
                           </div>
                         </td>
-                        <td className="px-6 py-4 space-y-1">
+                        <td className="px-4 py-2 space-y-1">
                           <div className="flex items-center gap-2">
                             {slide.badge && (
                               <span className="bg-vedicana-gold/10 text-vedicana-gold text-[10px] uppercase font-bold px-1.5 py-0.5 rounded border border-vedicana-gold/20">
@@ -298,7 +298,7 @@ export default function AdminBanners() {
                             <ExternalLink size={10} /> {slide.link}
                           </a>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-2">
                           <button
                             onClick={() => handleToggleActive(slide)}
                             disabled={saving}
@@ -312,7 +312,7 @@ export default function AdminBanners() {
                             {slide.is_active ? 'Active' : 'Draft'}
                           </button>
                         </td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-4 py-2 text-right">
                           <div className="flex justify-end gap-2 text-slate-400">
                             <button 
                               onClick={() => handleEditClick(slide)}

@@ -180,31 +180,31 @@ export default function AdminCategories() {
               <table className="w-full text-left border-collapse text-sm">
                 <thead>
                   <tr className="bg-slate-900/60 text-slate-300 text-xs uppercase tracking-wider font-semibold border-b border-slate-800/80">
-                    <th className="px-6 py-4 font-medium">ID</th>
-                    <th className="px-6 py-4 font-medium">Category Name</th>
-                    <th className="px-6 py-4 font-medium">Url Slug</th>
-                    <th className="px-6 py-4 font-medium">Active Products</th>
-                    <th className="px-6 py-4 font-medium text-right">Actions</th>
+                    <th className="px-4 py-2 font-medium">ID</th>
+                    <th className="px-4 py-2 font-medium">Category Name</th>
+                    <th className="px-4 py-2 font-medium">Url Slug</th>
+                    <th className="px-4 py-2 font-medium">Active Products</th>
+                    <th className="px-4 py-2 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 text-sm">
                   {categories.map((cat) => (
                     <tr key={cat.id} className="hover:bg-slate-800/20 transition-colors group">
-                      <td className="px-6 py-4 font-mono text-slate-500">{cat.id}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2 font-mono text-slate-500">{cat.id}</td>
+                      <td className="px-4 py-2">
                         <span className="font-semibold text-white leading-tight font-serif text-base">{cat.name}</span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2">
                         <span className="bg-slate-900 px-2.5 py-1.5 rounded text-xs border border-slate-850 font-mono text-slate-400">
                           /{cat.slug}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-900 border border-slate-850 text-xs font-semibold text-slate-400 font-mono">
                           {cat.productCount} Items
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right flex justify-end gap-2 text-slate-400">
+                      <td className="px-4 py-2 text-right flex justify-end gap-2 text-slate-400">
                         <button 
                           onClick={() => handleEditClick(cat)}
                           className="p-2 hover:text-vedicana-gold hover:bg-slate-800 rounded transition-colors cursor-pointer"

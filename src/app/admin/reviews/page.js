@@ -171,7 +171,7 @@ export default function ReviewModerationDashboard() {
                     <img 
                       src={rev.Product.image || 'https://via.placeholder.com/80'} 
                       alt={rev.Product.title}
-                      className="w-10 h-10 object-contain bg-white rounded-md p-0.5"
+                      className="w-8 h-8 object-contain bg-white rounded-md p-0.5"
                     />
                     <div className="flex-1 min-w-0">
                       <span className="text-[9px] uppercase tracking-wider text-vedicana-gold font-bold block leading-none mb-1">Target Product</span>

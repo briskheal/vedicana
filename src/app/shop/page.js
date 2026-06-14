@@ -5,6 +5,7 @@ import Product from '../../models/Product.js';
 import Category from '../../models/Category.js';
 import AddToCartButton from '../../components/AddToCartButton';
 import { Op } from 'sequelize';
+import { unstable_cache } from 'next/cache';
 
 export const revalidate = 3600;
 
@@ -16,22 +17,7 @@ export default async function Shop({ searchParams }) {
   const pageParam = resolvedSearchParams?.page || '1';
   const isAllActive = !categorySlug;
 
-  const includeCategory = {
-    model: Category,
-    required: !!categorySlug,
-  };
-  
-  if (categorySlug) {
-    includeCategory.where = { slug: categorySlug };
-  }
 
-  const whereClause = { is_active: true }; // Only show active/visible products
-  if (searchQuery) {
-    whereClause[Op.or] = [
-      { title: { [Op.iLike]: `%${searchQuery}%` } },
-      { description: { [Op.iLike]: `%${searchQuery}%` } }
-    ];
-  }
 
   // Pagination & limit setups
   let limit = 12;
@@ -44,30 +30,55 @@ export default async function Shop({ searchParams }) {
   const page = parseInt(pageParam, 10) || 1;
   const offset = limit ? (page - 1) * limit : 0;
 
-  const queryOptions = {
-    where: whereClause,
-    include: [includeCategory],
-    order: [['createdAt', 'DESC']]
-  };
 
-  if (limit !== null) {
-    queryOptions.limit = limit;
-    queryOptions.offset = offset;
-  }
 
-  // Fetch products and categories concurrently
-  const [
-    { count, rows: dbProducts },
-    dbCategories,
-    totalProductsCount
-  ] = await Promise.all([
-    Product.findAndCountAll(queryOptions),
-    Category.findAll(),
-    Product.count()
-  ]);
+  // Cache the database query to bypass the 9-second delay
+  const getCachedData = unstable_cache(
+    async (catSlug, sQuery, qLimit, qOffset) => {
+      const includeCat = { model: Category, required: !!catSlug };
+      if (catSlug) includeCat.where = { slug: catSlug };
 
-  const products = dbProducts.map(p => p.get({ plain: true }));
-  const categories = dbCategories.map(c => c.get({ plain: true }));
+      const wClause = { is_active: true };
+      if (sQuery) {
+        wClause[Op.or] = [
+          { title: { [Op.iLike]: `%${sQuery}%` } },
+          { description: { [Op.iLike]: `%${sQuery}%` } }
+        ];
+      }
+
+      const qOpts = {
+        where: wClause,
+        include: [includeCat],
+        order: [['createdAt', 'DESC']]
+      };
+
+      if (qLimit !== null) {
+        qOpts.limit = qLimit;
+        qOpts.offset = qOffset;
+      }
+
+      const [
+        { count, rows: dbProducts },
+        dbCategories,
+        totalProductsCount
+      ] = await Promise.all([
+        Product.findAndCountAll(qOpts),
+        Category.findAll(),
+        Product.count()
+      ]);
+
+      return {
+        count,
+        products: JSON.parse(JSON.stringify(dbProducts.map(p => p.get({ plain: true })))),
+        categories: JSON.parse(JSON.stringify(dbCategories.map(c => c.get({ plain: true })))),
+        totalProductsCount
+      };
+    },
+    [`shop-data-${categorySlug || 'all'}-${searchQuery || 'none'}-${limit || 'all'}-${offset}`],
+    { revalidate: 3600 }
+  );
+
+  const { count, products, categories, totalProductsCount } = await getCachedData(categorySlug, searchQuery, limit, offset);
   const totalPages = limit ? Math.ceil(count / limit) : 1;
 
   // URL Helper builders

@@ -1,17 +1,21 @@
-// Server Component — fetches data server-side for instant load (no spinner)
+// Server Component — fetches data server-side
 import { Suspense } from 'react';
 import BlogClient from './BlogClient';
+import Blog from '../../models/Blog.js';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Cache for 1 hour
 
 async function getBlogs() {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://vedicana.com';
-    const res = await fetch(`${baseUrl}/api/blogs`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  } catch {
+    const blogs = await Blog.findAll({
+      where: { status: 'published' },
+      order: [['published_at', 'DESC']],
+      raw: true
+    });
+    // Serialize
+    return JSON.parse(JSON.stringify(blogs));
+  } catch (err) {
+    console.error("Blog fetch error:", err);
     return [];
   }
 }

@@ -144,7 +144,7 @@ export default function CartPage() {
               
               <div className="flex items-center justify-center gap-2 text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
                 <ShieldCheck size={16} className="text-vedicana-green" />
-                <span>100% Secure Checkout via Razorpay</span>
+                <span>100% Secure Payment</span>
               </div>
             </div>
           </div>

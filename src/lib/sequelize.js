@@ -3,7 +3,12 @@ import pg from 'pg';
 
 let sequelize;
 
-const dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/vedicana';
+let dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/vedicana';
+
+// Force port 5432 because Supabase deprecated IPv4 pooling on 6543 which causes ECONNREFUSED
+if (dbUrl.includes('.supabase.com:6543')) {
+  dbUrl = dbUrl.replace(':6543', ':5432');
+}
 
 const sequelizeOptions = {
   dialect: 'postgres',

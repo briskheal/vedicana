@@ -52,6 +52,20 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-300 flex">
       
+      {/* Mobile / Tablet Restrictor Overlay */}
+      <div className="fixed inset-0 z-[100] bg-[#0f172a] flex flex-col items-center justify-center p-8 text-center md:hidden">
+        <AlertTriangle size={64} className="text-vedicana-gold mb-6" />
+        <h2 className="text-2xl font-serif text-white mb-3">Desktop Required</h2>
+        <p className="text-slate-400 mb-8 max-w-sm leading-relaxed">
+          The VediCana Admin Dashboard contains complex tables and tools optimized exclusively for larger displays. Please access this portal from a desktop or laptop computer.
+        </p>
+        <button 
+          onClick={handleSignOut} 
+          className="text-xs font-bold uppercase tracking-wider text-red-400 border border-red-400/30 px-8 py-3 rounded-full hover:bg-red-400/10 transition-colors"
+        >
+          Sign Out
+        </button>
+      </div>
       {/* Desktop Sidebar */}
       <aside className="w-64 bg-[#1e293b] border-r border-slate-800 flex flex-col hidden md:flex flex-shrink-0">
         <div className="h-20 flex items-center justify-center border-b border-slate-800">

@@ -2,6 +2,7 @@ import Product from '../../../models/Product.js';
 import Category from '../../../models/Category.js';
 import { ShoppingCart, ShieldCheck, Leaf, Truck } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import AddToCartButton from '../../../components/AddToCartButton';
 import ProductGallery from '../../../components/ProductGallery';
 import ProductTabs from '../../../components/ProductTabs';
@@ -47,9 +48,9 @@ export default async function ProductDetails({ params }) {
         
         {/* Breadcrumbs */}
         <div className="text-sm text-gray-500 mb-8">
-          <a href="/" className="hover:text-vedicana-green">Home</a>
+          <Link href="/" className="hover:text-vedicana-green">Home</Link>
           <span className="mx-2">/</span>
-          <a href="/shop" className="hover:text-vedicana-green">Shop</a>
+          <Link href="/shop" className="hover:text-vedicana-green">Shop</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-900 font-medium">{product.title}</span>
         </div>
@@ -73,7 +74,7 @@ export default async function ProductDetails({ params }) {
           </div>
 
           {/* Product Info (Right) */}
-          <ProductDetailInfo product={product} category={product.Category} />
+          <ProductDetailInfo product={product} category={product.Category} bundleProduct={relatedProducts.length > 0 ? relatedProducts[0] : null} />
         </div>
 
 

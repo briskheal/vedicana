@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import AddToCartButton from './AddToCartButton';
 
 export default function RelatedProductsCarousel({ products = [] }) {
@@ -104,7 +105,7 @@ export default function RelatedProductsCarousel({ products = [] }) {
                 className="w-[280px] sm:w-[300px] md:w-[310px] flex-shrink-0 bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 border border-gray-150/60 group flex flex-col snap-start"
               >
                 <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 relative">
-                  <a href={`/shop/${relProduct.slug}`} className="w-full h-full">
+                  <Link href={`/shop/${relProduct.slug}`} className="w-full h-full">
                     <Image 
                       src={relProduct.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={relProduct.title}
@@ -112,7 +113,7 @@ export default function RelatedProductsCarousel({ products = [] }) {
                       sizes="(max-width: 640px) 280px, 310px"
                       className="object-cover transform group-hover:scale-103 transition-transform duration-500"
                     />
-                  </a>
+                  </Link>
                   {relProduct.sale_price && (
                     <div className="absolute top-3 right-3 z-10">
                       <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -122,9 +123,9 @@ export default function RelatedProductsCarousel({ products = [] }) {
                   )}
                 </div>
                 <div className="p-4 flex flex-col flex-grow">
-                  <a href={`/shop/${relProduct.slug}`} className="block">
+                  <Link href={`/shop/${relProduct.slug}`} className="block">
                     <h3 className="font-serif text-[15px] text-gray-900 group-hover:text-vedicana-green transition-colors line-clamp-1 mb-2 font-bold leading-tight">{relProduct.title}</h3>
-                  </a>
+                  </Link>
                   <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
                     <div className="flex flex-col">
                       <span className="text-[15px] font-extrabold text-vedicana-green">₹{relProduct.sale_price || relProduct.price}</span>
@@ -145,7 +146,7 @@ export default function RelatedProductsCarousel({ products = [] }) {
           {products.map((relProduct) => (
             <div key={relProduct.id} className="bg-white rounded-xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 border border-gray-150/60 group flex flex-col">
               <div className="relative h-60 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 relative">
-                <a href={`/shop/${relProduct.slug}`} className="w-full h-full">
+                <Link href={`/shop/${relProduct.slug}`} className="w-full h-full">
                   <Image 
                     src={relProduct.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                     alt={relProduct.title}
@@ -153,7 +154,7 @@ export default function RelatedProductsCarousel({ products = [] }) {
                     sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
                     className="object-cover transform group-hover:scale-103 transition-transform duration-500"
                   />
-                </a>
+                </Link>
                 {relProduct.sale_price && (
                   <div className="absolute top-3 right-3 z-10">
                     <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -163,9 +164,9 @@ export default function RelatedProductsCarousel({ products = [] }) {
                 )}
               </div>
               <div className="p-4 flex flex-col flex-grow">
-                <a href={`/shop/${relProduct.slug}`} className="block">
+                <Link href={`/shop/${relProduct.slug}`} className="block">
                   <h3 className="font-serif text-[15px] text-gray-900 group-hover:text-vedicana-green transition-colors line-clamp-1 mb-2 font-bold leading-tight">{relProduct.title}</h3>
-                </a>
+                </Link>
                 <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100">
                   <div className="flex flex-col">
                     <span className="text-[15px] font-extrabold text-vedicana-green">₹{relProduct.sale_price || relProduct.price}</span>

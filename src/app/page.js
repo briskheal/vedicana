@@ -1,5 +1,6 @@
 import { ArrowRight, Leaf, ShieldCheck, Heart, ShoppingCart, Star, Check } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Product from '../models/Product.js';
 import AddToCartButton from '../components/AddToCartButton';
 import HeroSlider from '../components/HeroSlider';
@@ -132,51 +133,26 @@ const premiumPastelStyles = [
 ];
 
 export default async function Home() {
-  // Fetch actual products from our custom PostgreSQL Database
-  const dbProducts = await Product.findAll({
-    where: { is_featured: true },
-    limit: 3,
-  });
-  const products = dbProducts.map(p => p.get({ plain: true }));
-
-  // Fetch popular categories from PostgreSQL
+  // Fetch data from PostgreSQL concurrently
+  let products = [];
   let popularCategories = [];
-  try {
-    const dbPopular = await PopularCategory.findAll({
-      order: [['createdAt', 'ASC']]
-    });
-    popularCategories = dbPopular.map(c => c.get({ plain: true }));
-  } catch (err) {
-    console.error('Failed to load popular categories:', err);
-  }
-
-  // Fetch active hero slides from PostgreSQL
   let slides = [];
-  try {
-    const dbSlides = await HeroSlide.findAll({
-      where: { is_active: true },
-      order: [
-        ['order_index', 'ASC'],
-        ['id', 'ASC']
-      ]
-    });
-    slides = dbSlides.map(s => s.get({ plain: true }));
-  } catch (err) {
-    console.error('Failed to load custom hero slides:', err);
-  }
-
-  // Fetch active certifications stamps from PostgreSQL
   let certifications = [];
+
   try {
-    const dbCerts = await Certification.findAll({
-      order: [
-        ['order_index', 'ASC'],
-        ['id', 'ASC']
-      ]
-    });
+    const [dbProducts, dbPopular, dbSlides, dbCerts] = await Promise.all([
+      Product.findAll({ where: { is_featured: true }, limit: 3 }),
+      PopularCategory.findAll({ order: [['createdAt', 'ASC']] }),
+      HeroSlide.findAll({ where: { is_active: true }, order: [['order_index', 'ASC'], ['id', 'ASC']] }),
+      Certification.findAll({ order: [['order_index', 'ASC'], ['id', 'ASC']] })
+    ]);
+
+    products = dbProducts.map(p => p.get({ plain: true }));
+    popularCategories = dbPopular.map(c => c.get({ plain: true }));
+    slides = dbSlides.map(s => s.get({ plain: true }));
     certifications = dbCerts.map(c => c.get({ plain: true }));
   } catch (err) {
-    console.error('Failed to load certifications:', err);
+    console.error('Failed to load homepage data:', err);
   }
 
   const fallbackCertifications = [
@@ -263,7 +239,7 @@ export default async function Home() {
               const shapeClass = cat.shape === 'square' ? 'rounded-xl' : 'rounded-full';
 
               return (
-                <a 
+                <Link 
                   key={idx} 
                   href={`/shop?category=${cat.slug}`}
                   className={`p-6 rounded-2xl border transition-all duration-300 group flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-1 ${isDynamic ? style.bg : cat.bgColor}`}
@@ -284,7 +260,7 @@ export default async function Home() {
                   <p className="text-xs text-gray-500 leading-relaxed">
                     {cat.description}
                   </p>
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -299,10 +275,10 @@ export default async function Home() {
               <span className="text-vedicana-gold font-semibold tracking-wider uppercase text-sm block mb-2">Our Bestsellers</span>
               <h2 className="text-4xl font-serif text-vedicana-dark-green">Featured Remedies</h2>
             </div>
-            <a href="/shop" className="group flex items-center text-vedicana-green font-medium mt-4 md:mt-0 hover:text-vedicana-dark-green transition-colors">
+            <Link href="/shop" className="group flex items-center text-vedicana-green font-medium mt-4 md:mt-0 hover:text-vedicana-dark-green transition-colors">
               View All Products 
               <ArrowRight size={18} className="ml-2 transform group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -311,7 +287,7 @@ export default async function Home() {
                 <div className="relative h-72 overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 group-hover:opacity-0 transition-opacity pointer-events-none"></div>
                   {/* Pulling the Base64 WebP image directly from the Database! */}
-                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-white flex items-center justify-center relative">
+                  <Link href={`/shop/${product.slug}`} className="w-full h-full bg-white flex items-center justify-center relative">
                     <Image 
                       src={product.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={product.title}
@@ -319,7 +295,7 @@ export default async function Home() {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-contain p-6 transform group-hover:scale-105 transition-transform duration-500"
                     />
-                  </a>
+                  </Link>
                   {product.sale_price && (
                     <div className="absolute top-4 right-4 z-20">
                       <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
@@ -386,12 +362,12 @@ export default async function Home() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <a 
+                <Link 
                   href="/wellness-consultation"
                   className="bg-vedicana-green hover:bg-emerald-700 text-white font-bold uppercase tracking-wider text-xs md:text-sm px-8 py-4 rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 inline-flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Book a Consultation Call <ArrowRight size={16} />
-                </a>
+                </Link>
               </div>
             </div>
 

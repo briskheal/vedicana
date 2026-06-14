@@ -156,9 +156,25 @@ export default function ProfileDashboard({ initialUser }) {
             </div>
             <h2 className="text-lg font-bold text-gray-900">{user.name || 'User'}</h2>
             <p className="text-sm text-gray-500 truncate">{user.email}</p>
+            
             {user.role === 'admin' && (
               <span className="inline-block mt-2 bg-vedicana-gold/20 text-vedicana-gold text-xs px-2 py-1 rounded font-bold uppercase tracking-wider">Administrator</span>
             )}
+            
+            <div className="mt-6 pt-6 border-t border-gray-100 flex items-center justify-between">
+              <div className="flex flex-col text-left">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">VediCana Rewards</span>
+                <span className="text-xl font-bold text-vedicana-green flex items-center gap-1.5">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  {user.points || 0}
+                </span>
+              </div>
+              <div className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                Points
+              </div>
+            </div>
           </div>
           
           <nav className="space-y-2">
@@ -183,9 +199,9 @@ export default function ProfileDashboard({ initialUser }) {
               <Settings size={18} /> Account Settings
             </button>
             {user.role === 'admin' && (
-              <a href="/admin" className="flex items-center gap-3 px-4 py-3 text-vedicana-gold hover:bg-vedicana-gold/5 rounded-lg transition-colors font-medium">
+              <Link href="/admin" className="flex items-center gap-3 px-4 py-3 text-vedicana-gold hover:bg-vedicana-gold/5 rounded-lg transition-colors font-medium">
                 <UserIcon size={18} /> Admin Dashboard
-              </a>
+              </Link>
             )}
             <LogoutButton />
           </nav>
@@ -257,9 +273,9 @@ export default function ProfileDashboard({ initialUser }) {
                 <Package size={48} className="text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
                 <p className="text-gray-500 mb-6">When you purchase Ayurvedic products, they will appear here.</p>
-                <a href="/shop" className="inline-block bg-vedicana-green hover:bg-emerald-700 text-white rounded-md px-6 py-2.5 transition-colors font-medium">
+                <Link href="/shop" className="inline-block bg-vedicana-green hover:bg-emerald-700 text-white rounded-md px-6 py-2.5 transition-colors font-medium">
                   Start Shopping
-                </a>
+                </Link>
               </div>
             )}
           </div>

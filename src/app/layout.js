@@ -33,6 +33,8 @@ import Category from '../models/Category.js';
 import FooterLink from '../models/FooterLink.js';
 import fs from 'fs';
 import path from 'path';
+import Link from 'next/link';
+import PageTransition from '../components/PageTransition';
 
 export const metadata = {
   title: "VediCana | Tradition Re-emerged",
@@ -55,20 +57,21 @@ export default async function RootLayout({ children }) {
 
   // Check if store logo exists & retrieve height settings config
   const logoPath = path.join(process.cwd(), 'public', 'logo.webp');
-  const logoExists = fs.existsSync(logoPath);
+  let logoExists = false;
+  try {
+    await fs.promises.access(logoPath);
+    logoExists = true;
+  } catch (e) {}
 
   const logoConfigPath = path.join(process.cwd(), 'public', 'logo_config.json');
   let logoHeight = 48; // default fallback (48px)
-  if (fs.existsSync(logoConfigPath)) {
-    try {
-      const config = JSON.parse(fs.readFileSync(logoConfigPath, 'utf8'));
-      if (config.height) {
-        logoHeight = Number(config.height);
-      }
-    } catch (e) {
-      console.error('Failed to parse logo height config:', e);
+  try {
+    const data = await fs.promises.readFile(logoConfigPath, 'utf8');
+    const config = JSON.parse(data);
+    if (config.height) {
+      logoHeight = Number(config.height);
     }
-  }
+  } catch (e) {}
 
   // Retrieve social config settings
   const socialConfigPath = path.join(process.cwd(), 'public', 'social_config.json');
@@ -80,14 +83,11 @@ export default async function RootLayout({ children }) {
     twitter: '',
     whatsapp: ''
   };
-  if (fs.existsSync(socialConfigPath)) {
-    try {
-      const config = JSON.parse(fs.readFileSync(socialConfigPath, 'utf8'));
-      socialLinks = { ...socialLinks, ...config };
-    } catch (e) {
-      console.error('Failed to parse social links config:', e);
-    }
-  }
+  try {
+    const data = await fs.promises.readFile(socialConfigPath, 'utf8');
+    const config = JSON.parse(data);
+    socialLinks = { ...socialLinks, ...config };
+  } catch (e) {}
 
   // Retrieve settings config for company details
   const settingsConfigPath = path.join(process.cwd(), 'public', 'settings_config.json');
@@ -99,14 +99,11 @@ export default async function RootLayout({ children }) {
     company_gst: '',
     sweden_office: ''
   };
-  if (fs.existsSync(settingsConfigPath)) {
-    try {
-      const config = JSON.parse(fs.readFileSync(settingsConfigPath, 'utf8'));
-      companyDetails = { ...companyDetails, ...config };
-    } catch (e) {
-      console.error('Failed to parse settings config:', e);
-    }
-  }
+  try {
+    const data = await fs.promises.readFile(settingsConfigPath, 'utf8');
+    const config = JSON.parse(data);
+    companyDetails = { ...companyDetails, ...config };
+  } catch (e) {}
 
   let discoverPages = [];
   let categories = [];
@@ -114,25 +111,27 @@ export default async function RootLayout({ children }) {
   let footerPolicies = [];
   
   try {
-    discoverPages = await DiscoverPage.findAll({
-      where: { is_active: true },
-      order: [['createdAt', 'ASC']],
-      raw: true
-    });
-    categories = await Category.findAll({
-      order: [['name', 'ASC']],
-      raw: true
-    });
-    footerQuickLinks = await FooterLink.findAll({
-      where: { section: 'quick_links' },
-      order: [['order_index', 'ASC'], ['title', 'ASC']],
-      raw: true
-    });
-    footerPolicies = await FooterLink.findAll({
-      where: { section: 'policies' },
-      order: [['order_index', 'ASC'], ['title', 'ASC']],
-      raw: true
-    });
+    [discoverPages, categories, footerQuickLinks, footerPolicies] = await Promise.all([
+      DiscoverPage.findAll({
+        where: { is_active: true },
+        order: [['createdAt', 'ASC']],
+        raw: true
+      }),
+      Category.findAll({
+        order: [['name', 'ASC']],
+        raw: true
+      }),
+      FooterLink.findAll({
+        where: { section: 'quick_links' },
+        order: [['order_index', 'ASC'], ['title', 'ASC']],
+        raw: true
+      }),
+      FooterLink.findAll({
+        where: { section: 'policies' },
+        order: [['order_index', 'ASC'], ['title', 'ASC']],
+        raw: true
+      })
+    ]);
   } catch (err) {
     console.error('Failed to load dynamic navigation menus:', err);
   }
@@ -160,7 +159,7 @@ export default async function RootLayout({ children }) {
                 <div className="flex justify-between items-center h-20">
                   {/* Logo */}
                   <div className="flex-shrink-0 flex items-center">
-                    <a href="/" className="flex items-center">
+                    <Link href="/" className="flex items-center">
                       {logoExists ? (
                         <img 
                           src="/logo.webp" 
@@ -174,14 +173,14 @@ export default async function RootLayout({ children }) {
                           <span className="text-vedicana-gold text-4xl leading-none">.</span>
                         </span>
                       )}
-                    </a>
+                    </Link>
                   </div>
                   
                   {/* Desktop Menu */}
                   <div className="hidden lg:flex space-x-8 items-center">
-                    <a href="/" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Home</a>
-                    <a href="/shop" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Shop</a>
-                    <a href="/blog" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Blog</a>
+                    <Link href="/" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Home</Link>
+                    <Link href="/shop" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Shop</Link>
+                    <Link href="/blog" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Blog</Link>
                     
                     {/* Discover Dropdown */}
                     <div className="relative group py-8">
@@ -190,20 +189,20 @@ export default async function RootLayout({ children }) {
                       </button>
                       <div className="absolute top-20 left-0 w-64 bg-white shadow-xl border border-gray-100 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top group-hover:scale-100 scale-95">
                         <div className="py-2">
-                          <a 
+                          <Link 
                             href="/prakriti" 
                             className="block px-5 py-3 font-sans text-xs uppercase tracking-wider text-vedicana-gold hover:bg-gray-50 hover:text-vedicana-green border-b border-gray-100 transition-colors font-semibold"
                           >
                             Ayurvedic Quiz
-                          </a>
+                          </Link>
                           {discoverPages.map((page) => (
-                            <a 
+                            <Link 
                               key={page.id} 
                               href={`/${page.slug}`} 
                               className="block px-5 py-3 font-sans text-xs uppercase tracking-wider text-gray-600 hover:bg-gray-50 hover:text-vedicana-green transition-colors font-medium"
                             >
                               {page.title}
-                            </a>
+                            </Link>
                           ))}
                           {discoverPages.length === 0 && (
                             <span className="block px-5 py-2.5 text-sm text-gray-400 italic">No pages configured</span>
@@ -213,33 +212,33 @@ export default async function RootLayout({ children }) {
 
                     </div>
 
-                    <a href="/contact" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Contact Us</a>
-                    <a href="/career" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Careers</a>
+                    <Link href="/contact" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Contact Us</Link>
+                    <Link href="/career" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Careers</Link>
                   </div>
 
                   {/* Right Side Icons & Socials */}
                   <div className="flex items-center">
                     {/* Wellness Consultation CTA Button */}
                     <div className="hidden md:flex items-center mr-6 pr-6 border-r border-gray-200">
-                      <a 
+                      <Link 
                         href="/wellness-consultation" 
                         className="bg-vedicana-green hover:bg-vedicana-dark-green text-white px-4 py-1.5 rounded-full font-serif text-[11px] md:text-[12px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:shadow hover:-translate-y-0.5 active:translate-y-0 text-center"
                       >
                         Wellness Consultation
-                      </a>
+                      </Link>
                     </div>
 
                     {/* Actions */}
                     <div className="flex items-center space-x-5">
                       <LanguageTranslator />
                       <SearchBar />
-                      <a 
+                      <Link 
                         href="/profile" 
                         title="Sign Up/Login" 
                         className="text-gray-700 hover:text-vedicana-green transition-colors"
                       >
                         <User size={20} />
-                      </a>
+                      </Link>
                       <CartIcon />
                       <MobileNav discoverPages={discoverPages} />
                     </div>
@@ -249,8 +248,8 @@ export default async function RootLayout({ children }) {
             </header>
           )}
 
-          <main id="main-content" className="flex-grow">
-            {children}
+          <main id="main-content" className="flex-grow flex flex-col">
+            <PageTransition>{children}</PageTransition>
           </main>
 
           {!hideLayout && <SpinWheelModal />}
@@ -296,20 +295,20 @@ export default async function RootLayout({ children }) {
                     <h4 className="text-xs md:text-sm font-semibold text-white/95 mb-2 uppercase tracking-wider">Quick Links</h4>
                     <ul className="space-y-1 text-sm">
                       <li>
-                        <a href="/prakriti" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
+                        <Link href="/prakriti" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
                           Ayurvedic Quiz (Prakriti)
-                        </a>
+                        </Link>
                       </li>
                       <li>
-                        <a href="/wellness-consultation" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
+                        <Link href="/wellness-consultation" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
                           Wellness Consultation
-                        </a>
+                        </Link>
                       </li>
                       {footerQuickLinks.map((link) => (
                         <li key={link.id}>
-                          <a href={link.url} className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-light tracking-wide text-[13px] md:text-sm">
+                          <Link href={link.url} className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-light tracking-wide text-[13px] md:text-sm">
                             {link.title}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                       {footerQuickLinks.length === 0 && (
@@ -324,9 +323,9 @@ export default async function RootLayout({ children }) {
                     <ul className="space-y-1 text-sm">
                       {footerPolicies.map((link) => (
                         <li key={link.id}>
-                          <a href={link.url} className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-light tracking-wide text-[13px] md:text-sm">
+                          <Link href={link.url} className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-light tracking-wide text-[13px] md:text-sm">
                             {link.title}
-                          </a>
+                          </Link>
                         </li>
                       ))}
                       {footerPolicies.length === 0 && (

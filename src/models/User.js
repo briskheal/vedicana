@@ -34,6 +34,10 @@ const User = sequelize.define('User', {
     type: DataTypes.BOOLEAN,
     defaultValue: false
   },
+  points: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
   reset_pin: {
     type: DataTypes.STRING,
     allowNull: true,

@@ -1,0 +1,24 @@
+"use client";
+
+import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
+
+export default function PageTransition({ children }) {
+  const pathname = usePathname();
+
+  // On initial load, we don't want a massive delay, but on navigation we want a smooth fade-in
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="flex-grow flex flex-col"
+      >
+        {children}
+      </motion.div>
+    </AnimatePresence>
+  );
+}

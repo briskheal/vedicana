@@ -1,5 +1,6 @@
 import { ShoppingCart, Filter, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Product from '../../models/Product.js';
 import Category from '../../models/Category.js';
 import AddToCartButton from '../../components/AddToCartButton';
@@ -54,14 +55,19 @@ export default async function Shop({ searchParams }) {
     queryOptions.offset = offset;
   }
 
-  // Fetch products and categories from Supabase PostgreSQL Database
-  const { count, rows: dbProducts } = await Product.findAndCountAll(queryOptions);
-  const products = dbProducts.map(p => p.get({ plain: true }));
-  
-  const dbCategories = await Category.findAll();
-  const categories = dbCategories.map(c => c.get({ plain: true }));
+  // Fetch products and categories concurrently
+  const [
+    { count, rows: dbProducts },
+    dbCategories,
+    totalProductsCount
+  ] = await Promise.all([
+    Product.findAndCountAll(queryOptions),
+    Category.findAll(),
+    Product.count()
+  ]);
 
-  const totalProductsCount = await Product.count();
+  const products = dbProducts.map(p => p.get({ plain: true }));
+  const categories = dbCategories.map(c => c.get({ plain: true }));
   const totalPages = limit ? Math.ceil(count / limit) : 1;
 
   // URL Helper builders
@@ -201,7 +207,7 @@ export default async function Shop({ searchParams }) {
                 <div className="relative h-72 overflow-hidden bg-gray-100 flex-shrink-0">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 group-hover:opacity-0 transition-opacity pointer-events-none"></div>
                   {/* Now pulling standard image via URL */}
-                  <a href={`/shop/${product.slug}`} className="w-full h-full bg-vedicana-bg flex items-center justify-center relative">
+                  <Link href={`/shop/${product.slug}`} className="w-full h-full bg-vedicana-bg flex items-center justify-center relative">
                     <Image 
                       src={product.image || 'https://via.placeholder.com/800x800?text=No+Image'} 
                       alt={product.title}
@@ -209,7 +215,7 @@ export default async function Shop({ searchParams }) {
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover transform group-hover:scale-105 transition-transform duration-500"
                     />
-                  </a>
+                  </Link>
                   {product.sale_price && (
                     <div className="absolute top-4 right-4 z-20">
                       <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
@@ -227,9 +233,9 @@ export default async function Shop({ searchParams }) {
                 </div>
                 
                 <div className="p-6 flex flex-col flex-grow">
-                  <a href={`/shop/${product.slug}`} className="block">
+                  <Link href={`/shop/${product.slug}`} className="block">
                     <h3 className="text-xl font-serif mb-3 text-gray-900 group-hover:text-vedicana-green transition-colors line-clamp-1">{product.title}</h3>
-                  </a>
+                  </Link>
                   <div 
                     className="text-sm text-gray-550 mb-6 line-clamp-2" 
                     dangerouslySetInnerHTML={{ 

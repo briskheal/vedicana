@@ -111,7 +111,7 @@ export default function MantraPlayer() {
       {activeMantra && (
         <audio 
           ref={audioRef} 
-          src={`/mantras/${activeMantra.filename}`} 
+          src={activeMantra.filename.startsWith('http') ? activeMantra.filename : `/mantras/${activeMantra.filename}`} 
           onEnded={() => setIsPlaying(false)} 
           className="hidden"
         />

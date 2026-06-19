@@ -97,16 +97,16 @@ export default function MantrasLibrary() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Filename in /public/mantras/</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Supabase Audio URL</label>
                 <input 
                   type="text" 
                   value={file || ''}
                   onChange={(e) => setFile(e.target.value)}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green font-mono text-sm"
-                  placeholder="e.g., gayatri.mp3"
+                  placeholder="https://oeuelrgzxtogwmotdomd.supabase.co/storage/v1/object/public/mantra-audio/mantra.mp3"
                   required
                 />
-                <p className="text-xs text-slate-500 mt-2">Place your .mp3 file in the `public/mantras` folder of the code and type its exact name here.</p>
+                <p className="text-xs text-slate-500 mt-2">Paste the public URL from your Supabase `mantra-audio` bucket here.</p>
               </div>
 
               <button 
@@ -153,7 +153,7 @@ export default function MantrasLibrary() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <audio controls src={`/mantras/${mantra.filename}`} className="h-8 w-48 hidden md:block" />
+                      <audio controls src={mantra.filename.startsWith('http') ? mantra.filename : `/mantras/${mantra.filename}`} className="h-8 w-48 hidden md:block" />
                       <button 
                         onClick={() => handleDelete(mantra.id)}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"

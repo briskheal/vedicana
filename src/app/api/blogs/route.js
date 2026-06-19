@@ -4,7 +4,7 @@ import models from '../../../models/index.js';
 
 const { Blog } = models;
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export async function GET() {
   try {
@@ -16,7 +16,7 @@ export async function GET() {
       order: [['published_at', 'DESC']],
     });
     return NextResponse.json(blogs, {
-      headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' },
+      headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=300' },
     });
   } catch (error) {
     console.error('[API Public Blogs] GET Error:', error);

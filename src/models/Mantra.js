@@ -14,16 +14,7 @@ const Mantra = sequelize.define('Mantra', {
   filename: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  mimeType: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: 'audio/mpeg',
-  },
-  data: {
-    type: DataTypes.BLOB('long'),
-    allowNull: false,
-  },
+  }
 }, {
   timestamps: true,
 });

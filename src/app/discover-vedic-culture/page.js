@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import DiscoverPage from '../../models/DiscoverPage.js';
 import ChakraWheel from '../../components/ChakraWheel';
 import SafeHtmlRenderer from '../../components/SafeHtmlRenderer.js';
-
+import MantraPlayer from '../../components/MantraPlayer.js';
 export const dynamic = 'force-dynamic';
 
 export default async function DiscoverVedicCulturePage() {
@@ -49,6 +49,8 @@ export default async function DiscoverVedicCulturePage() {
           <SafeHtmlRenderer html={contentToRender} />
           {/* ChakraWheel will render client-side via React Portal into the #chakra-wheel-placeholder div */}
           <ChakraWheel />
+          
+          <MantraPlayer />
         </div>
       </div>
     </div>

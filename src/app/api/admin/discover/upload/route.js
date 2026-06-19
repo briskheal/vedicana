@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import sharp from 'sharp';
-import models from '../../../../../models/index.js';
+import { supabaseAdmin, STORAGE_BUCKET } from '../../../../../lib/supabaseAdmin.js';
 
-const { StoredImage } = models;
+export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
   try {
@@ -16,27 +16,43 @@ export async function POST(req) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    console.log(`[Upload API] Compressing image and saving to database...`);
+    console.log(`[Upload API] Compressing image and uploading to Supabase Storage...`);
 
-    // Compress using sharp (resize to max 1000px keeping aspect, encode in WebP)
+    // Compress using sharp (resize to max 1200px, encode as WebP @ 82% quality)
     const compressedBuffer = await sharp(buffer)
-      .resize({ width: 1000, withoutEnlargement: true })
-      .webp({ quality: 80 })
+      .resize({ width: 1200, withoutEnlargement: true })
+      .webp({ quality: 82 })
       .toBuffer();
 
-    // Save binary data to PostgreSQL
-    const storedImage = await StoredImage.create({
-      filename: `discover-upload-${Date.now()}.webp`,
-      mimeType: 'image/webp',
-      data: compressedBuffer
-    });
+    // Generate a unique filename
+    const filename = `discover-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.webp`;
 
-    // Return the clean public URL
-    return NextResponse.json({ url: `/api/images/${storedImage.id}` });
+    // Upload to Supabase Storage
+    const { data, error } = await supabaseAdmin.storage
+      .from(STORAGE_BUCKET)
+      .upload(filename, compressedBuffer, {
+        contentType: 'image/webp',
+        cacheControl: '31536000', // 1 year cache on Supabase CDN
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('[Upload API] Supabase Storage upload error:', error);
+      return NextResponse.json({ error: error.message || 'Storage upload failed' }, { status: 500 });
+    }
+
+    // Get the permanent public CDN URL
+    const { data: publicUrlData } = supabaseAdmin.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(data.path);
+
+    const publicUrl = publicUrlData.publicUrl;
+
+    console.log(`[Upload API] Image uploaded to Supabase CDN: ${publicUrl}`);
+
+    return NextResponse.json({ url: publicUrl });
   } catch (error) {
     console.error('[Upload API] Error processing image upload:', error);
     return NextResponse.json({ error: error.message || 'Image processing failed' }, { status: 500 });
   }
 }
-
-

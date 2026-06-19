@@ -7,7 +7,7 @@ export default function MantrasLibrary() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [title, setTitle] = useState('');
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState('');
 
   const fetchMantras = async () => {
     try {
@@ -30,25 +30,28 @@ export default function MantrasLibrary() {
     if (!title || !file) return;
 
     setUploading(true);
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('file', file);
 
     try {
       const res = await fetch('/api/admin/mantras', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title,
+          filename: file
+        })
       });
       if (res.ok) {
         setTitle('');
-        setFile(null);
-        e.target.reset();
+        setFile('');
         await fetchMantras();
       } else {
-        alert('Upload failed');
+        const err = await res.json();
+        alert('Failed: ' + err.error);
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error('Add error:', error);
     } finally {
       setUploading(false);
     }
@@ -79,7 +82,7 @@ export default function MantrasLibrary() {
         {/* Upload Form */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-lg font-bold text-slate-800 border-b pb-3 mb-4">Upload New Mantra</h2>
+            <h2 className="text-lg font-bold text-slate-800 border-b pb-3 mb-4">Add New Mantra</h2>
             <form onSubmit={handleUpload} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Mantra Title</label>
@@ -94,16 +97,16 @@ export default function MantrasLibrary() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Audio File (.mp3, .ogg)</label>
-                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:bg-slate-50 transition-colors">
-                  <input 
-                    type="file" 
-                    accept="audio/*"
-                    onChange={(e) => setFile(e.target.files[0])}
-                    className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-vedicana-green hover:file:bg-green-100"
-                    required
-                  />
-                </div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Filename in /public/mantras/</label>
+                <input 
+                  type="text" 
+                  value={file || ''}
+                  onChange={(e) => setFile(e.target.value)}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green font-mono text-sm"
+                  placeholder="e.g., gayatri.mp3"
+                  required
+                />
+                <p className="text-xs text-slate-500 mt-2">Place your .mp3 file in the `public/mantras` folder of the code and type its exact name here.</p>
               </div>
 
               <button 
@@ -112,7 +115,7 @@ export default function MantrasLibrary() {
                 className="w-full bg-vedicana-dark-green text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-vedicana-green transition-colors disabled:opacity-50"
               >
                 {uploading ? <RefreshCw className="animate-spin" size={18} /> : <Upload size={18} />}
-                {uploading ? 'Uploading...' : 'Upload Mantra'}
+                {uploading ? 'Adding...' : 'Add Mantra'}
               </button>
             </form>
           </div>
@@ -150,7 +153,7 @@ export default function MantrasLibrary() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <audio controls src={`/api/mantras/audio/${mantra.id}`} className="h-8 w-48 hidden md:block" />
+                      <audio controls src={`/mantras/${mantra.filename}`} className="h-8 w-48 hidden md:block" />
                       <button 
                         onClick={() => handleDelete(mantra.id)}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"

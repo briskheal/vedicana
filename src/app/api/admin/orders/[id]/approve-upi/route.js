@@ -5,10 +5,11 @@ const { Order, OrderItem, Product } = models;
 
 export async function POST(request, { params }) {
   try {
-    const { id } = params;
+    const resolvedParams = await params;
+    const { id } = resolvedParams;
 
     const order = await Order.findByPk(id, {
-      include: [{ model: OrderItem, as: 'items' }]
+      include: [{ model: OrderItem }]
     });
 
     if (!order) {
@@ -35,7 +36,24 @@ export async function POST(request, { params }) {
       console.error('[ERROR] Decrementing inventory stock on UPI approve:', stockErr);
     }
 
-    return NextResponse.json({ success: true, message: 'Payment approved successfully', order });
+      // Async email sending
+      try {
+        let shippingObj = {};
+        try { shippingObj = typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress; } catch(e){}
+        
+        const email = shippingObj.billingEmail || shippingObj.email;
+        const name = shippingObj.billingFirstName ? `${shippingObj.billingFirstName} ${shippingObj.billingLastName}` : shippingObj.name || 'Customer';
+        
+        const { sendOrderConfirmation } = await import('../../../../../../lib/orderMailer.js');
+        const fullOrder = await Order.findByPk(id, { include: [{ model: OrderItem, include: [Product] }] });
+        sendOrderConfirmation(fullOrder, email, name);
+      } catch (mailErr) {
+        console.error('Failed to send mail on UPI approve:', mailErr);
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Payment approved successfully', order });
   } catch (error) {
     console.error("UPI Approve Error:", error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

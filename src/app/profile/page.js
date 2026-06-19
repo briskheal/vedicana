@@ -28,16 +28,23 @@ export default async function ProfilePage() {
   }
 
   // Fetch full user and order history from DB
+  const { Op } = require('sequelize');
   const user = await User.findByPk(decoded.id, {
     include: [
       { 
         model: Order, 
         as: 'Orders', 
         separate: true, 
+        where: {
+          [Op.not]: {
+            paymentMethod: 'upi_direct',
+            paymentStatus: 'pending'
+          }
+        },
         order: [['createdAt', 'DESC']],
         include: [{
           model: OrderItem,
-          include: [{ model: Product, attributes: ['name'] }]
+          include: [{ model: Product, attributes: ['title'] }]
         }]
       }
     ]

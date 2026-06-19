@@ -6,7 +6,7 @@ const { Mantra } = models;
 export async function GET() {
   try {
     const mantras = await Mantra.findAll({
-      attributes: ['id', 'title', 'filename', 'mimeType', 'createdAt'],
+      attributes: ['id', 'title', 'filename', 'createdAt'],
       order: [['createdAt', 'DESC']],
       raw: true
     });
@@ -19,32 +19,28 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const formData = await req.formData();
-    const title = formData.get('title');
-    const file = formData.get('file');
+    const body = await req.json();
+    const { title, filename } = body;
 
-    if (!file || !title) {
-      return NextResponse.json({ error: 'Title and file are required' }, { status: 400 });
+    if (!title || !filename) {
+      return NextResponse.json({ error: 'Title and filename are required' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // Clean up filename (e.g. remove leading slashes)
+    const cleanFilename = filename.replace(/^\/+/, '');
 
     const mantra = await Mantra.create({
       title,
-      filename: file.name,
-      mimeType: file.type || 'audio/mpeg',
-      data: buffer
+      filename: cleanFilename
     });
 
     return NextResponse.json({
       id: mantra.id,
       title: mantra.title,
-      filename: mantra.filename,
-      mimeType: mantra.mimeType
+      filename: mantra.filename
     });
   } catch (error) {
-    console.error('Upload failed:', error);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    console.error('Creation failed:', error);
+    return NextResponse.json({ error: 'Creation failed' }, { status: 500 });
   }
 }

@@ -70,9 +70,14 @@ export async function PUT(request, { params }) {
     }
 
     // Update the Order status
+    let finalPaymentStatus = paymentStatus ?? order.paymentStatus;
+    if (newStatus === 'delivered' && oldStatus !== 'delivered' && (order.paymentMethod === 'cod' || order.paymentMethod === 'upi_direct')) {
+      finalPaymentStatus = 'paid';
+    }
+
     await Order.update({
       status: newStatus,
-      paymentStatus: paymentStatus ?? order.paymentStatus,
+      paymentStatus: finalPaymentStatus,
       ...(shippingAddress !== undefined && { shippingAddress })
     }, {
       where: { id }

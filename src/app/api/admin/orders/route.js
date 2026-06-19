@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Op } from 'sequelize';
 import models from '../../../../models/index.js';
 
 const { Order, User, OrderItem, Product } = models;
@@ -6,6 +7,12 @@ const { Order, User, OrderItem, Product } = models;
 export async function GET() {
   try {
     const orders = await Order.findAll({
+      where: {
+        [Op.not]: {
+          paymentMethod: 'upi_direct',
+          paymentStatus: 'pending'
+        }
+      },
       order: [['createdAt', 'DESC']],
       include: [
         { model: User, attributes: ['name', 'email'] },

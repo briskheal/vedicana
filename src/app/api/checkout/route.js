@@ -256,6 +256,15 @@ export async function POST(request) {
 
     // 5. Handle Payment Method
     if (paymentMethod === 'cod') {
+      const fullOrder = await Order.findByPk(newOrder.id, { include: [{ model: OrderItem, include: [Product] }] });
+      const email = shippingInfo?.billingEmail || shippingInfo?.email || userObj?.email;
+      const name = shippingInfo?.billingFirstName ? `${shippingInfo.billingFirstName} ${shippingInfo.billingLastName}` : shippingInfo?.name || userObj?.name || 'Customer';
+      
+      // Async email sending without awaiting to not block checkout response
+      import('../../../lib/orderMailer.js').then(({ sendOrderConfirmation }) => {
+        sendOrderConfirmation(fullOrder, email, name);
+      }).catch(err => console.error('Failed to load mailer:', err));
+
       return NextResponse.json({ success: true, orderId: newOrder.id, method: 'cod' });
     } else if (paymentMethod === 'upi_direct') {
       return NextResponse.json({

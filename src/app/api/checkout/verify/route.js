@@ -42,6 +42,23 @@ export async function POST(request) {
         console.error('[ERROR] Decrementing inventory stock on verify:', stockErr);
       }
 
+      // Fetch order for email
+      try {
+        const orderInfo = await Order.findByPk(internalOrderId, { include: [{ model: OrderItem, include: [Product] }] });
+        if (orderInfo) {
+          let shippingObj = {};
+          try { shippingObj = typeof orderInfo.shippingAddress === 'string' ? JSON.parse(orderInfo.shippingAddress) : orderInfo.shippingAddress; } catch(e){}
+          
+          const email = shippingObj.billingEmail || shippingObj.email;
+          const name = shippingObj.billingFirstName ? `${shippingObj.billingFirstName} ${shippingObj.billingLastName}` : shippingObj.name || 'Customer';
+          
+          const { sendOrderConfirmation } = await import('../../../../lib/orderMailer.js');
+          sendOrderConfirmation(orderInfo, email, name);
+        }
+      } catch (mailErr) {
+        console.error('Failed to send mail on Razorpay verify:', mailErr);
+      }
+
       return NextResponse.json({ success: true, message: 'Payment verified successfully' });
     } else {
       await Order.update(

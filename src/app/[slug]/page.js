@@ -8,7 +8,8 @@ import MantraPlayer from '../../components/MantraPlayer.js';
 import fs from 'fs';
 import path from 'path';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
 
 export default async function DynamicDiscoverPage({ params }) {
   const resolvedParams = await params;
@@ -54,9 +55,6 @@ export default async function DynamicDiscoverPage({ params }) {
 
   return (
     <div className="bg-[#fbfcfa] min-h-screen pb-24" suppressHydrationWarning={true}>
-      {slug === 'discover-vedic-culture' && (
-        <MantraPlayer />
-      )}
       
       {/* Page Header Banner */}
       <div className="bg-vedicana-dark-green py-20 text-center relative overflow-hidden">

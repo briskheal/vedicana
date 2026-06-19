@@ -3,12 +3,12 @@ import models from '../../../models/index.js';
 
 const { Mantra } = models;
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export async function GET() {
   try {
     const mantras = await Mantra.findAll({
-      attributes: ['id', 'title', 'filename', 'mimeType'],
+      attributes: ['id', 'title', 'filename'],
       order: [['createdAt', 'ASC']],
       raw: true
     });

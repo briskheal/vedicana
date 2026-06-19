@@ -2,7 +2,6 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import DiscoverPage from '../../models/DiscoverPage.js';
 import SafeHtmlRenderer from '../../components/SafeHtmlRenderer.js';
-
 export const dynamic = 'force-dynamic';
 
 export default async function SpiritualHomeOmvedicPage() {

@@ -478,7 +478,9 @@ export default function AdminOrders() {
                   {activeInspectOrder.upi_utr && (
                     <p className="text-[10px] text-amber-400 mt-1 font-mono break-all">UPI UTR: {activeInspectOrder.upi_utr}</p>
                   )}
-                  <p className="text-xs text-slate-300 mt-1">Payment Status: <span className={`font-semibold capitalize ${activeInspectOrder.paymentStatus === 'paid' ? 'text-emerald-400' : activeInspectOrder.paymentStatus === 'verification_pending' ? 'text-amber-400 animate-pulse' : 'text-amber-450'}`}>{activeInspectOrder.paymentStatus.replace('_', ' ')}</span></p>
+                  <p className="text-xs text-slate-300 mt-1">Payment Status: <span className={`font-semibold capitalize ${(activeInspectOrder.status === 'delivered' && (activeInspectOrder.paymentMethod === 'cod' || activeInspectOrder.paymentMethod === 'upi_direct')) ? 'text-emerald-400' : activeInspectOrder.paymentStatus === 'paid' ? 'text-emerald-400' : activeInspectOrder.paymentStatus === 'verification_pending' ? 'text-amber-400 animate-pulse' : 'text-amber-450'}`}>
+                    {(activeInspectOrder.status === 'delivered' && (activeInspectOrder.paymentMethod === 'cod' || activeInspectOrder.paymentMethod === 'upi_direct')) ? 'Cash Collected' : activeInspectOrder.paymentStatus.replace('_', ' ')}
+                  </span></p>
                   
                   {activeInspectOrder.paymentStatus === 'verification_pending' && (
                     <button 
@@ -610,13 +612,12 @@ export default function AdminOrders() {
                 </div>
               )}
 
-              {/* Financial Recap */}
               <div className="flex flex-col items-end pr-3 space-y-1.5 text-xs text-slate-400 border-t border-slate-800/40 pt-4">
                 {activeInspectOrder.discountAmount > 0 && (
                   <p>Coupon Discount: <span className="font-mono text-emerald-400">-₹{parseFloat(activeInspectOrder.discountAmount).toFixed(2)}</span></p>
                 )}
                 <p>Shipping Charges: <span className="font-mono text-slate-300">
-                  {parseFloat(activeInspectOrder.totalAmount || activeInspectOrder.total) < 500 && activeInspectOrder.paymentMethod === 'cod' ? '₹50.00' : 'Free'}
+                  {((activeInspectOrder.OrderItems || []).reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity), 0) < 500 && (activeInspectOrder.OrderItems || []).length > 0) ? '₹50.00' : 'Free'}
                 </span></p>
                 <p className="text-sm font-bold text-white mt-1">Grand Total: <span className="font-mono text-vedicana-gold text-base">₹{parseFloat(activeInspectOrder.totalAmount || activeInspectOrder.total).toFixed(2)}</span></p>
               </div>

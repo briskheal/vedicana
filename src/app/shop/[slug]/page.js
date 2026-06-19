@@ -10,7 +10,6 @@ import ProductDetailInfo from '../../../components/ProductDetailInfo';
 import RelatedProductsCarousel from '../../../components/RelatedProductsCarousel';
 import { Op } from 'sequelize';
 
-
 export const revalidate = 3600;
 
 export default async function ProductDetails({ params }) {

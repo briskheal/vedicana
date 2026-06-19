@@ -1,4 +1,20 @@
 import "./globals.css";
+import { Lato, Cardo } from 'next/font/google';
+
+const lato = Lato({
+  subsets: ['latin'],
+  weight: ['300', '400', '700'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const cardo = Cardo({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
 import { Search, User, ChevronDown } from 'lucide-react';
 
 const Facebook = ({ size = 20, className = "" }) => (
@@ -132,13 +148,10 @@ export default async function RootLayout({ children }) {
   }
 
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning={true}>
+    <html lang="en" className={`scroll-smooth ${lato.variable} ${cardo.variable}`} suppressHydrationWarning={true}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="flex flex-col min-h-screen overflow-x-hidden w-full relative" suppressHydrationWarning={true}>
+      <body className="flex flex-col min-h-screen overflow-x-hidden w-full relative font-sans" suppressHydrationWarning={true}>
         <CartProvider>
           {/* Skip directly to main content for screen readers / keyboard users */}
           <a 
@@ -150,7 +163,7 @@ export default async function RootLayout({ children }) {
 
           <ConditionalLayout
             header={
-              <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+              <header key="global-header" className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
               <nav className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-20">
                   {/* Logo */}
@@ -243,9 +256,9 @@ export default async function RootLayout({ children }) {
               </nav>
             </header>
             }
-            spinWheel={<SpinWheelModal />}
+            spinWheel={<SpinWheelModal key="global-spinwheel" />}
             footer={
-              <>
+              <div key="global-footer" className="global-footer-container">
                 <footer className="bg-black text-slate-300 pt-6 pb-4 border-t-[6px] border-vedicana-gold font-sans antialiased">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-3">
@@ -397,7 +410,7 @@ export default async function RootLayout({ children }) {
               </svg>
             </a>
             <AccessibilityAssistant />
-          </>
+          </div>
             }
           >
             <main id="main-content" className="flex-grow flex flex-col">

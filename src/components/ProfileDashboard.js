@@ -244,7 +244,7 @@ export default function ProfileDashboard({ initialUser }) {
                             <ul className="list-disc pl-4">
                               {order.OrderItems.map(item => (
                                 <li key={item.id}>
-                                  {item.quantity}x {item.Product ? item.Product.name : 'Unknown Item'} {item.variant ? `(${item.variant})` : ''}
+                                  {item.quantity}x {item.Product ? item.Product.title : 'Unknown Item'} {item.variant ? `(${item.variant})` : ''}
                                 </li>
                               ))}
                             </ul>
@@ -256,11 +256,16 @@ export default function ProfileDashboard({ initialUser }) {
                           ₹{order.totalAmount}
                         </td>
                         <td className="px-3 py-2 border border-gray-300 text-gray-700">
-                          {order.paymentMethod === 'cod' ? 'COD' : 'Razorpay'}
+                          {order.paymentMethod === 'cod' ? 'COD' : order.paymentMethod === 'upi_direct' ? 'UPI App' : 'Razorpay'}
+                          {order.upi_utr && (
+                            <div className="text-[10px] text-gray-500 font-mono mt-0.5" title="UPI UTR Number">
+                              UTR: {order.upi_utr}
+                            </div>
+                          )}
                         </td>
                         <td className="px-3 py-2 border border-gray-300">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                            order.status === 'processing' || order.status === 'shipped' || order.status === 'completed'
+                            order.status === 'processing' || order.status === 'shipped' || order.status === 'completed' || order.status === 'delivered'
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
                               : order.status === 'pending'
                               ? 'bg-amber-50 text-amber-700 border border-amber-100'
@@ -268,6 +273,25 @@ export default function ProfileDashboard({ initialUser }) {
                           }`}>
                             {order.status}
                           </span>
+                          {(() => {
+                            let tracking = null;
+                            if (order.shippingAddress) {
+                              try {
+                                const parsed = typeof order.shippingAddress === 'string' ? JSON.parse(order.shippingAddress) : order.shippingAddress;
+                                tracking = parsed.tracking;
+                              } catch(e) {}
+                            }
+                            if (tracking && tracking.consignmentNo) {
+                              return (
+                                <div className="mt-2 text-[10px] bg-slate-50 border border-slate-200 p-1.5 rounded text-gray-600 shadow-sm w-max max-w-[150px]">
+                                  <strong className="text-vedicana-green block mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">🚚 Track Order</strong>
+                                  <span className="block whitespace-nowrap overflow-hidden text-ellipsis" title={tracking.courierPartner}>By: {tracking.courierPartner}</span>
+                                  <span className="block font-mono select-all">No: {tracking.consignmentNo}</span>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
                         </td>
                         <td className="px-3 py-2 border border-gray-300 text-right space-x-3">
                           <a 

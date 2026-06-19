@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import models from '../../../../models/index.js';
 
 const { Mantra } = models;
@@ -10,6 +11,7 @@ export async function GET() {
       order: [['createdAt', 'DESC']],
       raw: true
     });
+
     return NextResponse.json(mantras);
   } catch (error) {
     console.error('Failed to fetch mantras:', error);
@@ -33,6 +35,9 @@ export async function POST(req) {
       title,
       filename: cleanFilename
     });
+
+    // Invalidate the public mantras cache so the frontend updates instantly
+    revalidatePath('/api/mantras');
 
     return NextResponse.json({
       id: mantra.id,

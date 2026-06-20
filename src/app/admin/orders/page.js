@@ -358,6 +358,7 @@ export default function AdminOrders() {
                   <th className="px-4 py-2 font-medium">Customer Identity</th>
                   <th className="px-4 py-2 font-medium">Timestamp</th>
                   <th className="px-4 py-2 font-medium">Total Paid</th>
+                  <th className="px-4 py-2 font-medium">Tracking Info</th>
                   <th className="px-4 py-2 font-medium">Status Selector</th>
                   <th className="px-4 py-2 font-medium text-right">Actions</th>
                 </tr>
@@ -383,6 +384,26 @@ export default function AdminOrders() {
                     </td>
                     <td className="px-4 py-2 font-mono text-slate-300 font-bold">
                       ₹{parseFloat(order.totalAmount || order.total).toFixed(2)}
+                    </td>
+                    <td className="px-4 py-2 text-xs">
+                      {(() => {
+                        let tracking = null;
+                        if (order.status === 'shipped' || order.status === 'delivered') {
+                          try {
+                            const parsed = JSON.parse(order.shippingAddress);
+                            tracking = parsed.tracking;
+                          } catch(e){}
+                        }
+                        if (tracking) {
+                          return (
+                            <div>
+                              <p className="font-semibold text-white whitespace-nowrap">{tracking.courierPartner}</p>
+                              <p className="font-mono text-vedicana-gold mt-0.5">{tracking.consignmentNo}</p>
+                            </div>
+                          );
+                        }
+                        return <span className="text-slate-500 italic">Pending Dispatch</span>;
+                      })()}
                     </td>
                     <td className="px-4 py-2">
                       <select 

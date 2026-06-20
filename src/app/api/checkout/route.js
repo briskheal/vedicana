@@ -255,16 +255,29 @@ export async function POST(request) {
     }
 
     // 5. Handle Payment Method
-    if (paymentMethod === 'cod') {
+    if (paymentMethod === 'cod' || paymentMethod === 'upi_direct') {
       const fullOrder = await Order.findByPk(newOrder.id, { include: [{ model: OrderItem, include: [Product] }] });
-      const email = shippingInfo?.billingEmail || shippingInfo?.email || userObj?.email;
-      const name = shippingInfo?.billingFirstName ? `${shippingInfo.billingFirstName} ${shippingInfo.billingLastName}` : shippingInfo?.name || userObj?.name || 'Customer';
+      
+      let email = shippingInfo?.billingEmail || shippingInfo?.email || '';
+      let name = shippingInfo?.billingFirstName ? `${shippingInfo.billingFirstName} ${shippingInfo.billingLastName}` : shippingInfo?.name || 'Customer';
+      
+      try {
+        if (!email && userId) {
+          const uObj = await User.findByPk(userId);
+          if (uObj) {
+            email = email || uObj.email;
+            name = name === 'Customer' ? (uObj.name || 'Customer') : name;
+          }
+        }
+      } catch (e) {}
       
       // Async email sending without awaiting to not block checkout response
       import('../../../lib/orderMailer.js').then(({ sendOrderConfirmation }) => {
         sendOrderConfirmation(fullOrder, email, name);
       }).catch(err => console.error('Failed to load mailer:', err));
+    }
 
+    if (paymentMethod === 'cod') {
       return NextResponse.json({ success: true, orderId: newOrder.id, method: 'cod' });
     } else if (paymentMethod === 'upi_direct') {
       return NextResponse.json({

@@ -21,10 +21,10 @@ const sequelizeOptions = {
     }
   },
   pool: {
-    max: 2,
-    min: 0,
-    acquire: 30000,
-    idle: 10000
+    max: 20,
+    min: 2,
+    acquire: 60000,
+    idle: 60000
   }
 };
 

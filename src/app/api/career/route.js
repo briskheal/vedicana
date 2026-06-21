@@ -6,21 +6,20 @@ const { CareerApplication } = models;
 
 // ── Zoho SMTP ───────────────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.in',
-  port: 465,
-  secure: true,
+  host: 'smtp.sendgrid.net',
+  port: 2525,
   auth: {
-    user: process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_HR_PASS || process.env.ZOHO_SMTP_PASS,
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 
 // ── HR Notification Email (with attachment) ─────────────────────────────────
 function buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, fileName, fileType) {
-  const senderEmail = process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER;
+  const adminEmail = 'hrpartner@vedicana.com';
   return {
-    from: `"VediCana Careers" <${senderEmail}>`,
-    to: senderEmail,
+    from: `"VediCana Careers" <hrpartner@vedicana.com>`,
+    to: adminEmail,
     replyTo: email,
     subject: `📄 New Job Application: ${full_name} for ${position}`,
     html: `
@@ -102,9 +101,8 @@ export async function POST(request) {
     const hrEmail = buildHREmail({ full_name, email, phone, position, experience_years, location, cover_letter }, fileBuffer, randomFileName, resume.type);
     
     // 3. Send Auto-Reply to Candidate
-    const senderEmail = process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER;
     const candidateAutoReply = {
-      from: `"VediCana HR" <${senderEmail}>`,
+      from: `"VediCana HR" <hrpartner@vedicana.com>`,
       to: email,
       subject: `Application Received: ${position} at VediCana Organics`,
       html: `

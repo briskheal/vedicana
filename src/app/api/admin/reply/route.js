@@ -9,18 +9,18 @@ export async function POST(request) {
       return NextResponse.json({ error: 'To, subject and message are required.' }, { status: 400 });
     }
 
-    // Define the appropriate name based on the bucket
-    let fromName;
+    // Define the appropriate name and email based on the bucket
+    let fromName, user;
     if (bucket === 'career') {
       fromName = 'VediCana HR';
+      user = 'hrpartner@vedicana.com';
     } else if (bucket === 'subscribe') {
       fromName = 'VediCana Updates';
+      user = 'newsletter@vedicana.com';
     } else {
       fromName = 'VediCana Organics';
+      user = 'info@vedicana.com';
     }
-
-    // Force all emails to come from the verified SendGrid identity
-    const user = 'info@vedicana.com';
 
     const transporter = nodemailer.createTransport({
       host: 'smtp.sendgrid.net',

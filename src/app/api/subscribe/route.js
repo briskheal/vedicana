@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 // ── Beautiful HTML thank-you email ──────────────────────────────────────────
 function buildAutoReplyEmail(email) {
   return {
-    from: `"VediCana Updates" <info@vedicana.com>`,
+    from: `"VediCana Updates" <newsletter@vedicana.com>`,
     to: email,
     subject: '🌿 Welcome to the VediCana Family!',
     html: `

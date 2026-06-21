@@ -255,7 +255,7 @@ export async function POST(request) {
     }
 
     // 5. Handle Payment Method
-    if (paymentMethod === 'cod' || paymentMethod === 'upi_direct') {
+    if (paymentMethod === 'cod') {
       const fullOrder = await Order.findByPk(newOrder.id, { include: [{ model: OrderItem, include: [Product] }] });
       
       let email = shippingInfo?.billingEmail || shippingInfo?.email || '';

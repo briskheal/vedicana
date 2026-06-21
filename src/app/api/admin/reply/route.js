@@ -9,27 +9,26 @@ export async function POST(request) {
       return NextResponse.json({ error: 'To, subject and message are required.' }, { status: 400 });
     }
 
-    // Pick the right Zoho account based on which inbox bucket the reply is from
-    let user, pass, fromName;
+    // Define the appropriate name based on the bucket
+    let fromName;
     if (bucket === 'career') {
-      user = process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER;
-      pass = process.env.ZOHO_HR_PASS || process.env.ZOHO_SMTP_PASS;
       fromName = 'VediCana HR';
     } else if (bucket === 'subscribe') {
-      user = process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER;
-      pass = process.env.ZOHO_NEWSLETTER_PASS || process.env.ZOHO_SMTP_PASS;
       fromName = 'VediCana Updates';
     } else {
-      user = process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER;
-      pass = process.env.ZOHO_INFO_PASS || process.env.ZOHO_SMTP_PASS;
       fromName = 'VediCana Organics';
     }
 
+    // Force all emails to come from the verified SendGrid identity
+    const user = 'info@vedicana.com';
+
     const transporter = nodemailer.createTransport({
-      host: 'smtp.zoho.in',
-      port: 465,
-      secure: true,
-      auth: { user, pass },
+      host: 'smtp.sendgrid.net',
+      port: 2525,
+      auth: {
+        user: 'apikey',
+        pass: process.env.SENDGRID_API_KEY,
+      },
     });
 
     await transporter.sendMail({

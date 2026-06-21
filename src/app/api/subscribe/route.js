@@ -6,20 +6,18 @@ const { Subscriber } = models;
 
 // ── Zoho SMTP (Newsletter) ──────────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.in',
-  port: 465,
-  secure: true,   // SSL — port 587 is blocked on Vercel
+  host: 'smtp.sendgrid.net',
+  port: 2525,
   auth: {
-    user: process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_NEWSLETTER_PASS || process.env.ZOHO_SMTP_PASS,
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 
 // ── Beautiful HTML thank-you email ──────────────────────────────────────────
 function buildAutoReplyEmail(email) {
-  const senderEmail = process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER;
   return {
-    from: `"VediCana Updates" <${senderEmail}>`,
+    from: `"VediCana Updates" <info@vedicana.com>`,
     to: email,
     subject: '🌿 Welcome to the VediCana Family!',
     html: `

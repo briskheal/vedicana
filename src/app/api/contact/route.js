@@ -9,21 +9,20 @@ const { ContactMessage } = models;
 
 // ── Zoho SMTP — port 465 SSL (587 is blocked on Vercel) ─────────────────────
 const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.in',
-  port: 465,
-  secure: true,   // SSL on 465
+  host: 'smtp.sendgrid.net',
+  port: 2525,
   auth: {
-    user: process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_INFO_PASS || process.env.ZOHO_SMTP_PASS,
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 
 // ── Email to admin (notify of new contact message) ───────────────────────────
 function buildAdminEmail({ name, email, subject, message }) {
-  const senderEmail = process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER;
+  const adminEmail = process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER || 'info@vedicana.com';
   return {
-    from: `"VediCana Website" <${senderEmail}>`,
-    to: senderEmail,   // send to info@
+    from: `"VediCana Website" <info@vedicana.com>`,
+    to: adminEmail,   // send to info@
     replyTo: email,
     subject: `📬 New Contact: ${subject}`,
     html: `

@@ -3,12 +3,11 @@ import User from '../../../../models/User.js';
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.in',
-  port: 465,
-  secure: true,
+  host: 'smtp.sendgrid.net',
+  port: 2525,
   auth: {
-    user: process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER,
-    pass: process.env.ZOHO_INFO_PASS || process.env.ZOHO_SMTP_PASS,
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 
@@ -40,7 +39,7 @@ export async function POST(request) {
 
     // Send email
     const mailOptions = {
-      from: `"VediCana Organics" <${process.env.ZOHO_INFO_USER || process.env.ZOHO_SMTP_USER}>`,
+      from: `"VediCana Organics" <info@vedicana.com>`,
       to: cleanEmail,
       subject: 'Your Password Reset PIN - VediCana',
       html: `

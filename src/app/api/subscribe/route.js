@@ -178,6 +178,15 @@ export async function POST(request) {
             subject: '🌿 Welcome Back to VediCana!',
           });
           console.log(`✅ Welcome-back email sent to ${normalizedEmail}`);
+
+          // Send notification to the admin
+          await transporter.sendMail({
+            from: `"VediCana Website" <info@vedicana.com>`,
+            to: 'newsletter@vedicana.com',
+            subject: `📬 Newsletter Reactivated!`,
+            html: `<p>A user has re-subscribed to the newsletter: <strong>${normalizedEmail}</strong></p>`
+          });
+          console.log(`✅ Admin notification sent to newsletter@vedicana.com`);
         } catch (mailErr) {
           console.error('Welcome-back email error:', mailErr.message);
           // Still return success but include mail error for debugging
@@ -198,12 +207,22 @@ export async function POST(request) {
     // 3. Create new subscriber
     await Subscriber.create({ email: normalizedEmail, is_active: true });
 
-    // 4. Send thank-you email — await to catch errors
+    // 4. Send emails
     try {
+      // Send welcome to the user
       await transporter.sendMail(buildAutoReplyEmail(normalizedEmail));
       console.log(`✅ Thank-you email sent to ${normalizedEmail}`);
+
+      // Send notification to the admin
+      await transporter.sendMail({
+        from: `"VediCana Website" <info@vedicana.com>`,
+        to: 'newsletter@vedicana.com',
+        subject: `📬 New Newsletter Subscriber!`,
+        html: `<p>Great news! A new user has subscribed to the newsletter: <strong>${normalizedEmail}</strong></p>`
+      });
+      console.log(`✅ Admin notification sent to newsletter@vedicana.com`);
     } catch (mailErr) {
-      console.error('Thank-you email SMTP error:', mailErr.message);
+      console.error('Newsletter SMTP error:', mailErr.message);
       // Subscription succeeded, but return mail error for debugging
       return NextResponse.json({
         success: true,

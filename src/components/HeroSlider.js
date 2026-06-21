@@ -6,22 +6,22 @@ import Link from 'next/link';
 const defaultSlides = [
   {
     id: 'default-1',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/slide-1.png',
+    image: '/images/products/vedicana-mustard-honey.png',
     link: '/shop'
   },
   {
     id: 'default-2',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/slide-2.png',
+    image: '/images/products/vedicana-jamun-honey.png',
     link: '/shop'
   },
   {
     id: 'default-3',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/slide-4.png',
+    image: '/images/products/vedicana-sudh-desi-ghee.png',
     link: '/shop'
   },
   {
     id: 'default-4',
-    image: 'https://vedicana.com/wp-content/uploads/2024/08/slide-3.png',
+    image: '/images/products/vedicana-chyawanprash.png',
     link: '/shop'
   }
 ];

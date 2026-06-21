@@ -17,6 +17,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'vedicana.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.vedicana.com',
       }
     ],
   },

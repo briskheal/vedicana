@@ -174,7 +174,7 @@ export async function POST(request) {
         // Send welcome-back email
         try {
           await transporter.sendMail({
-            ...buildThankYouEmail(normalizedEmail),
+            ...buildAutoReplyEmail(normalizedEmail),
             subject: '🌿 Welcome Back to VediCana!',
           });
           console.log(`✅ Welcome-back email sent to ${normalizedEmail}`);

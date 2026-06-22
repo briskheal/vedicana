@@ -64,13 +64,29 @@ export default function MantraPlayer() {
           <h3 className="text-xl font-bold text-white text-center h-8">
             {activeMantra ? activeMantra.title : 'Select a Mantra'}
           </h3>
-          <p className="text-slate-400 mt-2">
+          <p className="text-slate-400 mt-2 mb-6">
             {isPlaying ? 'Playing now...' : activeMantra ? 'Paused' : 'Ready to play'}
           </p>
+
+          {/* Native Audio Element for Volume and Progress Controls */}
+          {activeMantra && (
+            <div className="w-full mt-auto max-w-[280px]">
+              <audio 
+                ref={audioRef} 
+                src={activeMantra.filename.startsWith('http') ? activeMantra.filename : `/mantras/${activeMantra.filename}`} 
+                onEnded={() => setIsPlaying(false)} 
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                controls
+                controlsList="nodownload noplaybackrate"
+                className="w-full h-10 rounded-lg outline-none"
+              />
+            </div>
+          )}
         </div>
 
         {/* Playlist */}
-        <div className="max-h-80 overflow-y-auto bg-slate-900 p-4 custom-scrollbar">
+        <div className="h-[400px] overflow-y-auto bg-slate-900 p-4 custom-scrollbar">
           {mantras.length === 0 ? (
             <div className="text-center text-slate-500 py-12">No mantras available right now.</div>
           ) : (
@@ -107,15 +123,6 @@ export default function MantraPlayer() {
           )}
         </div>
       </div>
-      {/* Audio Element */}
-      {activeMantra && (
-        <audio 
-          ref={audioRef} 
-          src={activeMantra.filename.startsWith('http') ? activeMantra.filename : `/mantras/${activeMantra.filename}`} 
-          onEnded={() => setIsPlaying(false)} 
-          className="hidden"
-        />
-      )}
     </div>
   );
 }

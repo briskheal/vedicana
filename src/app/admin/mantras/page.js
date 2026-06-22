@@ -90,7 +90,7 @@ export default function MantrasLibrary() {
                   type="text" 
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green text-slate-900"
                   placeholder="e.g., Gayatri Mantra"
                   required
                 />
@@ -102,7 +102,7 @@ export default function MantrasLibrary() {
                   type="text" 
                   value={file || ''}
                   onChange={(e) => setFile(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green font-mono text-sm"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-vedicana-green focus:border-vedicana-green font-mono text-sm text-slate-900"
                   placeholder="https://oeuelrgzxtogwmotdomd.supabase.co/storage/v1/object/public/mantra-audio/mantra.mp3"
                   required
                 />

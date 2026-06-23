@@ -6,6 +6,7 @@ import { Filter, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import AddToCartButton from './AddToCartButton';
+import WishlistButton from './WishlistButton';
 
 export default function ShopClientGrid({ allProducts, categories }) {
   const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ export default function ShopClientGrid({ allProducts, categories }) {
   const searchQuery = searchParams.get('q');
   const limitParam = searchParams.get('limit');
   const pageParam = searchParams.get('page') || '1';
+  const sortParam = searchParams.get('sort') || 'newest';
 
   const isAllActive = !categorySlug;
 
@@ -44,8 +46,17 @@ export default function ShopClientGrid({ allProducts, categories }) {
       );
     }
     
+    if (sortParam === 'price_asc') {
+      filtered = [...filtered].sort((a, b) => (a.sale_price || a.price) - (b.sale_price || b.price));
+    } else if (sortParam === 'price_desc') {
+      filtered = [...filtered].sort((a, b) => (b.sale_price || b.price) - (a.sale_price || a.price));
+    } else {
+      // newest
+      filtered = [...filtered].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
     return filtered;
-  }, [allProducts, categorySlug, searchQuery]);
+  }, [allProducts, categorySlug, searchQuery, sortParam]);
 
   const count = filteredProducts.length;
   const totalPages = limit ? Math.ceil(count / limit) : 1;
@@ -150,27 +161,42 @@ export default function ShopClientGrid({ allProducts, categories }) {
             Showing {currentProducts.length} of {count} products
           </span>
 
-          {/* Sizing options: 12, 24, 36, All */}
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Show:</span>
-            <div className="flex rounded-lg border border-gray-150 p-0.5 bg-gray-50/50">
-              {[12, 24, 36, 'all'].map((lim) => {
-                const label = lim === 'all' ? 'All' : lim;
-                const isCurrent = lim === 'all' ? limit === null : limit === lim;
-                return (
-                  <button
-                    key={lim}
-                    onClick={() => updateParam('limit', lim)}
-                    className={`px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
-                      isCurrent 
-                        ? 'bg-vedicana-green text-white shadow-sm' 
-                        : 'text-gray-650 hover:text-vedicana-green'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
+          {/* Sizing options */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden sm:inline">Sort:</span>
+              <select 
+                value={sortParam}
+                onChange={(e) => updateParam('sort', e.target.value)}
+                className="bg-gray-50/50 border border-gray-150 text-gray-700 text-xs font-bold tracking-wide rounded-md px-2 py-1.5 focus:outline-none focus:border-vedicana-green cursor-pointer"
+              >
+                <option value="newest">Newest</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden md:inline">Show:</span>
+              <div className="flex rounded-lg border border-gray-150 p-0.5 bg-gray-50/50">
+                {[12, 24, 36, 'all'].map((lim) => {
+                  const label = lim === 'all' ? 'All' : lim;
+                  const isCurrent = lim === 'all' ? limit === null : limit === lim;
+                  return (
+                    <button
+                      key={lim}
+                      onClick={() => updateParam('limit', lim)}
+                      className={`px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider transition-all ${
+                        isCurrent 
+                          ? 'bg-vedicana-green text-white shadow-sm' 
+                          : 'text-gray-650 hover:text-vedicana-green'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -191,12 +217,15 @@ export default function ShopClientGrid({ allProducts, categories }) {
                   />
                 </Link>
                 {product.sale_price && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                  <div className="absolute top-4 right-16 z-20">
+                    <span className="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">
                       Sale
                     </span>
                   </div>
                 )}
+                <div className="absolute top-4 right-4 z-20">
+                  <WishlistButton productId={product.id} />
+                </div>
                 {product.Category && (
                   <div className="absolute top-4 left-4 z-20">
                     <span className="bg-white/90 backdrop-blur text-vedicana-dark-green text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-sm">

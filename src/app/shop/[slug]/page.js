@@ -43,6 +43,32 @@ export default async function ProductDetails({ params }) {
 
   return (
     <div className="bg-white min-h-screen py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.title,
+            "image": product.image ? [product.image] : [],
+            "description": product.short_description || product.description,
+            "sku": product.sku || product.id.toString(),
+            "brand": {
+              "@type": "Brand",
+              "name": "VediCana Organics"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": `https://www.vedicana.com/shop/${product.slug}`,
+              "priceCurrency": "INR",
+              "price": product.sale_price || product.price,
+              "priceValidUntil": new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0],
+              "itemCondition": "https://schema.org/NewCondition",
+              "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+            }
+          })
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}

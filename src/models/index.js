@@ -20,6 +20,8 @@ import CareerApplication from './CareerApplication.js';
 import ContactMessage from './ContactMessage.js';
 import StoredImage from './StoredImage.js';
 import Mantra from './Mantra.js';
+import Wishlist from './Wishlist.js';
+import AbandonedCart from './AbandonedCart.js';
 
 // Relationships
 Product.hasMany(Review, { foreignKey: 'productId', onDelete: 'CASCADE' });
@@ -29,6 +31,11 @@ Product.hasMany(DamagedStock, { foreignKey: 'productId', onDelete: 'CASCADE' });
 DamagedStock.belongsTo(Product, { foreignKey: 'productId' });
 Order.hasMany(DamagedStock, { foreignKey: 'orderId', onDelete: 'SET NULL' });
 DamagedStock.belongsTo(Order, { foreignKey: 'orderId' });
+
+User.hasMany(Wishlist, { foreignKey: 'userId', onDelete: 'CASCADE' });
+Wishlist.belongsTo(User, { foreignKey: 'userId' });
+Product.hasMany(Wishlist, { foreignKey: 'productId', onDelete: 'CASCADE' });
+Wishlist.belongsTo(Product, { foreignKey: 'productId' });
 
 const models = {
   User,
@@ -50,7 +57,9 @@ const models = {
   CareerApplication,
   ContactMessage,
   StoredImage,
-  Mantra
+  Mantra,
+  Wishlist,
+  AbandonedCart
 };
 
 export { sequelize };

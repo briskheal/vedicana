@@ -102,7 +102,7 @@ async function getUserId() {
 
 export async function POST(request) {
   try {
-    const { cartItems, shippingInfo, paymentMethod, couponCode } = await request.json();
+    const { cartItems, shippingInfo, paymentMethod, couponCode, redeemPoints } = await request.json();
 
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 });
@@ -195,8 +195,19 @@ export async function POST(request) {
       }
     }
 
+    let pointsDiscount = 0;
+    let userObj = null;
+    if (userId) {
+      userObj = await User.findByPk(userId);
+    }
+    
+    if (redeemPoints && userObj && userObj.points > 0) {
+      pointsDiscount = Math.min(userObj.points, Math.max(0, subtotal - discountAmount));
+    }
+
     const shippingFee = subtotal < 500 ? 50 : 0;
-    const totalAmount = Math.max(0, subtotal - discountAmount) + shippingFee;
+    const totalAmount = Math.max(0, subtotal - discountAmount - pointsDiscount) + shippingFee;
+    const totalDiscount = discountAmount + pointsDiscount;
 
     // 3. Create Order in DB
     const newOrder = await Order.create({
@@ -205,10 +216,23 @@ export async function POST(request) {
       paymentStatus: 'pending',
       paymentMethod,
       couponCode: appliedCoupon,
-      discountAmount,
+      discountAmount: totalDiscount,
       shippingAddress: JSON.stringify(shippingInfo),
       userId: userId || null
     });
+
+    // Mark abandoned cart as recovered
+    try {
+      const checkoutEmail = shippingInfo?.billingEmail || shippingInfo?.email || '';
+      if (checkoutEmail) {
+        await models.AbandonedCart.update(
+          { isRecovered: true }, 
+          { where: { email: checkoutEmail, isRecovered: false } }
+        );
+      }
+    } catch(err) {
+      console.error('Failed to update abandoned cart status', err);
+    }
 
     // Automatically update User table fields (phone/address) with checkout details if missing
     if (userId && shippingInfo) {
@@ -233,6 +257,12 @@ export async function POST(request) {
           if (updated) {
             await userObj.save();
           }
+        }
+        
+        // Deduct points
+        if (pointsDiscount > 0 && userObj) {
+          userObj.points -= pointsDiscount;
+          await userObj.save();
         }
       } catch (err) {
         console.error("Failed to automatically update user details during checkout:", err);

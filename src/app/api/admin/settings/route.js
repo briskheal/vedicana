@@ -36,7 +36,9 @@ const getDefaultSettings = () => ({
   bank_qr_type: 'dynamic',
   bank_static_qr_image: '',
   bank_upi_provider: 'all',
-  authorized_signature: ''
+  authorized_signature: '',
+  ga_id: '',
+  fb_pixel_id: ''
 });
 
 export async function GET() {
@@ -91,7 +93,9 @@ export async function POST(request) {
       bank_qr_type: body.bank_qr_type ?? currentSettings.bank_qr_type ?? 'dynamic',
       bank_static_qr_image: body.bank_static_qr_image ?? currentSettings.bank_static_qr_image ?? '',
       bank_upi_provider: body.bank_upi_provider ?? currentSettings.bank_upi_provider ?? 'all',
-      authorized_signature: body.authorized_signature ?? currentSettings.authorized_signature ?? ''
+      authorized_signature: body.authorized_signature ?? currentSettings.authorized_signature ?? '',
+      ga_id: body.ga_id ?? currentSettings.ga_id ?? '',
+      fb_pixel_id: body.fb_pixel_id ?? currentSettings.fb_pixel_id ?? ''
     };
 
     // Keep legacy sweden_office in sync for root layout

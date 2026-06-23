@@ -92,6 +92,10 @@ export default function AdminSettings() {
   const [adminPassword, setAdminPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
+  // Analytics states
+  const [gaId, setGaId] = useState('');
+  const [fbPixelId, setFbPixelId] = useState('');
+
   const loadSettingsData = async () => {
     try {
       setLoading(true);
@@ -130,6 +134,8 @@ export default function AdminSettings() {
         setAdminEmail(settings.admin_email || '');
         setAdminPassword(settings.admin_password || '');
         setConfirmPassword(settings.admin_password || '');
+        setGaId(settings.ga_id || '');
+        setFbPixelId(settings.fb_pixel_id || '');
       }
 
       // 2. Fetch Logo settings
@@ -462,6 +468,29 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSaveAnalytics = async (e) => {
+    if (e) e.preventDefault();
+    try {
+      setSaving(true);
+      setError(null);
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ga_id: gaId,
+          fb_pixel_id: fbPixelId
+        })
+      });
+      if (!res.ok) throw new Error('Failed to save analytics settings');
+      alert('Analytics tracking IDs saved successfully!');
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Error saving analytics parameters.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSaveAdminAccess = async (e) => {
     if (e) e.preventDefault();
     if (!adminEmail.trim()) {
@@ -583,6 +612,18 @@ export default function AdminSettings() {
           >
             <Globe size={16} />
             Social Profiles
+          </button>
+
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`w-full text-left px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-3 cursor-pointer ${
+              activeTab === 'analytics'
+                ? 'bg-vedicana-green/20 text-vedicana-green border-l-4 border-vedicana-green pl-3'
+                : 'text-slate-450 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <Eye size={16} />
+            Analytics & Tracking
           </button>
 
           <button
@@ -1400,6 +1441,51 @@ export default function AdminSettings() {
               >
                 {saving ? <Loader className="animate-spin" size={12} /> : <Save size={12} />}
                 Save Social Profiles
+              </button>
+            </form>
+          )}
+
+          {/* 5. Tab: Analytics & Tracking */}
+          {activeTab === 'analytics' && (
+            <form onSubmit={handleSaveAnalytics} className="space-y-6 animate-fadeIn">
+              <h3 className="text-sm uppercase tracking-wider text-slate-400 font-bold border-b border-slate-800 pb-3 flex items-center gap-2">
+                <Eye className="text-vedicana-green" size={16} />
+                Analytics & Tracking Configurations
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-xs font-bold text-slate-450 uppercase tracking-wider block">Google Analytics 4 (GA4) Measurement ID</label>
+                  <input 
+                    type="text"
+                    value={gaId}
+                    onChange={(e) => setGaId(e.target.value)}
+                    placeholder="e.g. G-XXXXXXXXXX"
+                    className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-xs text-white focus:outline-none font-mono"
+                  />
+                  <p className="text-[10px] text-slate-500">Starts with "G-". Leave blank to disable Google Analytics.</p>
+                </div>
+
+                <div className="space-y-1.5 md:col-span-2 mt-4">
+                  <label className="text-xs font-bold text-slate-450 uppercase tracking-wider block">Meta (Facebook) Pixel ID</label>
+                  <input 
+                    type="text"
+                    value={fbPixelId}
+                    onChange={(e) => setFbPixelId(e.target.value)}
+                    placeholder="e.g. 123456789012345"
+                    className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-xs text-white focus:outline-none font-mono"
+                  />
+                  <p className="text-[10px] text-slate-500">Numeric ID only. Leave blank to disable Meta Pixel.</p>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="bg-vedicana-green hover:bg-emerald-700 text-white font-bold text-xs px-6 py-2.5 rounded-lg uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+              >
+                {saving ? <Loader className="animate-spin" size={12} /> : <Save size={12} />}
+                Save Analytics Settings
               </button>
             </form>
           )}

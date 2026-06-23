@@ -25,6 +25,10 @@ export default function CheckoutPage() {
   const [discountAmount, setDiscountAmount] = useState(0);
   const [couponError, setCouponError] = useState('');
   
+  // Loyalty Points states
+  const [availablePoints, setAvailablePoints] = useState(0);
+  const [redeemPoints, setRedeemPoints] = useState(false);
+  
   // UPI QR Modal states
   const [showQRModal, setShowQRModal] = useState(false);
   const [qrOrderId, setQrOrderId] = useState(null);
@@ -134,6 +138,8 @@ export default function CheckoutPage() {
             billingState: state,
             billingPincode: pincode
           }));
+
+          setAvailablePoints(data.user.points || 0);
         }
       } catch (err) {
         console.error("Failed to auto-capture profile billing details:", err);
@@ -146,6 +152,20 @@ export default function CheckoutPage() {
   const handleInputChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
+  };
+
+  const handleEmailBlur = async () => {
+    if (formData.billingEmail && cart.length > 0) {
+      try {
+        await fetch('/api/cart/abandoned', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.billingEmail, cartData: cart })
+        });
+      } catch (err) {
+        console.error('Failed to log abandoned cart', err);
+      }
+    }
   };
 
   const handleApplyCoupon = async (e) => {
@@ -174,7 +194,12 @@ export default function CheckoutPage() {
   };
 
   const shippingFee = cartTotal < 500 ? 50 : 0;
-  const finalTotal = Math.max(0, cartTotal - discountAmount) + shippingFee;
+  
+  // Points calculation
+  const maxPointsUsable = Math.min(availablePoints, Math.max(0, cartTotal - discountAmount));
+  const pointsDiscount = redeemPoints ? maxPointsUsable : 0;
+  
+  const finalTotal = Math.max(0, cartTotal - discountAmount - pointsDiscount) + shippingFee;
 
   const handleCheckout = async (e) => {
     e.preventDefault();
@@ -189,7 +214,8 @@ export default function CheckoutPage() {
           cartItems: cart,
           shippingInfo: formData,
           paymentMethod,
-          couponCode: appliedCoupon?.code || null
+          couponCode: appliedCoupon?.code || null,
+          redeemPoints
         })
       });
 
@@ -356,7 +382,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Email address <span className="text-red-500">*</span></label>
-                  <input required type="email" name="billingEmail" value={formData.billingEmail} onChange={handleInputChange} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
+                  <input required type="email" name="billingEmail" value={formData.billingEmail} onChange={handleInputChange} onBlur={handleEmailBlur} className="w-full border border-gray-200 rounded-md px-2.5 py-1.5 text-sm bg-gray-50/20 hover:bg-white focus:bg-white focus:ring-1 focus:ring-vedicana-green transition-colors" />
                 </div>
               </div>
             </div>
@@ -444,6 +470,28 @@ export default function CheckoutPage() {
             <div className="border border-gray-200 shadow-xs p-3 md:p-5 rounded-lg bg-white sticky top-24 border-t-4 border-t-vedicana-green">
               <h3 className="text-[11px] font-bold text-gray-900 mb-2 uppercase tracking-wider border-b border-gray-100 pb-1.5">Your order</h3>
               
+              {/* Loyalty Points */}
+              {availablePoints > 0 && (
+                <div className="bg-emerald-50/50 border border-emerald-100 p-3 mb-4 mt-2 rounded-lg text-xs flex items-center justify-between shadow-xs animate-fade-in">
+                  <div className="flex items-center gap-2">
+                    <span className="bg-vedicana-gold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">⭐</span>
+                    <span className="text-emerald-900 font-semibold tracking-wide">You have {availablePoints} Loyalty Points (₹{availablePoints})</span>
+                  </div>
+                  <label className="flex items-center cursor-pointer">
+                    <div className="relative">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only" 
+                        checked={redeemPoints}
+                        onChange={() => setRedeemPoints(!redeemPoints)}
+                      />
+                      <div className={`block w-8 h-5 rounded-full transition-colors ${redeemPoints ? 'bg-vedicana-green' : 'bg-gray-300'}`}></div>
+                      <div className={`dot absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${redeemPoints ? 'transform translate-x-3' : ''}`}></div>
+                    </div>
+                  </label>
+                </div>
+              )}
+
               <table className="w-full mb-3 border-collapse">
                 <thead>
                   <tr className="border-b border-gray-100">
@@ -478,6 +526,12 @@ export default function CheckoutPage() {
                     <tr className="border-b border-gray-100/60 text-vedicana-green font-bold">
                       <th className="text-left py-1.5">Coupon: {appliedCoupon.code}</th>
                       <td className="py-1.5 text-right">-₹{discountAmount.toFixed(2)}</td>
+                    </tr>
+                  )}
+                  {redeemPoints && pointsDiscount > 0 && (
+                    <tr className="border-b border-gray-100/60 text-vedicana-gold font-bold">
+                      <th className="text-left py-1.5">Points Redeemed</th>
+                      <td className="py-1.5 text-right">-₹{pointsDiscount.toFixed(2)}</td>
                     </tr>
                   )}
                   <tr className="border-b border-gray-100/60 text-xs">

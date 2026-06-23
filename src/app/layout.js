@@ -51,10 +51,30 @@ import path from 'path';
 import Link from 'next/link';
 import PageTransition from '../components/PageTransition';
 import ConditionalLayout from '../components/ConditionalLayout';
+import Script from 'next/script';
+import AnalyticsTracker from '../components/AnalyticsTracker';
+
+import CookieBanner from '../components/CookieBanner';
 
 export const metadata = {
   title: "VediCana | Tradition Re-emerged",
-  description: "100% Pure Ayurvedic and Natural Products.",
+  description: "100% Pure Ayurvedic and Natural Products. Carefully formulated to heal, protect, and rejuvenate.",
+  metadataBase: new URL('https://www.vedicana.com'),
+  openGraph: {
+    title: "VediCana | Tradition Re-emerged",
+    description: "100% Pure Ayurvedic and Natural Products.",
+    url: "https://www.vedicana.com",
+    siteName: "VediCana Organics",
+    images: [{ url: "/logo.webp", width: 800, height: 600, alt: "VediCana Logo" }],
+    locale: "en_IN",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VediCana | Tradition Re-emerged",
+    description: "100% Pure Ayurvedic and Natural Products.",
+    images: ["/logo.webp"],
+  },
 };
 
 export const viewport = {
@@ -108,7 +128,9 @@ export default async function RootLayout({ children }) {
     company_phone: '+91 8249169354 | +91 8878923337',
     company_email: 'info@vedicana.com',
     company_gst: '',
-    sweden_office: ''
+    sweden_office: '',
+    ga_id: '',
+    fb_pixel_id: ''
   };
   try {
     const data = await fs.promises.readFile(settingsConfigPath, 'utf8');
@@ -150,8 +172,56 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en" className={`scroll-smooth ${lato.variable} ${cardo.variable}`} suppressHydrationWarning={true}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "VediCana Organics",
+              "url": "https://www.vedicana.com",
+              "logo": "https://www.vedicana.com/logo.webp",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+91-8249169354",
+                "contactType": "customer service",
+                "areaServed": "IN",
+                "availableLanguage": ["English", "Hindi"]
+              }
+            })
+          }}
+        />
+        {companyDetails.ga_id && (
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${companyDetails.ga_id}`} strategy="afterInteractive" />
+        )}
+        {companyDetails.ga_id && (
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){window.dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${companyDetails.ga_id}');
+            `}
+          </Script>
+        )}
+        {companyDetails.fb_pixel_id && (
+          <Script id="meta-pixel" strategy="afterInteractive">
+            {`
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '${companyDetails.fb_pixel_id}');
+            `}
+          </Script>
+        )}
       </head>
       <body className="flex flex-col min-h-screen overflow-x-hidden w-full relative font-sans" suppressHydrationWarning={true}>
+        <AnalyticsTracker gaId={companyDetails.ga_id} fbPixelId={companyDetails.fb_pixel_id} />
         <CartProvider>
           {/* Skip directly to main content for screen readers / keyboard users */}
           <a 
@@ -160,6 +230,8 @@ export default async function RootLayout({ children }) {
           >
             Skip to main content
           </a>
+
+          <CookieBanner />
 
           <ConditionalLayout
             header={
@@ -305,6 +377,11 @@ export default async function RootLayout({ children }) {
                       <li>
                         <Link href="/wellness-consultation" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
                           Wellness Consultation
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href="/track-order" className="text-slate-300/85 hover:text-vedicana-gold transition-colors font-medium tracking-wide text-[13px] md:text-sm border-b border-white/5 pb-1 block">
+                          Track Order
                         </Link>
                       </li>
                       {footerQuickLinks.map((link) => (

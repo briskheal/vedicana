@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import models from '../../../../../models/index.js';
 
-const { Order, OrderItem, Product, DamagedStock } = models;
+const { Order, OrderItem, Product, DamagedStock, User } = models;
 
 export async function PUT(request, { params }) {
   try {
@@ -71,8 +71,27 @@ export async function PUT(request, { params }) {
 
     // Update the Order status
     let finalPaymentStatus = paymentStatus ?? order.paymentStatus;
-    if (newStatus === 'delivered' && oldStatus !== 'delivered' && (order.paymentMethod === 'cod' || order.paymentMethod === 'upi_direct')) {
-      finalPaymentStatus = 'paid';
+    if (newStatus === 'delivered' && oldStatus !== 'delivered') {
+      if (order.paymentMethod === 'cod' || order.paymentMethod === 'upi_direct') {
+        finalPaymentStatus = 'paid';
+      }
+
+      // Award Loyalty Points (5% of totalAmount, 1 point per 20 INR)
+      if (order.userId) {
+        try {
+          const userObj = await User.findByPk(order.userId);
+          if (userObj) {
+            const pointsToAward = Math.floor(parseFloat(order.totalAmount) / 20);
+            if (pointsToAward > 0) {
+              userObj.points = (userObj.points || 0) + pointsToAward;
+              await userObj.save();
+              console.log(`[Loyalty] Awarded ${pointsToAward} points to User ${userObj.id} for Order #${order.id}`);
+            }
+          }
+        } catch (err) {
+          console.error('Error awarding loyalty points:', err);
+        }
+      }
     }
 
     await Order.update({

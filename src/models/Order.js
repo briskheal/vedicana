@@ -43,6 +43,22 @@ const Order = sequelize.define('Order', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  trackingNumber: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  courierPartner: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  refundStatus: {
+    type: DataTypes.ENUM('none', 'pending', 'processed'),
+    defaultValue: 'none',
+  },
+  deliveredAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   timestamps: true,
 });

@@ -1,17 +1,17 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Sparkles, Gift, RefreshCw, X, ArrowRight, Copy, Check } from 'lucide-react';
 
 const SEGMENTS = [
-  { text: 'Free Consult', color: '#8b5cf6', detail: 'Free Ayurvedic consultation with advisor.', code: 'SPINCONSULT' }, // Violet
-  { text: 'Better Luck', color: '#64748b', detail: 'Better luck next time!', code: null }, // Slate
-  { text: 'Free Dosha', color: '#10b981', detail: 'Get a free Prakriti body type analysis.', code: 'SPINDOSHA' }, // Green
-  { text: '10% OFF', color: '#ef4444', detail: '10% discount on all Ayurvedic remedies!', code: 'FIRSTSPIN10' }, // Red (Winner!)
-  { text: 'Earn Coins', color: '#eab308', detail: 'Earn 100 loyalty coins.', code: 'SPINCOINS' }, // Yellow
-  { text: 'Surprise Gift', color: '#f97316', detail: 'Free honey sampler on orders above ₹1000.', code: 'SPINGIFT' }, // Orange
-  { text: 'Try Again', color: '#94a3b8', detail: 'Spin again for a surprise retry.', code: 'TRYAGAIN' }, // Light Slate
-  { text: 'Vedic Guide', color: '#0ea5e9', detail: 'Free Ayurvedic diet chart PDF.', code: 'SPINGUIDE' } // Blue
+  { text: 'Free Consult', color: '#8b5cf6', detail: 'Free Ayurvedic consultation with advisor.', code: 'SPINCONSULT', weight: 10 }, // 10%
+  { text: 'Better Luck', color: '#64748b', detail: 'Better luck next time!', code: null, weight: 25 }, // 25%
+  { text: 'Free Dosha', color: '#10b981', detail: 'Get a free Prakriti body type analysis.', code: 'SPINDOSHA', weight: 15 }, // 15%
+  { text: '10% OFF', color: '#ef4444', detail: '10% discount on all Ayurvedic remedies!', code: 'FIRSTSPIN10', weight: 5 }, // 5%
+  { text: 'Earn Coins', color: '#eab308', detail: 'Earn 100 loyalty coins.', code: 'SPINCOINS', weight: 15 }, // 15%
+  { text: 'Surprise Gift', color: '#f97316', detail: 'Free honey sampler on orders above ₹1000.', code: 'SPINGIFT', weight: 5 }, // 5%
+  { text: 'Try Again', color: '#94a3b8', detail: 'Spin again for a surprise retry.', code: 'TRYAGAIN', weight: 15 }, // 15%
+  { text: 'Vedic Guide', color: '#0ea5e9', detail: 'Free Ayurvedic diet chart PDF.', code: 'SPINGUIDE', weight: 10 } // 10%
 ];
 
 export default function SpinWheelModal() {
@@ -25,11 +25,14 @@ export default function SpinWheelModal() {
   const [attempts, setAttempts] = useState(0);
   const [wonCoupons, setWonCoupons] = useState([]);
   const [copiedCode, setCopiedCode] = useState(null);
+  const [claimingPoints, setClaimingPoints] = useState(false);
+  const [pointsClaimMessage, setPointsClaimMessage] = useState(null);
 
   const canvasRef = useRef(null);
   const wheelRef = useRef(null);
 
   const pathname = usePathname();
+  const router = useRouter();
   const isAdmin = pathname?.startsWith('/admin') || pathname?.startsWith('/api/admin');
   const isInvoice = pathname?.includes('/invoice');
   const hideLauncher = isAdmin || isInvoice;
@@ -118,8 +121,18 @@ export default function SpinWheelModal() {
     setIsSpinning(true);
     setSpinCompleted(false);
 
-    // Pick random target slice index
-    const prizeIndex = Math.floor(Math.random() * SEGMENTS.length);
+    // Pick random target slice index based on weighted probability
+    const totalWeight = SEGMENTS.reduce((sum, seg) => sum + seg.weight, 0);
+    let randomNum = Math.random() * totalWeight;
+    let prizeIndex = 0;
+    
+    for (let i = 0; i < SEGMENTS.length; i++) {
+      if (randomNum < SEGMENTS[i].weight) {
+        prizeIndex = i;
+        break;
+      }
+      randomNum -= SEGMENTS[i].weight;
+    }
     
     // Formula to align midpoint of segment to top pointer peg:
     // targetAngleOffset = 360 - (prizeIndex * 45 + 22.5)
@@ -145,7 +158,22 @@ export default function SpinWheelModal() {
         localStorage.setItem(`vedicana_spin_attempts_${userEmail}`, nextAttempts.toString());
       }
 
-      if (prize.code && prize.code !== 'TRYAGAIN' && !nextCoupons.includes(prize.code)) {
+      if (prize.code === 'SPINCOINS') {
+        if (userEmail !== 'guest') {
+          setClaimingPoints(true);
+          fetch('/api/user/spin', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                setPointsClaimMessage('100 Points have been added to your account!');
+              } else {
+                setPointsClaimMessage(data.error || 'Failed to claim points.');
+              }
+            })
+            .catch(() => setPointsClaimMessage('Error claiming points.'))
+            .finally(() => setClaimingPoints(false));
+        }
+      } else if (prize.code && prize.code !== 'TRYAGAIN' && !nextCoupons.includes(prize.code)) {
         nextCoupons.push(prize.code);
         setWonCoupons(nextCoupons);
         localStorage.setItem(`vedicana_won_coupons_${userEmail}`, JSON.stringify(nextCoupons));
@@ -440,7 +468,33 @@ export default function SpinWheelModal() {
                 </p>
 
                 {/* Voucher Card layout */}
-                {targetPrize?.code && targetPrize?.code !== 'TRYAGAIN' && (
+                {targetPrize?.code === 'SPINCOINS' ? (
+                  <div className="bg-slate-900 border-2 border-dashed border-[#eab308]/40 p-4 rounded-2xl max-w-xs mx-auto mb-5 shadow-inner relative overflow-hidden">
+                    <span className="text-[10px] text-slate-300 font-bold block mb-2 uppercase tracking-widest">Loyalty Bonus</span>
+                    {userEmail === 'guest' ? (
+                      <div className="space-y-3">
+                        <p className="text-xs text-slate-400 leading-relaxed">Create an account or log in to claim your 100 Free Loyalty Points!</p>
+                        <button 
+                          onClick={() => {
+                            closeOverlay();
+                            router.push('/login');
+                          }}
+                          className="bg-vedicana-green hover:bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-wider px-4 py-2 rounded shadow-md transition-colors w-full cursor-pointer"
+                        >
+                          Log in to Claim
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {claimingPoints ? (
+                          <p className="text-xs text-slate-400">Claiming your points...</p>
+                        ) : (
+                          <p className="text-xs font-semibold text-[#eab308]">{pointsClaimMessage || 'Processing claim...'}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : targetPrize?.code && targetPrize?.code !== 'TRYAGAIN' && (
                   <div className="bg-slate-900 border-2 border-dashed border-[#d4af37]/30 p-4 rounded-2xl max-w-xs mx-auto mb-5 shadow-inner relative overflow-hidden">
                     <div className="absolute top-[-10px] left-[-10px] w-4 h-4 bg-[#1e293b] rounded-full" />
                     <div className="absolute top-[-10px] right-[-10px] w-4 h-4 bg-[#1e293b] rounded-full" />

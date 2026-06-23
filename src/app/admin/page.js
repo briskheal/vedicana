@@ -3,6 +3,7 @@ import Product from '../../models/Product.js';
 import Order from '../../models/Order.js';
 import { sequelize } from '../../models/index.js';
 import { Op } from 'sequelize';
+import SalesChart from './SalesChart.js';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ export default async function AdminDashboard() {
   let productCatalog = 0;
   let dbSizeStr = '0.00 MB';
   let dbPercentage = '0%';
+  let chartData = [];
 
   try {
     // 1. Live Sum of Total Revenue (excluding cancelled or failed transactions)
@@ -48,6 +50,41 @@ export default async function AdminDashboard() {
       const percent = Math.min(100, Math.round((bytes / limitBytes) * 100));
       dbPercentage = `${percent}%`;
     }
+
+    // 5. Build 30-day chart data
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29); // 30 days including today
+    thirtyDaysAgo.setHours(0, 0, 0, 0);
+    
+    const recentOrders = await Order.findAll({
+      where: {
+        createdAt: { [Op.gte]: thirtyDaysAgo },
+        status: { [Op.ne]: 'cancelled' },
+        paymentStatus: { [Op.ne]: 'failed' }
+      },
+      attributes: ['totalAmount', 'createdAt']
+    });
+
+    const chartDataMap = {};
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      chartDataMap[dateStr] = 0;
+    }
+
+    recentOrders.forEach(o => {
+      const dateStr = new Date(o.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      if (chartDataMap[dateStr] !== undefined) {
+        chartDataMap[dateStr] += Number(o.totalAmount);
+      }
+    });
+
+    chartData = Object.keys(chartDataMap).map(date => ({
+      date,
+      revenue: chartDataMap[date]
+    }));
+
   } catch (error) {
     console.error('[Admin Dashboard Metrics] Failed to load actual values:', error);
   }
@@ -123,6 +160,16 @@ export default async function AdminDashboard() {
             <span>{dbPercentage}</span>
           </div>
         </div>
+      </div>
+
+      {/* Revenue Chart Section */}
+      <div className="bg-[#1e293b] rounded-xl p-6 border border-slate-800 shadow-xl">
+        <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-2">
+          <TrendingUp className="text-vedicana-green" /> 
+          30-Day Revenue Trend
+        </h3>
+        <p className="text-slate-400 text-sm mb-4">Daily gross revenue (excluding cancelled orders)</p>
+        <SalesChart data={chartData} />
       </div>
 
       {/* Main Sections */}

@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Lato, Cardo } from 'next/font/google';
+import { Suspense } from 'react';
 
 const lato = Lato({
   subsets: ['latin'],
@@ -221,7 +222,9 @@ export default async function RootLayout({ children }) {
         )}
       </head>
       <body className="flex flex-col min-h-screen overflow-x-hidden w-full relative font-sans" suppressHydrationWarning={true}>
-        <AnalyticsTracker gaId={companyDetails.ga_id} fbPixelId={companyDetails.fb_pixel_id} />
+        <Suspense fallback={null}>
+          <AnalyticsTracker gaId={companyDetails.ga_id} fbPixelId={companyDetails.fb_pixel_id} />
+        </Suspense>
         <CartProvider>
           {/* Skip directly to main content for screen readers / keyboard users */}
           <a 

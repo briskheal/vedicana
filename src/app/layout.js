@@ -220,6 +220,28 @@ export default async function RootLayout({ children }) {
             `}
           </Script>
         )}
+        <Script id="copy-protection" strategy="afterInteractive">
+          {`
+            // Disable Right Click
+            document.addEventListener('contextmenu', event => event.preventDefault());
+
+            // Disable Keyboard Shortcuts
+            document.addEventListener('keydown', function(e) {
+              // Prevent Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+U (View Source), Ctrl+S (Save), Ctrl+P (Print)
+              if (e.ctrlKey && (e.key === 'c' || e.key === 'x' || e.key === 'a' || e.key === 'u' || e.key === 's' || e.key === 'p')) {
+                e.preventDefault();
+              }
+              // Prevent Command+C etc on Mac
+              if (e.metaKey && (e.key === 'c' || e.key === 'x' || e.key === 'a' || e.key === 'u' || e.key === 's' || e.key === 'p')) {
+                e.preventDefault();
+              }
+              // Prevent F12 (DevTools)
+              if (e.key === 'F12') {
+                e.preventDefault();
+              }
+            });
+          `}
+        </Script>
       </head>
       <body className="flex flex-col min-h-screen overflow-x-hidden w-full relative font-sans" suppressHydrationWarning={true}>
         <Suspense fallback={null}>

@@ -279,7 +279,7 @@ export default async function RootLayout({ children }) {
                           >
                             Ayurvedic Quiz
                           </Link>
-                          {discoverPages.map((page) => (
+                          {discoverPages.filter(p => !['payment-security', 'pricing-policy', 'cancelation-policy', 'shipping-policy', 'return-policy', 'privacy-policy', 'terms-and-conditions'].includes(p.slug)).map((page) => (
                             <Link 
                               key={page.id} 
                               href={`/${page.slug}`} 

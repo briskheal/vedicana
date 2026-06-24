@@ -55,8 +55,8 @@ export default function DiscoverDashboard() {
       {/* Header Panel */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#1e293b] p-6 rounded-xl border border-slate-800 shadow-sm">
         <div>
-          <h1 className="text-2xl font-serif text-white font-bold mb-1">Discover Pages CRUD</h1>
-          <p className="text-slate-400 text-sm">Create, edit, delete, and manage Custom Discover Pages dynamically in PostgreSQL.</p>
+          <h1 className="text-2xl font-serif text-white font-bold mb-1">Discover Pages & Policies</h1>
+          <p className="text-slate-400 text-sm">Create, edit, delete, and manage Custom Discover Pages and Legal Policies dynamically.</p>
         </div>
         <a 
           href="/admin/discover/edit/new" 
@@ -81,7 +81,7 @@ export default function DiscoverDashboard() {
           </div>
         ) : pages.length === 0 ? (
           <div className="py-20 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
-            <p className="text-base font-serif">No Discover Pages Found</p>
+            <p className="text-base font-serif">No Pages or Policies Found</p>
             <p className="text-sm text-slate-600">Please run the seeder script or create a custom page using the button above.</p>
           </div>
         ) : (

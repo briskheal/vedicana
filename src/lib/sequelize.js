@@ -28,15 +28,14 @@ const sequelizeOptions = {
   }
 };
 
-if (process.env.NODE_ENV === 'production') {
-  sequelize = new Sequelize(dbUrl, sequelizeOptions);
-} else {
-  // In development, use a global variable to preserve the Sequelize instance
-  // across hot reloads, preventing connection pool accumulation and timeouts.
-  if (!global.sequelizeGlobalInstance) {
-    global.sequelizeGlobalInstance = new Sequelize(dbUrl, sequelizeOptions);
-  }
-  sequelize = global.sequelizeGlobalInstance;
+// Use a global singleton across both development AND production.
+// Next.js App Router evaluates server component modules multiple times;
+// without a global singleton, production server chunks spawn 20+ separate connection pools,
+// instantly triggering Supabase's (EMAXCONNSESSION) max clients reached limit (pool_size: 15).
+if (!global.sequelizeGlobalInstance) {
+  global.sequelizeGlobalInstance = new Sequelize(dbUrl, sequelizeOptions);
 }
+sequelize = global.sequelizeGlobalInstance;
 
 export default sequelize;
+

@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
 import { Op } from 'sequelize';
 import Razorpay from 'razorpay';
+import fs from 'fs';
+import path from 'path';
 import models from '../../../models/index.js';
 
 const { Order, OrderItem, Product, Coupon, User } = models;
@@ -195,14 +197,26 @@ export async function POST(request) {
       }
     }
 
+    let loyaltyMaxRedeemPercent = 15;
+    let loyaltyMinOrderValue = 399;
+    try {
+      const cfgPath = path.join(process.cwd(), 'public/settings_config.json');
+      if (fs.existsSync(cfgPath)) {
+        const cfg = JSON.parse(fs.readFileSync(cfgPath, 'utf-8'));
+        if (cfg.loyalty_max_redeem_percent !== undefined) loyaltyMaxRedeemPercent = Number(cfg.loyalty_max_redeem_percent);
+        if (cfg.loyalty_min_order_value !== undefined) loyaltyMinOrderValue = Number(cfg.loyalty_min_order_value);
+      }
+    } catch(e) {}
+
     let pointsDiscount = 0;
     let userObj = null;
     if (userId) {
       userObj = await User.findByPk(userId);
     }
     
-    if (redeemPoints && userObj && userObj.points > 0) {
-      pointsDiscount = Math.min(userObj.points, Math.max(0, subtotal - discountAmount));
+    if (redeemPoints && userObj && userObj.points > 0 && subtotal >= loyaltyMinOrderValue) {
+      const capDiscount = Math.floor((subtotal * loyaltyMaxRedeemPercent) / 100);
+      pointsDiscount = Math.min(userObj.points, capDiscount, Math.max(0, subtotal - discountAmount));
     }
 
     const shippingFee = subtotal < 500 ? 50 : 0;

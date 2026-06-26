@@ -28,6 +28,8 @@ export default function CheckoutPage() {
   // Loyalty Points states
   const [availablePoints, setAvailablePoints] = useState(0);
   const [redeemPoints, setRedeemPoints] = useState(false);
+  const [loyaltyMaxRedeemPercent, setLoyaltyMaxRedeemPercent] = useState(15);
+  const [loyaltyMinOrderValue, setLoyaltyMinOrderValue] = useState(399);
   
   // UPI QR Modal states
   const [showQRModal, setShowQRModal] = useState(false);
@@ -147,6 +149,10 @@ export default function CheckoutPage() {
     };
 
     fetchUserProfile();
+    fetch('/api/admin/settings').then(res => res.json()).then(settings => {
+      if (settings.loyalty_max_redeem_percent !== undefined) setLoyaltyMaxRedeemPercent(Number(settings.loyalty_max_redeem_percent));
+      if (settings.loyalty_min_order_value !== undefined) setLoyaltyMinOrderValue(Number(settings.loyalty_min_order_value));
+    }).catch(() => {});
   }, []);
 
   const handleInputChange = (e) => {
@@ -196,8 +202,12 @@ export default function CheckoutPage() {
   const shippingFee = cartTotal < 500 ? 50 : 0;
   
   // Points calculation
-  const maxPointsUsable = Math.min(availablePoints, Math.max(0, cartTotal - discountAmount));
-  const pointsDiscount = redeemPoints ? maxPointsUsable : 0;
+  const eligibleForPoints = cartTotal >= loyaltyMinOrderValue;
+  const capDiscount = Math.floor((cartTotal * loyaltyMaxRedeemPercent) / 100);
+  const maxPointsUsable = eligibleForPoints 
+    ? Math.min(availablePoints, capDiscount, Math.max(0, cartTotal - discountAmount))
+    : 0;
+  const pointsDiscount = (redeemPoints && eligibleForPoints) ? maxPointsUsable : 0;
   
   const finalTotal = Math.max(0, cartTotal - discountAmount - pointsDiscount) + shippingFee;
 
@@ -472,23 +482,36 @@ export default function CheckoutPage() {
               
               {/* Loyalty Points */}
               {availablePoints > 0 && (
-                <div className="bg-emerald-50/50 border border-emerald-100 p-3 mb-4 mt-2 rounded-lg text-xs flex items-center justify-between shadow-xs animate-fade-in">
-                  <div className="flex items-center gap-2">
-                    <span className="bg-vedicana-gold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">⭐</span>
-                    <span className="text-emerald-900 font-semibold tracking-wide">You have {availablePoints} Loyalty Points (₹{availablePoints})</span>
-                  </div>
-                  <label className="flex items-center cursor-pointer">
-                    <div className="relative">
-                      <input 
-                        type="checkbox" 
-                        className="sr-only" 
-                        checked={redeemPoints}
-                        onChange={() => setRedeemPoints(!redeemPoints)}
-                      />
-                      <div className={`block w-8 h-5 rounded-full transition-colors ${redeemPoints ? 'bg-vedicana-green' : 'bg-gray-300'}`}></div>
-                      <div className={`dot absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${redeemPoints ? 'transform translate-x-3' : ''}`}></div>
+                <div className="bg-emerald-50/50 border border-emerald-100 p-3 mb-4 mt-2 rounded-lg text-xs shadow-xs animate-fade-in">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-vedicana-gold text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">⭐</span>
+                      <span className="text-emerald-900 font-semibold tracking-wide">You have {availablePoints} Points</span>
                     </div>
-                  </label>
+                    {eligibleForPoints && (
+                      <label className="flex items-center cursor-pointer">
+                        <div className="relative">
+                          <input 
+                            type="checkbox" 
+                            className="sr-only" 
+                            checked={redeemPoints}
+                            onChange={() => setRedeemPoints(!redeemPoints)}
+                          />
+                          <div className={`block w-8 h-5 rounded-full transition-colors ${redeemPoints ? 'bg-vedicana-green' : 'bg-gray-300'}`}></div>
+                          <div className={`dot absolute left-1 top-1 bg-white w-3 h-3 rounded-full transition-transform ${redeemPoints ? 'transform translate-x-3' : ''}`}></div>
+                        </div>
+                      </label>
+                    )}
+                  </div>
+                  {eligibleForPoints ? (
+                    <p className="text-[10px] text-emerald-700 mt-1.5 pl-6 font-medium">
+                      Redeem up to {capDiscount} coins ({loyaltyMaxRedeemPercent}% cap of cart value).
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-amber-600 mt-1.5 pl-6 font-semibold">
+                      Min order ₹{loyaltyMinOrderValue} required to redeem coins (Add ₹{loyaltyMinOrderValue - cartTotal} more).
+                    </p>
+                  )}
                 </div>
               )}
 

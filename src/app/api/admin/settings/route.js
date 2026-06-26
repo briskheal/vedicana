@@ -38,7 +38,11 @@ const getDefaultSettings = () => ({
   bank_upi_provider: 'all',
   authorized_signature: '',
   ga_id: '',
-  fb_pixel_id: ''
+  fb_pixel_id: '',
+  loyalty_spin_coins: 25,
+  loyalty_cashback_percent: 5,
+  loyalty_max_redeem_percent: 15,
+  loyalty_min_order_value: 399
 });
 
 export async function GET() {
@@ -95,7 +99,11 @@ export async function POST(request) {
       bank_upi_provider: body.bank_upi_provider ?? currentSettings.bank_upi_provider ?? 'all',
       authorized_signature: body.authorized_signature ?? currentSettings.authorized_signature ?? '',
       ga_id: body.ga_id ?? currentSettings.ga_id ?? '',
-      fb_pixel_id: body.fb_pixel_id ?? currentSettings.fb_pixel_id ?? ''
+      fb_pixel_id: body.fb_pixel_id ?? currentSettings.fb_pixel_id ?? '',
+      loyalty_spin_coins: body.loyalty_spin_coins !== undefined ? Number(body.loyalty_spin_coins) : currentSettings.loyalty_spin_coins ?? 25,
+      loyalty_cashback_percent: body.loyalty_cashback_percent !== undefined ? Number(body.loyalty_cashback_percent) : currentSettings.loyalty_cashback_percent ?? 5,
+      loyalty_max_redeem_percent: body.loyalty_max_redeem_percent !== undefined ? Number(body.loyalty_max_redeem_percent) : currentSettings.loyalty_max_redeem_percent ?? 15,
+      loyalty_min_order_value: body.loyalty_min_order_value !== undefined ? Number(body.loyalty_min_order_value) : currentSettings.loyalty_min_order_value ?? 399
     };
 
     // Keep legacy sweden_office in sync for root layout

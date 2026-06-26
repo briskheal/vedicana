@@ -10,6 +10,10 @@
   "marketing_office_addr": "Brisk Heal Solution, Bidanasi, Cuttack, Odisha",
   "admin_email": "jrdash.ctc@gmail.com",
   "admin_password": "VedicanaOrganics@1306",
+  "loyalty_spin_coins": 25,
+  "loyalty_cashback_percent": 5,
+  "loyalty_max_redeem_percent": 15,
+  "loyalty_min_order_value": 399,
   "courier_partners": [
     {
       "id": 1780197890443,

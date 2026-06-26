@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Building2, Globe, Sliders, Eye, Trash2, Key, Save, Loader, Check, 
-  UploadCloud, Mail, Phone, Shield, Landmark, MapPin, Truck 
+  UploadCloud, Mail, Phone, Shield, Landmark, MapPin, Truck, Coins 
 } from 'lucide-react';
 
 const FacebookIcon = ({ size = 16, className = "" }) => (
@@ -96,6 +96,12 @@ export default function AdminSettings() {
   const [gaId, setGaId] = useState('');
   const [fbPixelId, setFbPixelId] = useState('');
 
+  // Loyalty Guardrail states
+  const [loyaltySpinCoins, setLoyaltySpinCoins] = useState(25);
+  const [loyaltyCashbackPercent, setLoyaltyCashbackPercent] = useState(5);
+  const [loyaltyMaxRedeemPercent, setLoyaltyMaxRedeemPercent] = useState(15);
+  const [loyaltyMinOrderValue, setLoyaltyMinOrderValue] = useState(399);
+
   const loadSettingsData = async () => {
     try {
       setLoading(true);
@@ -136,6 +142,10 @@ export default function AdminSettings() {
         setConfirmPassword(settings.admin_password || '');
         setGaId(settings.ga_id || '');
         setFbPixelId(settings.fb_pixel_id || '');
+        if (settings.loyalty_spin_coins !== undefined) setLoyaltySpinCoins(Number(settings.loyalty_spin_coins));
+        if (settings.loyalty_cashback_percent !== undefined) setLoyaltyCashbackPercent(Number(settings.loyalty_cashback_percent));
+        if (settings.loyalty_max_redeem_percent !== undefined) setLoyaltyMaxRedeemPercent(Number(settings.loyalty_max_redeem_percent));
+        if (settings.loyalty_min_order_value !== undefined) setLoyaltyMinOrderValue(Number(settings.loyalty_min_order_value));
       }
 
       // 2. Fetch Logo settings
@@ -491,6 +501,31 @@ export default function AdminSettings() {
     }
   };
 
+  const handleSaveLoyalty = async (e) => {
+    if (e) e.preventDefault();
+    try {
+      setSaving(true);
+      setError(null);
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          loyalty_spin_coins: loyaltySpinCoins,
+          loyalty_cashback_percent: loyaltyCashbackPercent,
+          loyalty_max_redeem_percent: loyaltyMaxRedeemPercent,
+          loyalty_min_order_value: loyaltyMinOrderValue
+        })
+      });
+      if (!res.ok) throw new Error('Failed to save loyalty settings');
+      alert('Loyalty & Rewards settings saved successfully!');
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Error saving loyalty parameters.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleSaveAdminAccess = async (e) => {
     if (e) e.preventDefault();
     if (!adminEmail.trim()) {
@@ -624,6 +659,18 @@ export default function AdminSettings() {
           >
             <Eye size={16} />
             Analytics & Tracking
+          </button>
+
+          <button
+            onClick={() => setActiveTab('loyalty')}
+            className={`w-full text-left px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-3 cursor-pointer ${
+              activeTab === 'loyalty'
+                ? 'bg-vedicana-green/20 text-vedicana-green border-l-4 border-vedicana-green pl-3'
+                : 'text-slate-450 hover:bg-slate-800 hover:text-white'
+            }`}
+          >
+            <Coins size={16} />
+            Loyalty & Rewards
           </button>
 
           <button
@@ -1486,6 +1533,89 @@ export default function AdminSettings() {
               >
                 {saving ? <Loader className="animate-spin" size={12} /> : <Save size={12} />}
                 Save Analytics Settings
+              </button>
+            </form>
+          )}
+
+          {/* Loyalty & Rewards Settings */}
+          {activeTab === 'loyalty' && (
+            <form onSubmit={handleSaveLoyalty} className="space-y-6 animate-fadeIn">
+              <h3 className="text-sm uppercase tracking-wider text-slate-400 font-bold border-b border-slate-800 pb-3 flex items-center gap-2">
+                <Coins className="text-vedicana-green" size={16} />
+                Loyalty & Rewards Program Guardrails
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+                <div className="space-y-1.5 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                  <label className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Spin Wheel Win Coins</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      min="0"
+                      value={loyaltySpinCoins}
+                      onChange={(e) => setLoyaltySpinCoins(Number(e.target.value))}
+                      className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-sm font-bold text-white focus:outline-none"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs text-slate-500">Coins</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">Coins awarded when users spin the fortune wheel (Default: 25).</p>
+                </div>
+
+                <div className="space-y-1.5 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                  <label className="text-xs font-bold text-emerald-400 uppercase tracking-wider block">Order Delivery Cashback (%)</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={loyaltyCashbackPercent}
+                      onChange={(e) => setLoyaltyCashbackPercent(Number(e.target.value))}
+                      className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-sm font-bold text-white focus:outline-none"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs text-slate-500">%</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">Cashback % credited as coins upon order delivery (Default: 5%).</p>
+                </div>
+
+                <div className="space-y-1.5 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                  <label className="text-xs font-bold text-sky-400 uppercase tracking-wider block">Max Redemption Cap (%)</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={loyaltyMaxRedeemPercent}
+                      onChange={(e) => setLoyaltyMaxRedeemPercent(Number(e.target.value))}
+                      className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-sm font-bold text-white focus:outline-none"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs text-slate-500">% of Cart</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">Maximum % of cart value payable via coins (Default: 15%).</p>
+                </div>
+
+                <div className="space-y-1.5 bg-slate-900/50 p-4 rounded-xl border border-slate-800">
+                  <label className="text-xs font-bold text-purple-400 uppercase tracking-wider block">Min Order Threshold (₹)</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      min="0"
+                      value={loyaltyMinOrderValue}
+                      onChange={(e) => setLoyaltyMinOrderValue(Number(e.target.value))}
+                      className="w-full bg-slate-900 border border-slate-800 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg py-2 px-3 text-sm font-bold text-white focus:outline-none"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs text-slate-500">INR</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1">Minimum cart value required to redeem coins (Default: ₹399).</p>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="bg-vedicana-green hover:bg-emerald-700 text-white font-bold text-xs px-6 py-2.5 rounded-lg uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+              >
+                {saving ? <Loader className="animate-spin" size={12} /> : <Save size={12} />}
+                Save Loyalty Settings
               </button>
             </form>
           )}

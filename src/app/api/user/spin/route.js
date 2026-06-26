@@ -1,21 +1,24 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
-import User from '@/models/User';
+import { jwtVerify } from 'jose';
+import models from '../../../../models/index.js';
+
+const { User } = models;
 
 export async function POST(req) {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('token')?.value;
+    const cookieStore = await cookies();
+    const token = cookieStore.get('vedicana_session')?.value;
 
     if (!token) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ success: false, error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret');
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback_secret_key_vedicana_auth_xyz123');
+    const { payload } = await jwtVerify(token, secret);
     
     // Find the user
-    const user = await User.findByPk(decoded.userId);
+    const user = await User.findByPk(payload.id);
     if (!user) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }

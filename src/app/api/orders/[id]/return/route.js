@@ -7,9 +7,13 @@ import models from '../../../../../models/index.js';
 const { Order } = models;
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 2525,
-  auth: { user: 'apikey', pass: process.env.SENDGRID_API_KEY },
+  host: process.env.ZOHO_SMTP_HOST || 'smtp.zoho.in',
+  port: parseInt(process.env.ZOHO_SMTP_PORT || '465', 10),
+  secure: true,
+  auth: {
+    user: process.env.ZOHO_SMTP_USER || 'info@vedicana.com',
+    pass: process.env.ZOHO_SMTP_PASS,
+  },
 });
 
 const RETURN_WINDOW_DAYS = 7;

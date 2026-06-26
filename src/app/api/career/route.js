@@ -6,11 +6,12 @@ const { CareerApplication } = models;
 
 // ── Zoho SMTP ───────────────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 2525,
+  host: process.env.ZOHO_SMTP_HOST || 'smtp.zoho.in',
+  port: parseInt(process.env.ZOHO_SMTP_PORT || '465', 10),
+  secure: true,
   auth: {
-    user: 'apikey',
-    pass: process.env.SENDGRID_API_KEY,
+    user: process.env.ZOHO_HR_USER || process.env.ZOHO_SMTP_USER || 'hrpartner@vedicana.com',
+    pass: process.env.ZOHO_HR_PASS || process.env.ZOHO_SMTP_PASS,
   },
 });
 

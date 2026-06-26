@@ -6,11 +6,12 @@ const { Subscriber } = models;
 
 // ── Zoho SMTP (Newsletter) ──────────────────────────────────────────────────────────
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 2525,
+  host: process.env.ZOHO_SMTP_HOST || 'smtp.zoho.in',
+  port: parseInt(process.env.ZOHO_SMTP_PORT || '465', 10),
+  secure: true,
   auth: {
-    user: 'apikey',
-    pass: process.env.SENDGRID_API_KEY,
+    user: process.env.ZOHO_NEWSLETTER_USER || process.env.ZOHO_SMTP_USER || 'newsletter@vedicana.com',
+    pass: process.env.ZOHO_NEWSLETTER_PASS || process.env.ZOHO_SMTP_PASS,
   },
 });
 

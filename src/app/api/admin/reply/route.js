@@ -23,13 +23,14 @@ export async function POST(request) {
     }
 
     const transporter = nodemailer.createTransport({
-      host: 'smtp.sendgrid.net',
-      port: 2525,
-      auth: {
-        user: 'apikey',
-        pass: process.env.SENDGRID_API_KEY,
-      },
-    });
+  host: process.env.ZOHO_SMTP_HOST || 'smtp.zoho.in',
+  port: parseInt(process.env.ZOHO_SMTP_PORT || '465', 10),
+  secure: true,
+  auth: {
+    user: process.env.ZOHO_SMTP_USER || 'info@vedicana.com',
+    pass: process.env.ZOHO_SMTP_PASS,
+  },
+});
 
     await transporter.sendMail({
       from: `"${fromName}" <${user}>`,

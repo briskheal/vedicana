@@ -11,6 +11,10 @@ function SuccessContent() {
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('vedicana_won_coupon');
+      localStorage.removeItem('vedicana_spin_won');
+    }
   }, []);
 
   if (!mounted) return null;

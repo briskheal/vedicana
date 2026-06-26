@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Package, User as UserIcon, Settings, Key, MapPin, Phone, Check, Heart, ShoppingCart, Truck, XCircle, RotateCcw, X } from 'lucide-react';
+import { Package, User as UserIcon, Settings, Key, MapPin, Phone, Check, Heart, ShoppingCart, Truck, XCircle, RotateCcw, X, Info, Sparkles, Gift } from 'lucide-react';
 import LogoutButton from './LogoutButton';
 
 const INDIAN_STATES = [
@@ -30,9 +30,25 @@ const RETURN_POLICY = `• Products must be unused, in original packaging, and i
 • Shipping cost for returns is borne by the customer.
 • VediCana Organics reserves the right to reject returns that do not meet these conditions.`;
 
+const REWARDS_FAQ_POLICY = `🎁 HOW VEDICANA REWARDS & SPIN COINS WORK 🎁
+
+1. COIN VALUATION:
+• Every 1 VediCana Reward Point is worth exactly ₹1 in cash discount.
+• Points never expire and stay securely in your account.
+
+2. HOW TO EARN POINTS:
+• Daily Spin Wheel: Log in every day and spin the Lucky Wheel to win up to 25 Free Reward Coins!
+• Order Cashback: Automatically earn 5% cashback points on the final total of every delivered order.
+
+3. HOW TO REDEEM POINTS:
+• Minimum Cart Threshold: You can redeem your points at checkout on any order with a subtotal of ₹399 or higher.
+• Fair Usage Cap: To keep our program sustainable, point redemption is capped at 15% of the total cart value per order.
+• Instant Deduction: Simply toggle "Redeem Points" during checkout to instantly apply your savings!`;
+
 export default function ProfileDashboard({ initialUser }) {
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'wishlist' | 'settings'
   const [user, setUser] = useState(initialUser);
+  const [showRewardsModal, setShowRewardsModal] = useState(false);
 
   // Wishlist state
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -185,6 +201,50 @@ export default function ProfileDashboard({ initialUser }) {
 
   return (
     <>
+      {/* Rewards Utilization FAQ Modal */}
+      {showRewardsModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowRewardsModal(false)}>
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-8 border border-amber-100 relative text-left" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+                  <Gift size={22} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold font-serif text-gray-900">VediCana Rewards & Spin Coins</h3>
+                  <p className="text-xs text-gray-500">Official Utilization Policy & Guide</p>
+                </div>
+              </div>
+              <button onClick={() => setShowRewardsModal(false)} className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 text-xs text-gray-700 leading-relaxed">
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-100 p-4 rounded-2xl flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Your Current Balance</span>
+                  <span className="text-2xl font-extrabold text-emerald-900">₹{user.points || 0} OFF</span>
+                </div>
+                <span className="bg-emerald-600 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl shadow-sm">
+                  {user.points || 0} Coins Available
+                </span>
+              </div>
+
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 whitespace-pre-line font-medium text-gray-800 leading-6">
+                {REWARDS_FAQ_POLICY}
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
+              <button onClick={() => setShowRewardsModal(false)} className="bg-vedicana-green hover:bg-emerald-800 text-white font-bold text-xs px-6 py-3 rounded-xl shadow-md transition-all cursor-pointer w-full text-center">
+                Got it, Let&apos;s Shop & Save!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Return T&C Modal */}
       {returnModal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setReturnModal(null)}>
@@ -239,7 +299,13 @@ export default function ProfileDashboard({ initialUser }) {
                     {user.points || 0}
                   </span>
                 </div>
-                <div className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Points</div>
+                <button
+                  onClick={() => setShowRewardsModal(true)}
+                  className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer shadow-sm"
+                  title="Click to learn how points work"
+                >
+                  How Coins Work ℹ️
+                </button>
               </div>
             </div>
 
@@ -269,7 +335,21 @@ export default function ProfileDashboard({ initialUser }) {
           {/* ORDERS TAB */}
           {activeTab === 'orders' && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-              <h2 className="text-2xl font-serif text-gray-900 mb-6">Order History</h2>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-6 border-b border-gray-100">
+                <h2 className="text-2xl font-serif text-gray-900">Order History</h2>
+                <div className="bg-gradient-to-r from-amber-50 to-emerald-50 border border-amber-200/60 rounded-xl p-4 flex items-center gap-3 max-w-lg shadow-sm text-left">
+                  <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-600 flex-shrink-0">
+                    <Sparkles size={20} />
+                  </div>
+                  <div className="text-xs text-gray-700 leading-relaxed">
+                    <strong className="text-gray-900 font-bold block mb-0.5">VediCana Spin Coins Program ⭐</strong>
+                    You have <strong className="text-vedicana-green font-bold">{user.points || 0} Points</strong> (Worth ₹{user.points || 0}). Redeemable on orders ₹399+ (up to 15% off).{' '}
+                    <button onClick={() => setShowRewardsModal(true)} className="text-amber-700 font-bold underline hover:text-amber-900 transition-colors inline-flex items-center gap-0.5 cursor-pointer">
+                      View Utilization Guide →
+                    </button>
+                  </div>
+                </div>
+              </div>
               {user.Orders && user.Orders.length > 0 ? (
                 <div className="overflow-x-auto border border-gray-300 shadow-sm mt-4">
                   <table className="w-full text-left text-sm whitespace-nowrap border-collapse">

@@ -94,7 +94,11 @@ export async function POST(request, { params }) {
     // Send emails asynchronously
     sendCancellationEmails(order, decoded);
 
-    return NextResponse.json({ success: true, message: 'Order cancelled successfully. Refund will be processed within 5–7 business days.' });
+    const responseMsg = order.paymentMethod === 'cod'
+      ? 'Order cancelled successfully. As this was Cash on Delivery (COD), no payment charge occurred.'
+      : 'Order cancelled successfully. Your refund will be processed within 5 to 7 business days to your original payment mode.';
+
+    return NextResponse.json({ success: true, message: responseMsg });
 
   } catch (error) {
     console.error('Cancel Order Error:', error);

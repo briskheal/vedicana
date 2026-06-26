@@ -3,6 +3,7 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { User as UserIcon, Key, Eye, EyeOff } from 'lucide-react';
+import { syncGuestWishlistToServer } from '../../components/WishlistButton';
 
 function LoginForm({ onToggleForgot }) {
   const router = useRouter();
@@ -33,6 +34,7 @@ function LoginForm({ onToggleForgot }) {
 
       if (typeof window !== 'undefined') {
         localStorage.setItem('vedicana_just_logged_in', 'true');
+        syncGuestWishlistToServer();
       }
 
       router.push('/profile');

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Package, User as UserIcon, Settings, Key, MapPin, Phone, Check, Heart, ShoppingCart, Truck, XCircle, RotateCcw, X, Info, Sparkles, Gift } from 'lucide-react';
 import LogoutButton from './LogoutButton';
+import { syncGuestWishlistToServer } from './WishlistButton';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -92,11 +93,13 @@ export default function ProfileDashboard({ initialUser }) {
   useEffect(() => {
     if (activeTab === 'wishlist') {
       setWishlistLoading(true);
-      fetch('/api/wishlist')
-        .then(r => r.json())
-        .then(data => { if (Array.isArray(data)) setWishlistItems(data); })
-        .catch(console.error)
-        .finally(() => setWishlistLoading(false));
+      syncGuestWishlistToServer().then(() => {
+        fetch('/api/wishlist')
+          .then(r => r.json())
+          .then(data => { if (Array.isArray(data)) setWishlistItems(data); })
+          .catch(console.error)
+          .finally(() => setWishlistLoading(false));
+      });
     }
   }, [activeTab]);
 

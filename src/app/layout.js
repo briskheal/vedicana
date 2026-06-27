@@ -289,11 +289,11 @@ export default async function RootLayout({ children }) {
                     <Link href="/blog" className="text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">Blog</Link>
                     
                     {/* Discover Dropdown */}
-                    <div className="relative group py-8">
-                      <button className="flex items-center text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors">
+                    <div className="relative group flex items-center h-20">
+                      <button className="flex items-center text-gray-700 hover:text-vedicana-green font-bold text-sm uppercase tracking-wide transition-colors cursor-pointer">
                         Discover <ChevronDown size={14} className="ml-1" />
                       </button>
-                      <div className="absolute top-20 left-0 w-64 bg-white shadow-xl border border-gray-100 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top group-hover:scale-100 scale-95">
+                      <div className="absolute top-16 left-0 w-64 bg-white shadow-xl border border-gray-100 rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top group-hover:scale-100 scale-95">
                         <div className="py-2">
                           <Link 
                             href="/prakriti" 

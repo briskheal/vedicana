@@ -161,7 +161,7 @@ export default function LanguageTranslator() {
 
         /* Suppress leftover Google Translate style artifacts */
         #google_language_translator,
-        .skiptranslate,
+        iframe.skiptranslate,
         .goog-te-banner-frame,
         #goog-gt-tt,
         .goog-tooltip,

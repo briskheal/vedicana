@@ -107,7 +107,12 @@ function buildAutoReply({ name, email, subject, companyEmail, companyAddress }) 
 
 export async function POST(request) {
   try {
-    const { name, email, subject, message } = await request.json();
+    const { name, email, subject, message, bot_honeypot } = await request.json();
+
+    if (bot_honeypot) {
+      // Silent reject for spam bots
+      return NextResponse.json({ success: true, message: 'Message sent!' }, { status: 200 });
+    }
 
     if (!name || !email || !subject || !message) {
       return NextResponse.json({ error: 'Please fill out all required fields.' }, { status: 400 });

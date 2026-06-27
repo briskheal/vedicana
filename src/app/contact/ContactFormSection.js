@@ -3,10 +3,18 @@ import React, { useState } from 'react';
 import { Send, CheckCircle, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function ContactFormSection() {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '', bot_honeypot: '' });
+  const [num1, setNum1] = useState(5);
+  const [num2, setNum2] = useState(3);
+  const [captchaInput, setCaptchaInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    setNum1(Math.floor(Math.random() * 8) + 2);
+    setNum2(Math.floor(Math.random() * 8) + 1);
+  }, [isSubmitted]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,6 +23,11 @@ export default function ContactFormSection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (parseInt(captchaInput, 10) !== num1 + num2) {
+      setError('Security check failed. Please enter the correct math sum.');
+      return;
+    }
+
     setIsSubmitting(true);
     setError('');
 
@@ -30,6 +43,7 @@ export default function ContactFormSection() {
         setError(data.error || 'Something went wrong. Please try again.');
       } else {
         setIsSubmitted(true);
+        setCaptchaInput('');
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -39,7 +53,8 @@ export default function ContactFormSection() {
   };
 
   const handleReset = () => {
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setFormData({ name: '', email: '', subject: '', message: '', bot_honeypot: '' });
+    setCaptchaInput('');
     setIsSubmitted(false);
     setError('');
   };
@@ -117,6 +132,26 @@ export default function ContactFormSection() {
                 required name="message" value={formData.message} onChange={handleChange} rows="5"
                 className="w-full border border-gray-200 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-xl px-4 py-3 text-sm transition-all resize-none"
                 placeholder="Detail your questions or wellness feedback here..."
+              />
+            </div>
+
+            {/* Invisible Honeypot for spam bots */}
+            <div className="hidden" aria-hidden="true">
+              <input type="text" name="bot_honeypot" value={formData.bot_honeypot || ''} onChange={handleChange} tabIndex="-1" autoComplete="off" placeholder="Leave empty" />
+            </div>
+
+            {/* Security Captcha Challenge */}
+            <div className="bg-emerald-50/60 border border-emerald-100 p-4 rounded-xl flex items-center justify-between gap-4">
+              <label className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                🛡️ Security Check: What is {num1} + {num2}? *
+              </label>
+              <input
+                required
+                type="number"
+                value={captchaInput}
+                onChange={(e) => setCaptchaInput(e.target.value)}
+                placeholder="?"
+                className="w-20 border border-emerald-300 focus:border-vedicana-green focus:ring-1 focus:ring-vedicana-green rounded-lg px-3 py-1.5 text-sm font-bold text-center bg-white"
               />
             </div>
 

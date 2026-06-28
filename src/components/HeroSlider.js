@@ -2,26 +2,27 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const defaultSlides = [
   {
     id: 'default-1',
-    image: '/images/products/vedicana-mustard-honey.png',
+    image: '/images/products/vedicana-mustard-honey.webp',
     link: '/shop'
   },
   {
     id: 'default-2',
-    image: '/images/products/vedicana-jamun-honey.png',
+    image: '/images/products/vedicana-jamun-honey.webp',
     link: '/shop'
   },
   {
     id: 'default-3',
-    image: '/images/products/vedicana-sudh-desi-ghee.png',
+    image: '/images/products/vedicana-sudh-desi-ghee.webp',
     link: '/shop'
   },
   {
     id: 'default-4',
-    image: '/images/products/vedicana-chyawanprash.png',
+    image: '/images/products/vedicana-chyawanprash.webp',
     link: '/shop'
   }
 ];
@@ -79,18 +80,17 @@ export default function HeroSlider({ slides = [] }) {
             }`}
           >
             <div className="relative w-full h-full">
-              <Link href={slide.link || '/shop'} className="block w-full h-full">
+              <Link href={slide.link || '/shop'} className="block relative w-full h-full">
                 {/* Background Image */}
-                <img 
-                  src={slide.image} 
+                <Image 
+                  src={slide.image || '/images/banners/slide-13.webp'} 
                   alt={slide.title || "VediCana Hero Banner"} 
-                  className={`w-full h-full object-cover object-right transform transition-transform duration-[9000ms] ease-out ${
+                  fill
+                  priority={index === 0}
+                  sizes="100vw"
+                  className={`object-cover object-right transform transition-transform duration-[9000ms] ease-out ${
                     isActive ? 'scale-105' : 'scale-100'
                   }`}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentElement.classList.add('bg-gradient-to-br', 'from-[#0f172a]', 'to-[#020617]');
-                  }}
                 />
               </Link>
 

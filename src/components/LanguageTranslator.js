@@ -34,47 +34,47 @@ export default function LanguageTranslator() {
   useEffect(() => {
     setSelectedLang(getActiveLanguage());
 
-    // 1. Define callback globally
-    window.GoogleLanguageTranslatorInit = function() {
-      if (window.google && window.google.translate) {
-        new window.google.translate.TranslateElement({
-          pageLanguage: 'en',
-          layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
-          autoDisplay: false
-        }, 'google_language_translator');
+    let initialized = false;
+    const initTranslator = () => {
+      if (initialized) return;
+      initialized = true;
+
+      window.GoogleLanguageTranslatorInit = function() {
+        if (window.google && window.google.translate) {
+          new window.google.translate.TranslateElement({
+            pageLanguage: 'en',
+            layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
+            autoDisplay: false
+          }, 'google_language_translator');
+        }
+      };
+
+      const scriptId = 'google-translate-loader';
+      if (!document.getElementById(scriptId)) {
+        const script = document.createElement('script');
+        script.id = scriptId;
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=GoogleLanguageTranslatorInit';
+        script.async = true;
+        document.body.appendChild(script);
       }
     };
 
-    // 2. Append the loader script if not present
-    const scriptId = 'google-translate-loader';
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.src = 'https://translate.google.com/translate_a/element.js?cb=GoogleLanguageTranslatorInit';
-      script.async = true;
-      document.body.appendChild(script);
+    // If language is already changed from default English, init immediately
+    if (getActiveLanguage() !== 'en') {
+      initTranslator();
+    } else {
+      // Otherwise defer loading until user interacts or 3.5 seconds elapse
+      const timer = setTimeout(initTranslator, 3500);
+      window.addEventListener('scroll', initTranslator, { once: true, passive: true });
+      window.addEventListener('mousemove', initTranslator, { once: true, passive: true });
+      window.addEventListener('touchstart', initTranslator, { once: true, passive: true });
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('scroll', initTranslator);
+        window.removeEventListener('mousemove', initTranslator);
+        window.removeEventListener('touchstart', initTranslator);
+      };
     }
-
-    // 3. Periodically check and re-initialize Google Translate if container is recreated empty on route transitions
-    const interval = setInterval(() => {
-      const gltContainer = document.getElementById('google_language_translator');
-      if (gltContainer && gltContainer.innerHTML.length === 0) {
-        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-          try {
-            new window.google.translate.TranslateElement({
-              pageLanguage: 'en',
-              layout: window.google.translate.TranslateElement.InlineLayout.HORIZONTAL,
-              autoDisplay: false
-            }, 'google_language_translator');
-            console.log("Re-initialized Google Translate Element successfully.");
-          } catch (err) {
-            console.error("Error re-initializing google translate:", err);
-          }
-        }
-      }
-    }, 500);
-
-    return () => clearInterval(interval);
   }, []);
 
   const handleLanguageChange = (langCode) => {

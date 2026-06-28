@@ -75,8 +75,8 @@ export default function HeroSlider({ slides = [] }) {
         return (
           <div 
             key={slide.id || index}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-              isActive ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 pointer-events-none z-0'
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              isActive ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
             }`}
           >
             <div className="relative w-full h-full">
@@ -88,9 +88,7 @@ export default function HeroSlider({ slides = [] }) {
                   fill
                   priority={index === 0}
                   sizes="100vw"
-                  className={`object-cover object-right transform transition-transform duration-[9000ms] ease-out ${
-                    isActive ? 'scale-105' : 'scale-100'
-                  }`}
+                  className="object-cover object-right"
                 />
               </Link>
 

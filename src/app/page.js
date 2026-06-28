@@ -141,7 +141,7 @@ export default async function Home() {
 
   try {
     const [dbProducts, dbPopular, dbSlides, dbCerts] = await Promise.all([
-      Product.findAll({ where: { is_featured: true }, limit: 3 }),
+      Product.findAll({ where: { is_featured: true }, limit: 3, attributes: ['id', 'title', 'slug', 'image', 'price', 'sale_price', 'description'] }),
       PopularCategory.findAll({ order: [['createdAt', 'ASC']] }),
       HeroSlide.findAll({ where: { is_active: true }, order: [['order_index', 'ASC'], ['id', 'ASC']] }),
       Certification.findAll({ order: [['order_index', 'ASC'], ['id', 'ASC']] })

@@ -15,6 +15,7 @@ export default async function Shop() {
     const [dbProducts, dbCategories] = await Promise.all([
       Product.findAll({
         where: { is_active: true },
+        attributes: ['id', 'title', 'slug', 'image', 'price', 'sale_price', 'short_description', 'description', 'categoryId'],
         include: [Category],
         order: [['createdAt', 'DESC']],
       }),

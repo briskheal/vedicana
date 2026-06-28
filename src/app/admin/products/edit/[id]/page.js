@@ -197,52 +197,38 @@ export default function EditProductPage() {
     }
   }, [title, autoSlug, isNew]);
 
-  // Compress Image to WebP using Canvas
-  const handleImageUpload = (e, slotIndex) => {
+  // Upload Image to Supabase CDN endpoint
+  const handleImageUpload = async (e, slotIndex) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
+      const res = await fetch('/api/admin/products/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Upload failed');
+      }
 
-        // Compress and encode as base64 WebP
-        const base64WebP = canvas.toDataURL('image/webp', 0.85);
-        
-        if (slotIndex === 0) {
-          setPrimaryImage(base64WebP);
-        } else {
-          const newGallery = [...gallery];
-          newGallery[slotIndex - 1] = base64WebP;
-          setGallery(newGallery);
-        }
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+      const { url } = await res.json();
+
+      if (slotIndex === 0) {
+        setPrimaryImage(url);
+      } else {
+        const newGallery = [...gallery];
+        newGallery[slotIndex - 1] = url;
+        setGallery(newGallery);
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      alert('Failed to upload image: ' + error.message);
+    }
   };
 
   const handleClearImage = (slotIndex) => {

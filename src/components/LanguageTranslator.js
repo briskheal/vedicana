@@ -29,9 +29,10 @@ export default function LanguageTranslator() {
     return 'en';
   };
 
-  const [selectedLang, setSelectedLang] = useState(() => getActiveLanguage());
+  const [selectedLang, setSelectedLang] = useState('en');
 
   useEffect(() => {
+    setSelectedLang(getActiveLanguage());
 
     let initialized = false;
     const initTranslator = () => {

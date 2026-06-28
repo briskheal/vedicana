@@ -408,6 +408,9 @@ export default async function Home() {
                       <img 
                         src={cert.image} 
                         alt={cert.title} 
+                        width="64"
+                        height="64"
+                        loading="lazy"
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform"
                       />
                     </div>

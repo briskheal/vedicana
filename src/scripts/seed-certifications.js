@@ -6,47 +6,47 @@ const { Certification } = models;
 const defaultCertifications = [
   {
     title: 'WHO GMP',
-    image: 'https://cdn-icons-png.flaticon.com/512/2912/2912795.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2912/2912795.webp',
     order_index: 1
   },
   {
     title: 'Organic',
-    image: 'https://cdn-icons-png.flaticon.com/512/892/892926.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/892/892926.webp',
     order_index: 2
   },
   {
     title: 'Cruelty Free',
-    image: 'https://cdn-icons-png.flaticon.com/512/825/825590.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/825/825590.webp',
     order_index: 3
   },
   {
     title: 'Chemical Free',
-    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913520.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913520.webp',
     order_index: 4
   },
   {
     title: 'Sustainable',
-    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913564.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2913/2913564.webp',
     order_index: 5
   },
   {
     title: 'SSL Secure',
-    image: 'https://cdn-icons-png.flaticon.com/512/2504/2504932.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2504/2504932.webp',
     order_index: 6
   },
   {
     title: 'Child Labor Free',
-    image: 'https://cdn-icons-png.flaticon.com/512/3209/3209935.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/3209/3209935.webp',
     order_index: 7
   },
   {
     title: 'COA Certified',
-    image: 'https://cdn-icons-png.flaticon.com/512/2912/2912778.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2912/2912778.webp',
     order_index: 8
   },
   {
     title: '100% Natural',
-    image: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
+    image: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.webp',
     order_index: 9
   }
 ];

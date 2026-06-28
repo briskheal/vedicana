@@ -148,10 +148,12 @@ export default async function RootLayout({ children }) {
     [discoverPages, categories, footerQuickLinks, footerPolicies] = await Promise.all([
       DiscoverPage.findAll({
         where: { is_active: true },
+        attributes: ['id', 'title', 'slug'],
         order: [['createdAt', 'ASC']],
         raw: true
       }),
       Category.findAll({
+        attributes: ['id', 'name', 'slug'],
         order: [['name', 'ASC']],
         raw: true
       }),

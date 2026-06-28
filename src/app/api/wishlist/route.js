@@ -29,12 +29,23 @@ export async function GET() {
       where: { userId: user.id },
       include: [{
         model: Product,
-        attributes: ['id', 'title', 'price', 'compareAtPrice', 'images', 'slug', 'stock'],
+        attributes: ['id', 'title', 'price', 'sale_price', 'image', 'gallery', 'slug', 'stock'],
       }],
       order: [['createdAt', 'DESC']],
     });
 
-    return NextResponse.json(items.map(i => i.toJSON()));
+    return NextResponse.json(items.map(i => {
+      const json = i.toJSON();
+      if (json.Product) {
+        // Alias for frontend compatibility
+        json.Product.compareAtPrice = json.Product.sale_price;
+        const gallery = Array.isArray(json.Product.gallery) 
+          ? json.Product.gallery 
+          : (typeof json.Product.gallery === 'string' ? JSON.parse(json.Product.gallery || '[]') : []);
+        json.Product.images = gallery.length > 0 ? gallery : (json.Product.image ? [json.Product.image] : []);
+      }
+      return json;
+    }));
   } catch (error) {
     console.error('GET Wishlist Error:', error);
     return NextResponse.json({ error: 'Failed to fetch wishlist.' }, { status: 500 });

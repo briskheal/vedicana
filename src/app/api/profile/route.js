@@ -35,7 +35,9 @@ export async function GET() {
         email: user.email,
         phone: user.phone,
         address: user.address,
-        role: user.role
+        role: user.role,
+        points: user.points,
+        hasSpunWheel: user.hasSpunWheel
       }
     });
   } catch (error) {
@@ -104,7 +106,9 @@ export async function PUT(request) {
         email: user.email,
         phone: user.phone,
         address: user.address,
-        role: user.role
+        role: user.role,
+        points: user.points,
+        hasSpunWheel: user.hasSpunWheel
       }
     });
 

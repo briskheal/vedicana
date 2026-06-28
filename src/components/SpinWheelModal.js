@@ -53,6 +53,20 @@ export default function SpinWheelModal() {
 
         // Check if just logged in (reset logic)
         if (localStorage.getItem('vedicana_just_logged_in') === 'true') {
+          // If they won coins as a guest, claim them now!
+          if (localStorage.getItem('vedicana_spin_won_coins') === 'true') {
+            fetch('/api/user/spin', { method: 'POST' })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  console.log("Spin coins claimed successfully after login.");
+                }
+              })
+              .catch(console.error)
+              .finally(() => {
+                localStorage.removeItem('vedicana_spin_won_coins');
+              });
+          }
           localStorage.removeItem(`vedicana_spin_attempts_${emailKey}`);
           localStorage.removeItem(`vedicana_won_coupons_${emailKey}`);
           localStorage.removeItem('vedicana_just_logged_in');
@@ -172,6 +186,9 @@ export default function SpinWheelModal() {
             })
             .catch(() => setPointsClaimMessage('Error claiming points.'))
             .finally(() => setClaimingPoints(false));
+        } else {
+          // Guest won coins — store flag to auto-claim upon login
+          localStorage.setItem('vedicana_spin_won_coins', 'true');
         }
       } else if (prize.code && prize.code !== 'TRYAGAIN' && !nextCoupons.includes(prize.code)) {
         nextCoupons.push(prize.code);

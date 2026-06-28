@@ -85,7 +85,9 @@ export default function MobileNav({ discoverPages = [] }) {
                     <Link href="/prakriti" className="py-2 text-sm font-semibold text-vedicana-gold hover:text-vedicana-green">
                       Ayurvedic Quiz (Prakriti)
                     </Link>
-                    {discoverPages.map((page) => (
+                    {discoverPages
+                      .filter(p => !['payment-security', 'pricing-policy', 'cancelation-policy', 'shipping-policy', 'return-policy', 'privacy-policy', 'terms-and-conditions', 'cookies'].includes(p.slug) && !p.slug.endsWith('-policy'))
+                      .map((page) => (
                       <Link key={page.id} href={`/${page.slug}`} className="py-2 text-sm font-medium text-gray-600 hover:text-vedicana-green">
                         {page.title}
                       </Link>

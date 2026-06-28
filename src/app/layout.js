@@ -166,6 +166,9 @@ export default async function RootLayout({ children }) {
         raw: true
       })
     ]);
+
+    const policySlugs = ['payment-security', 'pricing-policy', 'cancelation-policy', 'shipping-policy', 'return-policy', 'privacy-policy', 'terms-and-conditions', 'cookies'];
+    discoverPages = discoverPages.filter(p => !policySlugs.includes(p.slug) && !p.slug.endsWith('-policy'));
   } catch (err) {
     console.error('Failed to load dynamic navigation menus:', err);
   }
@@ -301,7 +304,7 @@ export default async function RootLayout({ children }) {
                           >
                             Ayurvedic Quiz
                           </Link>
-                          {discoverPages.filter(p => !['payment-security', 'pricing-policy', 'cancelation-policy', 'shipping-policy', 'return-policy', 'privacy-policy', 'terms-and-conditions'].includes(p.slug)).map((page) => (
+                          {discoverPages.map((page) => (
                             <Link 
                               key={page.id} 
                               href={`/${page.slug}`} 

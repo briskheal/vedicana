@@ -6,16 +6,18 @@ let sequelize;
 let dbUrl = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/vedicana';
 
 
+const useSsl = dbUrl.includes('supabase') || dbUrl.includes('amazonaws') || dbUrl.includes('render.com') || dbUrl.includes('sslmode=require');
+
 const sequelizeOptions = {
   dialect: 'postgres',
   dialectModule: pg,
   logging: false,
-  dialectOptions: {
+  dialectOptions: useSsl ? {
     ssl: {
       require: true,
       rejectUnauthorized: false
     }
-  },
+  } : {},
   pool: {
     max: 1,
     min: 0,

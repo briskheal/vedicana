@@ -33,11 +33,12 @@ export default function AdminCertifications() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadCertifications();
   }, []);
 
   // In-browser WebP compressor and resizer to 120x120 stamp size
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -46,38 +47,26 @@ export default function AdminCertifications() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const STAMP_SIZE = 120; // 120x120px stamp size
-        
-        canvas.width = STAMP_SIZE;
-        canvas.height = STAMP_SIZE;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'certifications');
 
-        const ctx = canvas.getContext('2d');
-        
-        // Fill clear background
-        ctx.clearRect(0, 0, STAMP_SIZE, STAMP_SIZE);
-
-        // Draw image fitting the 120x120 box proportionally
-        const ratio = Math.min(STAMP_SIZE / img.width, STAMP_SIZE / img.height);
-        const w = img.width * ratio;
-        const h = img.height * ratio;
-        const x = (STAMP_SIZE - w) / 2;
-        const y = (STAMP_SIZE - h) / 2;
-
-        ctx.drawImage(img, x, y, w, h);
-
-        // Convert to WebP format Base64 string
-        const base64 = canvas.toDataURL('image/webp', 0.9);
-        setImageBase64(base64);
-        setImagePreview(base64);
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setImageBase64(data.url);
+        setImagePreview(data.url);
+      } else {
+        alert(data.error || 'Failed to upload image');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Error uploading image');
+    }
   };
 
   // Submit Handler (Add certification stamp)
@@ -167,7 +156,7 @@ export default function AdminCertifications() {
             <span className="bg-vedicana-green w-2 h-8 rounded-full inline-block"></span>
             High Quality Certifications Stamps
           </h2>
-          <p className="text-slate-400 text-sm mt-1">Manage stamp size credentials displayed in the storefront "High Quality" column. The system strictly caps the maximum active certifications at exactly 9 to preserve the elegant 3x3 layout design.</p>
+          <p className="text-slate-400 text-sm mt-1">Manage stamp size credentials displayed in the storefront &ldquo;High Quality&rdquo; column. The system strictly caps the maximum active certifications at exactly 9 to preserve the elegant 3x3 layout design.</p>
         </div>
         <button 
           onClick={loadCertifications}

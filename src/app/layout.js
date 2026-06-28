@@ -81,8 +81,6 @@ export const metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default async function RootLayout({ children }) {
@@ -343,9 +341,10 @@ export default async function RootLayout({ children }) {
                     <div className="flex items-center space-x-5">
                       <LanguageTranslator />
                       <SearchBar />
-                      <Link 
+                       <Link 
                         href="/profile" 
                         title="Sign Up/Login" 
+                        aria-label="User Account"
                         className="text-gray-700 hover:text-vedicana-green transition-colors"
                       >
                         <User size={20} />
@@ -449,27 +448,27 @@ export default async function RootLayout({ children }) {
                         <h4 className="text-xs md:text-sm font-semibold text-white/95 mb-2 uppercase tracking-wider">Be Sociable</h4>
                         <div className="flex items-center space-x-2">
                           {socialLinks.facebook && (
-                            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#1877F2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Facebook">
+                            <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#1877F2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Facebook" aria-label="Facebook">
                               <Facebook size={14} />
                             </a>
                           )}
                           {socialLinks.instagram && (
-                            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#E4405F] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Instagram">
+                            <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#E4405F] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Instagram" aria-label="Instagram">
                               <Instagram size={14} />
                             </a>
                           )}
                           {socialLinks.linkedin && (
-                            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#0A66C2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="LinkedIn">
+                            <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#0A66C2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="LinkedIn" aria-label="LinkedIn">
                               <Linkedin size={14} />
                             </a>
                           )}
                           {socialLinks.youtube && (
-                            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#FF0000] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="YouTube">
+                            <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#FF0000] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="YouTube" aria-label="YouTube">
                               <Youtube size={14} />
                             </a>
                           )}
                           {socialLinks.twitter && (
-                            <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#1DA1F2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Twitter / X">
+                            <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-slate-950 border border-slate-900 text-slate-400 hover:text-white hover:border-[#1DA1F2] flex items-center justify-center transition-all hover:-translate-y-0.5 shadow-sm" title="Twitter / X" aria-label="Twitter">
                               <Twitter size={14} />
                             </a>
                           )}
@@ -505,6 +504,7 @@ export default async function RootLayout({ children }) {
               rel="noopener noreferrer" 
               className="fixed bottom-6 right-6 z-[999] bg-[#25D366] hover:bg-[#20ba5a] text-white w-12 h-12 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 active:scale-95 active:translate-y-0 shadow-[#25d366]/40 flex items-center justify-center group"
               title="Chat with VediCana Support"
+              aria-label="Chat with VediCana Support on WhatsApp"
             >
               {/* Slide-out tooltip */}
               <div className="absolute right-16 top-1/2 -translate-y-1/2 mr-3 bg-[#FCF9F2] text-vedicana-green text-xs font-serif font-semibold py-2 px-4 rounded-xl shadow-lg border border-[#e6c280]/35 whitespace-nowrap opacity-0 translate-x-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 pointer-events-none hidden md:block select-none shadow-[#25d366]/5">

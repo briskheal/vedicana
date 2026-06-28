@@ -33,6 +33,7 @@ export default function SearchBar() {
 
   useEffect(() => {
     if (query.trim().length >= 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsSearching(true);
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
       
@@ -95,12 +96,14 @@ export default function SearchBar() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search for remedies, ingredients, categories..." 
                   className="w-full bg-transparent border-none text-gray-900 text-lg sm:text-xl placeholder:text-gray-400 focus:outline-none focus:ring-0 font-serif"
+                  aria-label="Search query"
                 />
               </form>
               <button 
                 type="button"
                 onClick={() => setIsOpen(false)}
                 className="text-gray-400 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer flex-shrink-0"
+                aria-label="Close search overlay"
               >
                 <X size={24} />
               </button>
@@ -122,7 +125,7 @@ export default function SearchBar() {
 
               {query.length >= 2 && !isSearching && results.products.length === 0 && results.categories.length === 0 && (
                 <div className="p-8 text-center text-gray-500 font-sans">
-                  No results found for "<span className="text-gray-900 font-medium">{query}</span>"
+                  No results found for &ldquo;<span className="text-gray-900 font-medium">{query}</span>&rdquo;
                 </div>
               )}
 

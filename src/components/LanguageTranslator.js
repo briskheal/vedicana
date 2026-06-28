@@ -17,8 +17,6 @@ const languages = [
 ];
 
 export default function LanguageTranslator() {
-  const [selectedLang, setSelectedLang] = useState('en');
-
   // Read the active translation language from cookies
   const getActiveLanguage = () => {
     if (typeof document !== 'undefined') {
@@ -31,8 +29,9 @@ export default function LanguageTranslator() {
     return 'en';
   };
 
+  const [selectedLang, setSelectedLang] = useState(() => getActiveLanguage());
+
   useEffect(() => {
-    setSelectedLang(getActiveLanguage());
 
     let initialized = false;
     const initTranslator = () => {
@@ -113,6 +112,7 @@ export default function LanguageTranslator() {
         value={selectedLang} 
         onChange={onChange}
         className="premium-lang-selector"
+        aria-label="Select Language"
       >
         {languages.map((lang) => (
           <option key={lang.code} value={lang.code}>

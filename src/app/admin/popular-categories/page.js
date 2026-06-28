@@ -37,6 +37,7 @@ export default function AdminPopularCategoriesManager() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategories();
   }, []);
 
@@ -44,42 +45,21 @@ export default function AdminPopularCategoriesManager() {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      // Create quick temporary object URL for form preview
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
-  // Browser canvas optimization to crop and resize to exactly 112x112 px (Retina 56x56 px w-14 h-14)
-  const cropAndOptimizeImage = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const TARGET_SIZE = 112; // 112px is perfect for w-14 h-14 display (56px) on Retina/high-res screens
-          canvas.width = TARGET_SIZE;
-          canvas.height = TARGET_SIZE;
-          
-          const ctx = canvas.getContext('2d');
-          
-          // Crop square from the center of the image
-          const minDim = Math.min(img.width, img.height);
-          const sx = (img.width - minDim) / 2;
-          const sy = (img.height - minDim) / 2;
-          
-          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, TARGET_SIZE, TARGET_SIZE);
-          
-          // Export as WebP base64 data URL
-          const webpDataUrl = canvas.toDataURL('image/webp', 0.95);
-          resolve(webpDataUrl);
-        };
-        img.onerror = (err) => reject(err);
-      };
-      reader.onerror = (err) => reject(err);
+  const uploadToCdn = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'popular-categories');
+    const res = await fetch('/api/admin/upload', {
+      method: 'POST',
+      body: formData,
     });
+    const data = await res.json();
+    if (!res.ok || !data.url) throw new Error(data.error || 'Upload failed');
+    return data.url;
   };
 
   const handleSubmit = async (e) => {
@@ -97,10 +77,10 @@ export default function AdminPopularCategoriesManager() {
       setSaving(true);
       setError(null);
 
-      // Crop and optimize to WebP base64 if a new image was uploaded
+      // Upload to Supabase CDN if a new image was uploaded
       let optimizedImageBase64 = null;
       if (imageFile) {
-        optimizedImageBase64 = await cropAndOptimizeImage(imageFile);
+        optimizedImageBase64 = await uploadToCdn(imageFile);
       }
 
       let res;

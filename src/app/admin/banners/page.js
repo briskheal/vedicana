@@ -42,48 +42,40 @@ export default function AdminBanners() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadSlides();
   }, []);
 
-  // Handle image upload and client-side resizing/compression
-  const handleFileChange = (e) => {
+  // Handle image upload via API endpoint to Supabase CDN
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Check size limit (e.g., 8MB) just for safety before loading
     if (file.size > 8 * 1024 * 1024) {
       alert("Image is too large. Please upload an image under 8MB.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1200; // Optimal width for hero banner
-        let width = img.width;
-        let height = img.height;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', 'banners');
 
-        if (width > MAX_WIDTH) {
-          height = Math.round((height * MAX_WIDTH) / width);
-          width = MAX_WIDTH;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Convert to WebP format with 0.82 compression ratio
-        const base64 = canvas.toDataURL('image/webp', 0.82);
-        setImageBase64(base64);
-        setImagePreview(base64);
-      };
-      img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setImageBase64(data.url);
+        setImagePreview(data.url);
+      } else {
+        alert(data.error || 'Failed to upload image');
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Error uploading image');
+    }
   };
 
   // Handle Edit Action Click

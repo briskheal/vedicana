@@ -461,7 +461,7 @@ export default function ProfileDashboard({ initialUser }) {
                           </button>
                         </div>
                         <div className="p-4">
-                          <Link href={`/${product.slug}`} className="font-semibold text-gray-900 text-sm hover:text-vedicana-green line-clamp-2 block mb-2">{product.title}</Link>
+                          <Link href={`/shop/${product.slug}`} className="font-semibold text-gray-900 text-sm hover:text-vedicana-green line-clamp-2 block mb-2">{product.title}</Link>
                           <div className="flex items-center gap-2 mb-3">
                             <span className="text-vedicana-green font-bold">₹{product.price}</span>
                             {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -469,7 +469,7 @@ export default function ProfileDashboard({ initialUser }) {
                             )}
                           </div>
                           <div className="flex gap-2">
-                            <Link href={`/${product.slug}`}
+                            <Link href={`/shop/${product.slug}`}
                               className="flex-1 bg-vedicana-green text-white text-xs font-bold py-2 rounded-lg hover:bg-emerald-700 transition-colors text-center flex items-center justify-center gap-1.5">
                               <ShoppingCart size={13} /> Add to Cart
                             </Link>

@@ -37,13 +37,19 @@ const Youtube = ({ size = 20, className = "" }) => (
 const Twitter = ({ size = 20, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
 );
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+
 import CartIcon from '../components/CartIcon';
-import SearchBar from '../components/SearchBar';
-import LanguageTranslator from '../components/LanguageTranslator';
-import AccessibilityAssistant from '../components/AccessibilityAssistant';
 import { CartProvider } from '../context/CartContext';
-import SpinWheelModal from '../components/SpinWheelModal';
-import MobileNav from '../components/MobileNav';
+
+const SearchBar = dynamic(() => import('../components/SearchBar'));
+const LanguageTranslator = dynamic(() => import('../components/LanguageTranslator'));
+const AccessibilityAssistant = dynamic(() => import('../components/AccessibilityAssistant'));
+const SpinWheelModal = dynamic(() => import('../components/SpinWheelModal'));
+const MobileNav = dynamic(() => import('../components/MobileNav'));
+const CookieBanner = dynamic(() => import('../components/CookieBanner'));
+
 import DiscoverPage from '../models/DiscoverPage.js';
 import Category from '../models/Category.js';
 import FooterLink from '../models/FooterLink.js';
@@ -54,8 +60,6 @@ import PageTransition from '../components/PageTransition';
 import ConditionalLayout from '../components/ConditionalLayout';
 import Script from 'next/script';
 import AnalyticsTracker from '../components/AnalyticsTracker';
-
-import CookieBanner from '../components/CookieBanner';
 
 export const metadata = {
   title: "VediCana | Tradition Re-emerged",
@@ -270,10 +274,12 @@ export default async function RootLayout({ children }) {
                   <div className="flex-shrink-0 flex items-center">
                     <Link href="/" className="flex items-center">
                       {logoExists ? (
-                        <img 
+                        <Image 
                           src="/logo.webp" 
                           alt="VediCana" 
-                          style={{ height: `${logoHeight}px` }}
+                          width={240}
+                          height={logoHeight}
+                          priority={true}
                           className="w-auto object-contain max-h-[50px] md:max-h-[72px]"
                         />
                       ) : (
@@ -368,10 +374,11 @@ export default async function RootLayout({ children }) {
                   <div className="col-span-1 md:col-span-2 space-y-4 max-w-md">
                     <h2 className="text-3xl font-serif text-white mb-2 flex items-center">
                       {logoExists ? (
-                        <img 
+                        <Image 
                           src="/logo.webp" 
                           alt="VediCana" 
-                          style={{ height: `${logoHeight}px` }}
+                          width={240}
+                          height={logoHeight}
                           className="w-auto object-contain brightness-0 invert"
                         />
                       ) : (

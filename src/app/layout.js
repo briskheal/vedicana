@@ -527,7 +527,7 @@ export default async function RootLayout({ children }) {
           </div>
             }
           >
-            <main id="main-content" className="flex-grow flex flex-col">
+            <main id="main-content" className="flex-grow flex flex-col max-w-full overflow-x-hidden w-full">
               <PageTransition>{children}</PageTransition>
             </main>
           </ConditionalLayout>

@@ -55,7 +55,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-[#f2f8ef] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-[400px] h-[400px] bg-vedicana-light-green opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute top-0 right-0 -mt-20 -mr-20 w-72 sm:w-[400px] h-72 sm:h-[400px] max-w-full bg-vedicana-light-green opacity-20 rounded-full blur-3xl pointer-events-none"></div>
       
       <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100 relative z-10 animate-fade-in-up">
         <div className="text-center mb-8">

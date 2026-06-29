@@ -24,6 +24,23 @@ export function CartProvider({ children }) {
   }, [cart]);
 
   const addToCart = (product, quantity = 1) => {
+    // Automatically remove product from wishlist on cart add (guest storage & api)
+    try {
+      const guestList = JSON.parse(localStorage.getItem('vc_guest_wishlist') || '[]');
+      if (guestList.includes(product.id)) {
+        const updated = guestList.filter(id => id !== product.id);
+        localStorage.setItem('vc_guest_wishlist', JSON.stringify(updated));
+      }
+    } catch (e) {
+      console.error('Failed to update guest wishlist in localStorage:', e);
+    }
+
+    fetch('/api/wishlist', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: product.id })
+    }).catch(err => console.error('Wishlist removal error on cart add:', err));
+
     setCart(prev => {
       const existing = prev.find(item => item.id === product.id && (item.selectedVariant || null) === (product.selectedVariant || null));
       if (existing) {

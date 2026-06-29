@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import AddToCartButton from './AddToCartButton';
-import { Leaf, ShieldCheck, Truck, Share2 } from 'lucide-react';
+import { Leaf, ShieldCheck, Truck, Share2, Info } from 'lucide-react';
+import Link from 'next/link';
 
 function calculateVariantPrice(basePrice, selectedVariant, baseVariant) {
   const parse = (str) => {
@@ -231,17 +232,42 @@ export default function ProductDetailInfo({ product, category, bundleProduct }) 
             <span className="w-1.5 h-1.5 rounded-full bg-vedicana-green"></span> Frequently Bought Together
           </h4>
           
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-16 h-16 bg-white rounded-lg shadow-sm border border-gray-100 p-1 flex-shrink-0 relative">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 flex-nowrap min-w-0">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-lg shadow-sm border border-gray-100 p-1 flex-shrink-0 relative">
               <Image src={product.image || 'https://via.placeholder.com/100'} alt={product.title} fill className="object-contain p-1" />
             </div>
-            <div className="text-gray-400 font-bold text-lg">+</div>
-            <div className="w-16 h-16 bg-white rounded-lg shadow-sm border border-gray-100 p-1 flex-shrink-0 relative group-hover:border-vedicana-green transition-colors">
+            <div className="text-gray-400 font-bold text-sm sm:text-lg flex-shrink-0">+</div>
+            <Link 
+              href={`/shop/${bundleProduct.slug}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="w-12 h-12 sm:w-16 sm:h-16 bg-white rounded-lg shadow-sm border border-gray-100 p-1 flex-shrink-0 relative hover:border-vedicana-green hover:scale-105 transition-all"
+              title={`View ${bundleProduct.title} details (opens in a new tab)`}
+            >
               <Image src={bundleProduct.image || 'https://via.placeholder.com/100'} alt={bundleProduct.title} fill className="object-contain p-1" />
-            </div>
-            <div className="ml-2 flex-grow">
-              <h5 className="text-[13px] font-medium text-gray-800 line-clamp-1">{bundleProduct.title}</h5>
-              <div className="text-xs text-vedicana-green font-bold mt-0.5">
+            </Link>
+            <div className="ml-1 sm:ml-2 flex-grow min-w-0">
+              <div className="flex items-center gap-1">
+                <Link 
+                  href={`/shop/${bundleProduct.slug}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="font-medium text-gray-800 hover:text-vedicana-green hover:underline transition-colors block text-[11px] sm:text-[13px] line-clamp-1 flex-grow min-w-0"
+                  title={`View ${bundleProduct.title} details (opens in a new tab)`}
+                >
+                  {bundleProduct.title}
+                </Link>
+                <Link 
+                  href={`/shop/${bundleProduct.slug}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-gray-400 hover:text-vedicana-green p-0.5 flex-shrink-0 hover:scale-115 transition-transform"
+                  title="View product details (opens in a new tab)"
+                >
+                  <Info size={11} className="sm:w-3 sm:h-3" />
+                </Link>
+              </div>
+              <div className="text-[10px] sm:text-xs text-vedicana-green font-bold mt-0.5">
                 + ₹{bundleProduct.sale_price || bundleProduct.price}
               </div>
             </div>

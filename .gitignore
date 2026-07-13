@@ -40,6 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-public/mantras/*.mp3
 *.zip
 *.tar.gz

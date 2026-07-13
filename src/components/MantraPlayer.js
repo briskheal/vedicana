@@ -7,6 +7,7 @@ export default function MantraPlayer() {
   const [activeMantra, setActiveMantra] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
+  const isSwitchingRef = useRef(false);
 
   useEffect(() => {
     fetch('/api/mantras')
@@ -20,13 +21,21 @@ export default function MantraPlayer() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !activeMantra) return;
 
-    if (isPlaying && activeMantra) {
-      audio.play().catch(e => {
-        console.error("Playback failed:", e);
-        setIsPlaying(false);
-      });
+    if (isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isSwitchingRef.current = false;
+        }).catch(e => {
+          if (e.name !== 'AbortError') {
+            console.error("Playback failed:", e);
+            setIsPlaying(false);
+          }
+          isSwitchingRef.current = false;
+        });
+      }
     } else {
       audio.pause();
     }
@@ -36,6 +45,7 @@ export default function MantraPlayer() {
     if (activeMantra?.id === mantra.id) {
       setIsPlaying(!isPlaying);
     } else {
+      isSwitchingRef.current = true;
       setActiveMantra(mantra);
       setIsPlaying(true);
     }
@@ -76,7 +86,12 @@ export default function MantraPlayer() {
                 src={activeMantra.filename.startsWith('http') ? activeMantra.filename : `/mantras/${activeMantra.filename}`} 
                 onEnded={() => setIsPlaying(false)} 
                 onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
+                onPause={() => {
+                  if (isSwitchingRef.current) {
+                    return;
+                  }
+                  setIsPlaying(false);
+                }}
                 controls
                 controlsList="nodownload noplaybackrate"
                 className="w-full h-10 rounded-lg outline-none"

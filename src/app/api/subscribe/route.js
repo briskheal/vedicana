@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import models from '../../../models/index.js';
+import { checkRateLimit } from '../../../lib/rateLimit.js';
+import { verifyRecaptcha } from '../../../lib/recaptcha.js';
 
 const { Subscriber } = models;
 
@@ -144,7 +146,21 @@ function buildAutoReplyEmail(email) {
 // ── API Route ────────────────────────────────────────────────────────────────
 export async function POST(request) {
   try {
-    const { email } = await request.json();
+    // 1. Rate Limiting Check
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    if (!checkRateLimit(ip, 5, 15 * 60 * 1000)) { // Max 5 requests per 15 mins
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
+    const { email, recaptchaToken } = await request.json();
+
+    // 2. reCAPTCHA Verification
+    if (recaptchaToken) {
+      const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
+      if (!isValidCaptcha) {
+        return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
+      }
+    }
 
     // 1. Validation
     if (!email) {

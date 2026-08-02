@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from 'react';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export default function NewsletterForm() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -17,10 +19,15 @@ export default function NewsletterForm() {
     setErrorMessage('');
 
     try {
+      let token = '';
+      if (executeRecaptcha) {
+        token = await executeRecaptcha('subscribe');
+      }
+
       const res = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim() })
+        body: JSON.stringify({ email: email.trim(), recaptchaToken: token })
       });
 
       const data = await res.json();

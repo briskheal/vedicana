@@ -4,11 +4,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { User as UserIcon, Key, Eye, EyeOff } from 'lucide-react';
 import { syncGuestWishlistToServer } from '../../components/WishlistButton';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 function LoginForm({ onToggleForgot }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get('registered');
+  const { executeRecaptcha } = useGoogleReCaptcha();
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,10 +25,15 @@ function LoginForm({ onToggleForgot }) {
     const data = Object.fromEntries(formData);
 
     try {
+      let token = '';
+      if (executeRecaptcha) {
+        token = await executeRecaptcha('login');
+      }
+
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, recaptchaToken: token }),
       });
 
       const json = await res.json();

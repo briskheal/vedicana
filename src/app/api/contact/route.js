@@ -4,6 +4,8 @@ import fs from 'fs/promises';
 import path from 'path';
 
 import models from '../../../models/index.js';
+import { checkRateLimit } from '../../../lib/rateLimit.js';
+import { verifyRecaptcha } from '../../../lib/recaptcha.js';
 
 const { ContactMessage } = models;
 
@@ -107,11 +109,25 @@ function buildAutoReply({ name, email, subject, companyEmail, companyAddress }) 
 
 export async function POST(request) {
   try {
-    const { name, email, subject, message, bot_honeypot } = await request.json();
+    // 1. Rate Limiting Check
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    if (!checkRateLimit(ip, 3, 15 * 60 * 1000)) { // Max 3 requests per 15 minutes per IP
+      return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
+    }
+
+    const { name, email, subject, message, bot_honeypot, recaptchaToken } = await request.json();
 
     if (bot_honeypot) {
       // Silent reject for spam bots
       return NextResponse.json({ success: true, message: 'Message sent!' }, { status: 200 });
+    }
+
+    // 2. reCAPTCHA Verification
+    if (recaptchaToken) {
+      const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
+      if (!isValidCaptcha) {
+        return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
+      }
     }
 
     if (!name || !email || !subject || !message) {

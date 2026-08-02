@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Leaf, Eye, EyeOff } from 'lucide-react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", 
@@ -15,6 +16,7 @@ const INDIAN_STATES = [
 
 export default function Register() {
   const router = useRouter();
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,10 +37,15 @@ export default function Register() {
     }
 
     try {
+      let token = '';
+      if (executeRecaptcha) {
+        token = await executeRecaptcha('register');
+      }
+
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, recaptchaToken: token }),
       });
 
       const json = await res.json();

@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from 'react';
 import { Send, CheckCircle, Sparkles, AlertCircle } from 'lucide-react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export default function ContactFormSection() {
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '', bot_honeypot: '' });
   const [num1, setNum1] = useState(5);
   const [num2, setNum2] = useState(3);
@@ -32,10 +34,15 @@ export default function ContactFormSection() {
     setError('');
 
     try {
+      let token = '';
+      if (executeRecaptcha) {
+        token = await executeRecaptcha('contact');
+      }
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken: token }),
       });
       const data = await res.json();
 

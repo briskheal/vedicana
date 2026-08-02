@@ -1,10 +1,26 @@
 import { NextResponse } from 'next/server';
 import User from '../../../../models/User.js';
 import bcrypt from 'bcryptjs';
+import { checkRateLimit } from '../../../../lib/rateLimit.js';
+import { verifyRecaptcha } from '../../../../lib/recaptcha.js';
 
 export async function POST(request) {
   try {
-    const { firstName, lastName, email, password, phone, address, city, state, pincode } = await request.json();
+    // 1. Rate Limiting Check
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    if (!checkRateLimit(ip, 5, 15 * 60 * 1000)) { // Max 5 requests per 15 mins
+      return NextResponse.json({ error: 'Too many registration attempts. Please try again later.' }, { status: 429 });
+    }
+
+    const { firstName, lastName, email, password, phone, address, city, state, pincode, recaptchaToken } = await request.json();
+
+    // 2. reCAPTCHA Verification
+    if (recaptchaToken) {
+      const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
+      if (!isValidCaptcha) {
+        return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
+      }
+    }
 
     if (!email || !password || !firstName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

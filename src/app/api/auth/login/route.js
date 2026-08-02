@@ -4,10 +4,26 @@ import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import fs from 'fs';
 import path from 'path';
+import { checkRateLimit } from '../../../../lib/rateLimit.js';
+import { verifyRecaptcha } from '../../../../lib/recaptcha.js';
 
 export async function POST(request) {
   try {
-    const { email, password } = await request.json();
+    // 1. Rate Limiting Check
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+    if (!checkRateLimit(ip, 10, 15 * 60 * 1000)) { // Max 10 login attempts per 15 mins
+      return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+    }
+
+    const { email, password, recaptchaToken } = await request.json();
+
+    // 2. reCAPTCHA Verification
+    if (recaptchaToken) {
+      const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
+      if (!isValidCaptcha) {
+        return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
+      }
+    }
 
     if (!email || !password) {
       return NextResponse.json({ error: 'Missing email or password' }, { status: 400 });

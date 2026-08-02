@@ -60,6 +60,7 @@ import PageTransition from '../components/PageTransition';
 import ConditionalLayout from '../components/ConditionalLayout';
 import Script from 'next/script';
 import AnalyticsTracker from '../components/AnalyticsTracker';
+import RecaptchaProvider from '../components/RecaptchaProvider';
 
 export const metadata = {
   title: "VediCana | Tradition Re-emerged",
@@ -254,14 +255,15 @@ export default async function RootLayout({ children }) {
         <Suspense fallback={null}>
           <AnalyticsTracker gaId={companyDetails.ga_id} fbPixelId={companyDetails.fb_pixel_id} />
         </Suspense>
-        <CartProvider>
-          {/* Skip directly to main content for screen readers / keyboard users */}
-          <a 
-            href="#main-content" 
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-vedicana-green text-white px-4 py-2.5 rounded-lg font-bold z-[99999] text-xs uppercase tracking-wider shadow-md"
-          >
-            Skip to main content
-          </a>
+        <RecaptchaProvider>
+          <CartProvider>
+            {/* Skip directly to main content for screen readers / keyboard users */}
+            <a 
+              href="#main-content" 
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-vedicana-green text-white px-4 py-2.5 rounded-lg font-bold z-[99999] text-xs uppercase tracking-wider shadow-md"
+            >
+              Skip to main content
+            </a>
 
           <CookieBanner />
 
@@ -532,6 +534,7 @@ export default async function RootLayout({ children }) {
             </main>
           </ConditionalLayout>
         </CartProvider>
+        </RecaptchaProvider>
       </body>
     </html>
   );

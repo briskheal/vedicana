@@ -107,6 +107,21 @@ function buildAutoReply({ name, email, subject, companyEmail, companyAddress }) 
   };
 }
 
+// ── Deep Bot Text Validation ───────────────────────────────────────────────────
+const deepBotCheck = (data) => {
+  const { name, email, message } = data;
+  if (email && (email.toLowerCase() === 'bobbylarson1@yahoo.com' || email.toLowerCase().endsWith('.ru'))) {
+    return { isSpam: true };
+  }
+  if (name && /[bcdfghjklmnpqrstvwxz]{5,}/i.test(name.replace(/\s/g, ''))) {
+    return { isSpam: true };
+  }
+  if (message && /[bcdfghjklmnpqrstvwxz]{7,}/i.test(message)) {
+    return { isSpam: true };
+  }
+  return { isSpam: false };
+};
+
 export async function POST(request) {
   try {
     // 1. Rate Limiting Check
@@ -122,12 +137,23 @@ export async function POST(request) {
       return NextResponse.json({ success: true, message: 'Message sent!' }, { status: 200 });
     }
 
-    // 2. reCAPTCHA Verification
-    if (recaptchaToken) {
-      const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
-      if (!isValidCaptcha) {
-        return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
-      }
+    // ── Deep Text Validation ──
+    const botCheck = deepBotCheck({ name, email, message });
+    if (botCheck.isSpam) {
+      // Silent reject
+      console.warn(`Spam bot caught by deep text check on Vedicana from ${ip}`);
+      return NextResponse.json({ success: true, message: 'Your message has been sent! We will get back to you within 24–48 hours.' }, { status: 200 });
+    }
+
+    // 2. reCAPTCHA Verification (Strictly Required)
+    if (!recaptchaToken) {
+      console.warn(`Blocked request missing recaptcha token from ${ip}`);
+      return NextResponse.json({ error: 'Security token missing. Please try again.' }, { status: 403 });
+    }
+    
+    const isValidCaptcha = await verifyRecaptcha(recaptchaToken);
+    if (!isValidCaptcha) {
+      return NextResponse.json({ error: 'Security check failed. You appear to be a bot.' }, { status: 403 });
     }
 
     if (!name || !email || !subject || !message) {
